@@ -1,0 +1,87 @@
+15 ივნისი 2021
+1. პროცესში დაგროვილი მეხსიერების გასაწმენდად კოდში ცვლილებების გაკეთებაა საჭირო
+
+12 ივნისი 2021
+1. ზოგიერთი სიტყვა არასწორად არის შენახული
+გამოვიყენე
+SELECT trmId, termText, termTypeId, U.urlName
+FROM terms T
+  INNER JOIN termsByUrls TBU ON T.trmId = TBU.termId
+  INNER JOIN urls U ON TBU.urlId = U.urlId
+ORDER BY termText --ან DESC
+-	3	https://www.ganmarteba.ge/word/ხლება/1
+!	3	https://www.ganmarteba.ge/word/ვაიმე
+"	3	https://www.ganmarteba.ge/word/ეგრეთ
+ჰყოფნისზმნაიხ	2	https://www.ganmarteba.ge/word/ჰყოფნის
+ჰყავსზმნაიხ	2	https://www.ganmarteba.ge/word/ჰყავს
+ჰქვიაზმნაიხ	2	https://www.ganmarteba.ge/word/ჰქვია
+
+2. სავარაუდოდ არეული უნდა იყოს gotUrlId და fromUrlId ველები. გადასამოწმებელია
+
+3. არასირი url-ები სავარაუდოდ sitemap-დან
+https://www.ganmarteba.ge/search/%E1%83%B0
+https://www.ganmarteba.ge/search/%E1%83%92
+https://www.ganmarteba.ge/search/%E1%83%93
+https://www.ganmarteba.ge/search/%E1%83%94
+https://www.ganmarteba.ge/search/%E1%83%95
+https://www.ganmarteba.ge/search/%E1%83%96
+https://www.ganmarteba.ge/search/%E1%83%97
+https://www.ganmarteba.ge/search/%E1%83%98
+https://www.ganmarteba.ge/search/%E1%83%99
+https://www.ganmarteba.ge/search/%E1%83%9A
+https://www.ganmarteba.ge/search/%E1%83%9B
+https://www.ganmarteba.ge/search/%E1%83%9C
+https://www.ganmarteba.ge/search/%E1%83%9D
+https://www.ganmarteba.ge/search/%E1%83%9E
+https://www.ganmarteba.ge/search/%E1%83%9F
+https://www.ganmarteba.ge/search/%E1%83%91
+https://www.ganmarteba.ge/search/%E1%83%A0
+https://www.ganmarteba.ge/search/%E1%83%A2
+https://www.ganmarteba.ge/search/%E1%83%A3
+https://www.ganmarteba.ge/search/%E1%83%A4
+https://www.ganmarteba.ge/search/%E1%83%A5
+https://www.ganmarteba.ge/search/%E1%83%A6
+https://www.ganmarteba.ge/search/%E1%83%A7
+https://www.ganmarteba.ge/search/%E1%83%A8
+https://www.ganmarteba.ge/search/%E1%83%A9
+https://www.ganmarteba.ge/search/%E1%83%AA
+https://www.ganmarteba.ge/search/%E1%83%AB
+https://www.ganmarteba.ge/search/%E1%83%AC
+https://www.ganmarteba.ge/search/%E1%83%AD
+https://www.ganmarteba.ge/search/%E1%83%AE
+https://www.ganmarteba.ge/search/%E1%83%AF
+https://www.ganmarteba.ge/search/%E1%83%A1
+https://www.ganmarteba.ge/search/%E1%83%90
+
+4. უნდა გაიზარდოს ქეშის ბუფერის ზომა და რამდენიმე (ბევრი) გვერდიდან მიღებული ინფორმაცია ერთად უნდა წავიდეს ბაზაში
+
+5. სატესტოდ შესაძლებელი უნდა იყოს მხოლოდ ერთი გვერდის მოქაჩვა და გაანალიზება
+
+-6. მოქაჩვისა და გაანალიზების თრიდები უნდა უნდა გაიყოს.
+
+-7. პროცესების მონიტორინგი უნდა დაიხვეწოს, რომ ბრძანებების ფანჯარაში სწორად გამოვიდეს პროგრესის შესახებ ინფორმაცია.
+
+-8. ბაზის წაშლა და სუფთა ბაზის შექმნა ერთ სკრიპტში უნდა გაერთიანდეს, ისე რომ მიგრაციის ფაილების წაიშალოს ავტომატურად. შეიძლება ამი პროცესის დამატება დამხმარე ინსტრუმენტებში.
+
+9. mailto: მისამართს ინახავს ბაზაში და არ უნდა შეინახოს.
+
+
+
+
+
+
+1 ივნისი 2021
+1. პუნქტუაციის ნიშნები პარამეტრებში გამოტანისას უნდა დალაგდეს სორტირების იდენტიფიკატორის მიხედვით.
+2. ახალი პუნქტუაციის ჩამატება, ან პუნქტუაციის სორტირების იდენტიფიკატორის ცვლილება უნდა იწვევდეს ყველა ჩანაწერის სორტირების იდენტიფიკატორების გადათვლას, ისე, რომ დაინომროს 1-დან გამოტოვებების გარეშე. თუ გადანომვრისას აღმოჩნდება, რომ ერთნაირი სორტირების იდენტიფიკატორები აქვთ რამდენიმე ჩანაწერს, მაშინ ასეთი ჩანაწერები ჯერ დალაგდება სახელების ალფავიტის მიხედვით და მერე გადაინომრება.
+3. ამოცანების გაშვების პარამეტრები უნდა გავიტანოთ ბაზიდან პარამეტრების ფაილში. ეს საშუალებას მოგვცემს დამატებითი ინფორმაციის შეყვანის გარეშე თუნდაც სუფთა ბაზაზე გავუშვათ ამოცანა. ანუ პარამეტრებშ უნდა გადავიდეს ჰოსტების ჩამონათვალი და ღიაა თუ არა ამოცანა სხვა ჯოსტებისათვის და შეიძლება კიდევ სხვა პარამეტრები.
+4. html-ის გაანალიზების შედეგების ბაზაში შენახვა არის გასაკეთებელი
+
+
+
+
+24 მაისი 2021
+გასაკეთებელია დოკუმენტების ანალიზატორები:
+1. SiteMap ფაილისათვის
+2. Html კონტენტისათვის
+
+robots.txt ანალიზატორი გაკეთებულია, მაგრამ მომავლისთვის საჭირო იქნება მისი დაჭკვიანება, რადგან ეხლა მხოლოდ SiteMap ჩანაწერებს არჩევს
