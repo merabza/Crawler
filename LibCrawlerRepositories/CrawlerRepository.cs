@@ -68,7 +68,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public HostModel CheckAddHostName(string hostName)
     {
         return _context.Hosts.SingleOrDefault(a => a.HostName == hostName) ??
-               _context.Hosts.Add(new HostModel(hostName)).Entity;
+               _context.Hosts.Add(new HostModel {HostName = hostName}).Entity;
     }
 
     public ExtensionModel CheckAddExtensionName(string extensionName)
@@ -80,7 +80,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public SchemeModel CheckAddSchemeName(string schemeName)
     {
         return _context.Schemes.SingleOrDefault(a => a.SchName == schemeName) ??
-               _context.Schemes.Add(new SchemeModel(schemeName)).Entity;
+               _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
     }
 
     public UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string strUrl)
@@ -149,10 +149,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
                 return;
 
             var scheme = _context.Schemes.SingleOrDefault(s => s.SchName == schemeName) ??
-                         _context.Schemes.Add(new SchemeModel(schemeName)).Entity;
+                         _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
 
             var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName) ??
-                       _context.Hosts.Add(new HostModel(hostName)).Entity;
+                       _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
 
             _context.HostsByBatches.Add(new HostByBatch(batch.BatchId, scheme,
                 host));

@@ -7,10 +7,6 @@ namespace CrawlerDb.Models;
 
 public sealed class HostModel : ItemData
 {
-    public HostModel(string hostName)
-    {
-        HostName = hostName;
-    }
 
     public int HostId { get; set; }
     public string HostName { get; set; }

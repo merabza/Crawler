@@ -7,9 +7,9 @@ namespace CrawlerDb.Models;
 
 public sealed class Batch : ItemData
 {
-    public Batch(string batchName)
+    public Batch()
     {
-        BatchName = batchName;
+
     }
 
     public Batch(string batchName, bool isOpen, bool autoCreateNextPart)

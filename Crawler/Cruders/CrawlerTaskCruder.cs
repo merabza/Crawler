@@ -39,22 +39,22 @@
 //        return tasks.ContainsKey(recordKey);
 //    }
 
-//    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+//    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
 //    {
 //        TaskModel? newJobSchedule = newRecord as TaskModel;
 //        if (newJobSchedule is null)
 //            throw new Exception("newJobSchedule is null");
 //        CrawlerParameters parameters = (CrawlerParameters) ParametersManager.Parameters;
-//        parameters.Tasks[recordName] = newJobSchedule;
+//        parameters.Tasks[recordKey] = newJobSchedule;
 //    }
 
-//    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+//    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
 //    {
 //        TaskModel? newJobSchedule = newRecord as TaskModel;
 //        if (newJobSchedule is null)
 //            throw new Exception("newJobSchedule is null");
 //        CrawlerParameters parameters = (CrawlerParameters) ParametersManager.Parameters;
-//        parameters.Tasks.Add(recordName, newJobSchedule);
+//        parameters.Tasks.Add(recordKey, newJobSchedule);
 
 //    }
 
@@ -65,17 +65,17 @@
 //        jobSchedules.Remove(recordKey);
 //    }
 
-//    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+//    protected override ItemData CreateNewItem(string recordKey, ItemData? defaultItemData)
 //    {
 //        return new TaskModel();
 //    }
 
-//    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+//    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordKey)
 //    {
 
-//        base.FillDetailsSubMenu(itemSubMenuSet, recordName);
+//        base.FillDetailsSubMenu(itemSubMenuSet, recordKey);
 //        itemSubMenuSet.AddMenuItem(
-//            new TaskCommand(_logger, _crawlerRepositoryCreatorFabric, ParametersManager, recordName),
+//            new TaskCommand(_logger, _crawlerRepositoryCreatorFabric, ParametersManager, recordKey),
 //            "Run this task");
 
 //    }

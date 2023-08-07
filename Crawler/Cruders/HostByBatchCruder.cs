@@ -33,12 +33,12 @@ public sealed class HostByBatchCruder : Cruder
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        return GetHostNamesByBatch().ToDictionary(k => k, v => (ItemData)new TextItemData(v));
+        return GetHostNamesByBatch().ToDictionary(k => k, v => (ItemData)new TextItemData{Text = v});
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
-        return new TextItemData(recordName);
+        return new TextItemData();
     }
 
     public override bool ContainsRecordWithKey(string recordKey)
@@ -58,7 +58,7 @@ public sealed class HostByBatchCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         //SupportToolsParameters parameters = (SupportToolsParameters)ParametersManager?.Parameters;
         //Dictionary<string, ProjectModel> projects = parameters?.Projects;
@@ -67,10 +67,10 @@ public sealed class HostByBatchCruder : Cruder
         //ProjectModel project = projects[_projectName];
 
         //project.RedundantFileNames ??= new List<string>();
-        //project.RedundantFileNames.Add(recordName);
+        //project.RedundantFileNames.Add(recordKey);
 
         var repo = GetCrawlerRepository();
-        Uri uri = new(recordName);
+        Uri uri = new(recordKey);
         repo.AddHostNamesByBatch(_batch, uri.Scheme, uri.Host);
         repo.SaveChanges();
     }

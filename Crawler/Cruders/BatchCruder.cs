@@ -54,14 +54,14 @@ public sealed class BatchCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not Batch newBatch)
             return;
 
         var repo = GetCrawlerRepository();
 
-        var batch = repo.GetBatchByName(recordName);
+        var batch = repo.GetBatchByName(recordKey);
         if (batch is null)
             throw new Exception("batch is null");
         batch.BatchName = newBatch.BatchName;
@@ -70,7 +70,7 @@ public sealed class BatchCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not Batch newBatch)
             return;
@@ -92,31 +92,31 @@ public sealed class BatchCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
-        return new Batch(recordName);
+        return new Batch();
     }
 
 
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordKey)
     {
-        base.FillDetailsSubMenu(itemSubMenuSet, recordName);
+        base.FillDetailsSubMenu(itemSubMenuSet, recordKey);
 
         var batchesList = GetBatches();
         var batches = batchesList.ToDictionary(k => k.BatchName, v => v);
-        var batch = batches[recordName];
+        var batch = batches[recordKey];
 
         itemSubMenuSet.AddMenuItem(new BatchTaskCommand(_logger, _crawlerRepositoryCreatorFabric, _par, batch),
             "Run this batch");
 
         HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFabric, batch);
-        NewItemCommand newItemCommand = new(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
+        NewItemCommand newItemCommand = new(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
         var hostNames = detailsCruder.GetHostNamesByBatch();
 
         foreach (var detailListCommand in hostNames.Select(s =>
-                     new HostSubMenuCommand(detailsCruder, s, recordName, true)))
+                     new HostSubMenuCommand(detailsCruder, s, recordKey, true)))
             itemSubMenuSet.AddMenuItem(detailListCommand);
     }
 }

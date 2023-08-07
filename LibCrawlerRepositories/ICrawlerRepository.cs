@@ -12,7 +12,7 @@ public interface ICrawlerRepository
     IDbContextTransaction GetTransaction();
 
     List<HostModel> GetHostsList();
-    HostModel? GetHostByName(string recordName);
+    HostModel? GetHostByName(string recordKey);
     HostModel UpdateHost(HostModel host);
     HostModel CreateHost(HostModel newHost);
     HostModel DeleteHost(HostModel hostForDelete);

@@ -40,22 +40,22 @@ public sealed class PunctuationCruder : ParCruder
         return punctuations.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         var newPunctuation = newRecord as PunctuationModel;
         if (newPunctuation is null)
             throw new ArgumentNullException(nameof(newPunctuation));
         var parameters = (CrawlerParameters)ParametersManager.Parameters;
-        parameters.Punctuations[recordName] = newPunctuation;
+        parameters.Punctuations[recordKey] = newPunctuation;
     }
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         var punctuation = newRecord as PunctuationModel;
         if (punctuation is null)
             throw new ArgumentNullException(nameof(punctuation));
         var parameters = (CrawlerParameters)ParametersManager.Parameters;
-        parameters.Punctuations.Add(recordName, punctuation);
+        parameters.Punctuations.Add(recordKey, punctuation);
     }
 
     protected override void RemoveRecordWithKey(string recordKey)
@@ -86,7 +86,7 @@ public sealed class PunctuationCruder : ParCruder
             : $"{punctuationModel.PctName} -> {punctuationModel.PctPunctuation}";
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new PunctuationModel();
     }

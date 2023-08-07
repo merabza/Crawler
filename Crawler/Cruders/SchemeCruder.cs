@@ -42,14 +42,14 @@ public sealed class SchemeCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not SchemeModel newScheme)
             return;
 
         var repo = GetCrawlerRepository();
 
-        var scheme = repo.GetSchemeByName(recordName);
+        var scheme = repo.GetSchemeByName(recordKey);
         if (scheme is null)
             throw new Exception("scheme is null");
         scheme.SchName = newScheme.SchName;
@@ -58,7 +58,7 @@ public sealed class SchemeCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not SchemeModel newScheme)
             return;
@@ -79,8 +79,8 @@ public sealed class SchemeCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
-        return new SchemeModel(recordName);
+        return new SchemeModel();
     }
 }

@@ -43,14 +43,14 @@ public sealed class HostCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not HostModel newHost)
             return;
 
         var repo = GetCrawlerRepository();
 
-        var host = repo.GetHostByName(recordName);
+        var host = repo.GetHostByName(recordKey);
         if (host is null)
             throw new Exception("host is null");
         host.HostName = newHost.HostName;
@@ -59,7 +59,7 @@ public sealed class HostCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not HostModel newHost)
             return;
@@ -80,9 +80,9 @@ public sealed class HostCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
-        return new HostModel(recordName);
+        return new HostModel();
     }
 
     public override bool CheckValidation(ItemData item)

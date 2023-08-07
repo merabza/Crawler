@@ -15,7 +15,7 @@ public sealed class SchemeFieldEditor : FieldEditor<string>
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
+    public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
     {
         SchemeCruder schemeCruder = new(_crawlerRepositoryCreatorFabric);
         var keys = schemeCruder.GetKeys();
