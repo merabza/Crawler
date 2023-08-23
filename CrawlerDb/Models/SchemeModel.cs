@@ -7,7 +7,6 @@ namespace CrawlerDb.Models;
 
 public sealed class SchemeModel : ItemData
 {
-
     public int SchId { get; set; }
     public string SchName { get; set; }
     public bool SchProhibited { get; set; }

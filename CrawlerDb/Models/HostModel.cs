@@ -7,7 +7,6 @@ namespace CrawlerDb.Models;
 
 public sealed class HostModel : ItemData
 {
-
     public int HostId { get; set; }
     public string HostName { get; set; }
     public bool HostProhibited { get; set; }

@@ -68,7 +68,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public HostModel CheckAddHostName(string hostName)
     {
         return _context.Hosts.SingleOrDefault(a => a.HostName == hostName) ??
-               _context.Hosts.Add(new HostModel {HostName = hostName}).Entity;
+               _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
     }
 
     public ExtensionModel CheckAddExtensionName(string extensionName)

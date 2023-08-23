@@ -33,7 +33,7 @@ public sealed class HostByBatchCruder : Cruder
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        return GetHostNamesByBatch().ToDictionary(k => k, v => (ItemData)new TextItemData{Text = v});
+        return GetHostNamesByBatch().ToDictionary(k => k, v => (ItemData)new TextItemData { Text = v });
     }
 
     protected override ItemData CreateNewItem(ItemData? defaultItemData)

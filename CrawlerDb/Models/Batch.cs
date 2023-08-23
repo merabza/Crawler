@@ -9,7 +9,6 @@ public sealed class Batch : ItemData
 {
     public Batch()
     {
-
     }
 
     public Batch(string batchName, bool isOpen, bool autoCreateNextPart)
