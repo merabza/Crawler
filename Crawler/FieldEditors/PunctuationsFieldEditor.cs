@@ -15,7 +15,7 @@ public sealed class PunctuationsFieldEditor : FieldEditor<Dictionary<string, Pun
     private readonly ParametersManager _parametersManager;
 
     public PunctuationsFieldEditor(string propertyName, ParametersManager parametersManager, ILogger logger) : base(
-        propertyName, null, true)
+        propertyName, true, null, true)
     {
         _parametersManager = parametersManager;
         _logger = logger;
