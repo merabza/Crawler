@@ -33,7 +33,7 @@ public sealed class PunctuationsFieldEditor : FieldEditor<Dictionary<string, Pun
     {
         var val = GetValue(record);
 
-        if (val == null || val.Count <= 0)
+        if (val is null || val.Count <= 0)
             return "No Details";
 
         if (val.Count > 1)
