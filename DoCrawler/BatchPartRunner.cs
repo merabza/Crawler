@@ -29,6 +29,7 @@ public sealed class BatchPartRunner
     private readonly ICrawlerRepository _repository;
     private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public BatchPartRunner(ILogger logger, ICrawlerRepository repository, CrawlerParameters par,
         ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
     {
@@ -79,11 +80,11 @@ public sealed class BatchPartRunner
 
     private bool LoadUrls(BatchPart batchPart)
     {
-        StShared.ConsoleWriteInformationLine("Loading next part Urls...", true);
+        StShared.ConsoleWriteInformationLine(_logger, true, "Loading next part Urls...");
         GetPagesState getPagesState = new(_logger, _repository, _par, batchPart);
         getPagesState.Execute();
-        StShared.ConsoleWriteInformationLine(
-            $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}", true);
+        StShared.ConsoleWriteInformationLine(_logger, true,
+            $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
         return getPagesState.UrlsLoaded;
     }
 
@@ -111,7 +112,7 @@ public sealed class BatchPartRunner
 
     private void AnalyzeAsRobotsText(string content, int fromUrlPageId, int batchPartId)
     {
-        StShared.ConsoleWriteInformationLine("Analyze as robots.txt", true);
+        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as robots.txt");
 
         var lines = content.Split(Environment.NewLine);
 
@@ -184,9 +185,9 @@ public sealed class BatchPartRunner
         }
     }
 
-    private static void AnalyzeAsSiteMapXml(XElement element, int fromUrlPageId, int batchPartId)
+    private void AnalyzeAsSiteMapXml(XElement element, int fromUrlPageId, int batchPartId)
     {
-        StShared.ConsoleWriteInformationLine("Analyze as Sitemap XML", true);
+        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap XML");
 
         //FIXME Xml-ის დამუშავება გასაკეთებელია
         throw new NotImplementedException();
@@ -194,7 +195,7 @@ public sealed class BatchPartRunner
 
     private void AnalyzeAsSiteMapText(string content, int fromUrlPageId, int batchPartId)
     {
-        StShared.ConsoleWriteInformationLine("Analyze as Sitemap Text", true);
+        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Text");
 
         var lines = content.Split('\n');
 
@@ -414,7 +415,7 @@ public sealed class BatchPartRunner
 
     private void SaveChangesAndReduceCache()
     {
-        StShared.ConsoleWriteInformationLine("Save Changes", true);
+        StShared.ConsoleWriteInformationLine(_logger, true, "Save Changes");
 
         _repository.SaveChangesWithTransaction();
 
