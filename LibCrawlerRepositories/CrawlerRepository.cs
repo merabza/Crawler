@@ -15,6 +15,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     private readonly CrawlerDbContext _context;
     private readonly ILogger<CrawlerRepository> _logger;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public CrawlerRepository(CrawlerDbContext ctx, ILogger<CrawlerRepository> logger)
     {
         _context = ctx;

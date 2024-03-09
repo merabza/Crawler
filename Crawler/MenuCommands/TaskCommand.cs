@@ -21,6 +21,7 @@ public sealed class TaskCommand : CliMenuCommand
     private readonly IParametersManager _parametersManager;
     private readonly string _taskName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public TaskCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
         IParametersManager parametersManager, string taskName)
     {

@@ -163,8 +163,11 @@ public sealed class Crawler : CliAppLoop
                         return false;
                     }
 
-                    if (dc.TestConnection())
+                    var testConnectionResult = dc.TestConnection();
+                    if (testConnectionResult.IsNone)
                         return true;
+
+                    Err.PrintErrorsOnConsole((Err[])testConnectionResult);
 
                     Console.WriteLine("Database test connection failed");
                     return false;

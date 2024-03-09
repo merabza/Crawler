@@ -17,10 +17,10 @@ namespace CrawlerDbMigration.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("CrawlerDb.Models.Batch", b =>
                 {
@@ -29,7 +29,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("batchId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BatchId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BatchId"));
 
                     b.Property<bool>("AutoCreateNextPart")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("bpId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BpId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BpId"));
 
                     b.Property<int>("BatchId")
                         .HasColumnType("int")
@@ -95,7 +95,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("caId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CaId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CaId"));
 
                     b.Property<int>("BatchPartId")
                         .HasColumnType("int")
@@ -131,7 +131,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("extId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtId"));
 
                     b.Property<string>("ExtName")
                         .IsRequired()
@@ -161,7 +161,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("hbbId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HbbId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HbbId"));
 
                     b.Property<int>("BatchId")
                         .HasMaxLength(50)
@@ -196,7 +196,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("hostId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HostId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HostId"));
 
                     b.Property<string>("HostName")
                         .IsRequired()
@@ -226,7 +226,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("schId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SchId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SchId"));
 
                     b.Property<string>("SchName")
                         .IsRequired()
@@ -256,7 +256,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("trmId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrmId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrmId"));
 
                     b.Property<string>("TermText")
                         .IsRequired()
@@ -286,7 +286,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("tbuId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TbuId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TbuId"));
 
                     b.Property<int>("BatchPartId")
                         .HasColumnType("int")
@@ -324,7 +324,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ttId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TtId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TtId"));
 
                     b.Property<string>("TtKey")
                         .IsRequired()
@@ -353,7 +353,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ugnId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UgnId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UgnId"));
 
                     b.Property<int>("BatchPartId")
                         .HasColumnType("int")
@@ -387,7 +387,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("urlId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UrlId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UrlId"));
 
                     b.Property<int>("ExtensionId")
                         .HasColumnType("int")
