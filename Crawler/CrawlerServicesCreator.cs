@@ -11,6 +11,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
 {
     private readonly CrawlerParameters _par;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public CrawlerServicesCreator(CrawlerParameters par) : base(par.LogFolder, null, "Crawler")
     {
         _par = par;

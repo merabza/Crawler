@@ -28,6 +28,7 @@ public sealed class Crawler : CliAppLoop
     private readonly ParametersManager _parametersManager;
     private readonly ServiceProvider _serviceProvider;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public Crawler(ILogger logger, ParametersManager parametersManager, ServiceProvider serviceProvider)
     {
         _logger = logger;

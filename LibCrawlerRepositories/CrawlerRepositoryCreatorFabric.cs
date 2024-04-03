@@ -7,6 +7,7 @@ public sealed class CrawlerRepositoryCreatorFabric : ICrawlerRepositoryCreatorFa
 {
     private readonly IServiceProvider _services;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public CrawlerRepositoryCreatorFabric(IServiceProvider services)
     {
         _services = services;
