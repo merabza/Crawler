@@ -19,6 +19,7 @@ public sealed class BatchTaskCommand : CliMenuCommand
     private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public BatchTaskCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
         CrawlerParameters par, Batch batch)
     {

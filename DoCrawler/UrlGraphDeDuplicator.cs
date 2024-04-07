@@ -7,8 +7,9 @@ namespace DoCrawler;
 public sealed class UrlGraphDeDuplicator
 {
     private readonly ICrawlerRepository _repository;
-    private readonly SortedDictionary<string, UrlGraphNode> _urlGraphNodes = new();
+    private readonly SortedDictionary<string, UrlGraphNode> _urlGraphNodes = [];
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public UrlGraphDeDuplicator(ICrawlerRepository repository)
     {
         _repository = repository;

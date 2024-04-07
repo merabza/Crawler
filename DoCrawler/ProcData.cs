@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using CrawlerDb.Models;
 
 namespace DoCrawler;
@@ -16,40 +17,18 @@ public sealed class ProcData : IDisposable
     private readonly ConcurrentDictionary<string, TermType> _termTypesCache = new();
     private readonly ConcurrentDictionary<int, UrlModel> _urlCache = new();
 
-    //public readonly ConcurrentQueue<IForBase> BaseCommandsqueue = new ConcurrentQueue<IForBase>();
     public readonly ConcurrentQueue<UrlModel> UrlsQueue = new();
 
     private int _lastStateId;
-    //public readonly ConcurrentDictionary<string, GetPagesFromHostState> CurrentHosts = new ConcurrentDictionary<string, GetPagesFromHostState>();
-    //public readonly SaveToBaseState SaveToBaseState = new SaveToBaseState();
-    //public readonly Collector Collector = new Collector();
-    //public Dictionary<string, List<string>> ProhibitedQueries;
-    //public List<string> ProhibitedContentTypes;
-    //public List<string> DomainRootNamesWithDot;
 
-    //public string LastUsedCommand { private get; set; }
-    //public bool BatchIdChangeDenide { get; set; }
-    //public int BatchId { get; set; }
-
-    private ProcData( /*bool init = true*/)
+    private ProcData()
     {
-        //if (init)
-        //  LoadFrombase();
-    }
 
-    //private int _currentId;
-    //public HostModel GetHostByName(string hostName)
-    //{
-    //  if (!_hostsCache.TryAdd(currentId, DateTime.Now))
-    //    return true;
-    //  while (_hostNamesCache.Count > MaxCacheRecordCount)
-    //    _hostNamesCache.TryRemove(_hostNamesCache.OrderBy(m => m.Value).SingleOrDefault());
-    //  return false;
-    //}
+    }
 
     public UrlModel? GetUrlByHashCode(int hashCode)
     {
-        return _urlCache.ContainsKey(hashCode) ? _urlCache[hashCode] : null;
+        return _urlCache.GetValueOrDefault(hashCode);
     }
 
     public bool NeedsToReduceCache()
@@ -91,7 +70,7 @@ public sealed class ProcData : IDisposable
 
     public SchemeModel? GetSchemeByName(string schemeName)
     {
-        return _schemesCache.TryGetValue(schemeName, out var scheme) ? scheme : null;
+        return _schemesCache.GetValueOrDefault(schemeName);
     }
 
     public void AddScheme(SchemeModel scheme)
@@ -101,7 +80,7 @@ public sealed class ProcData : IDisposable
 
     public ExtensionModel? GetExtensionByName(string extensionName)
     {
-        return _extensionsCache.TryGetValue(extensionName, out var extension) ? extension : null;
+        return _extensionsCache.GetValueOrDefault(extensionName);
     }
 
     public void AddExtension(ExtensionModel extension)
@@ -111,7 +90,7 @@ public sealed class ProcData : IDisposable
 
     public HostModel? GetHostByName(string hostName)
     {
-        return _hostsCache.TryGetValue(hostName, out var host) ? host : null;
+        return _hostsCache.GetValueOrDefault(hostName);
     }
 
     public void AddHost(HostModel host)
@@ -121,7 +100,7 @@ public sealed class ProcData : IDisposable
 
     internal TermType? GetTermTypeByKey(string termTypeName)
     {
-        return _termTypesCache.TryGetValue(termTypeName, out var termType) ? termType : null;
+        return _termTypesCache.GetValueOrDefault(termTypeName);
     }
 
     public void AddTermType(TermType termTypeInBase)
@@ -131,7 +110,7 @@ public sealed class ProcData : IDisposable
 
     public Term? GetTermByName(string termText)
     {
-        return _termCache.TryGetValue(termText, out var term) ? term : null;
+        return _termCache.GetValueOrDefault(termText);
     }
 
     public void AddTerm(Term term)

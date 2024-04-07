@@ -21,6 +21,7 @@ public sealed class TestOnePageCommand : CliMenuCommand
     private readonly ParametersManager _parametersManager;
     private readonly string _taskName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public TestOnePageCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
         ParametersManager parametersManager, string taskName)
     {

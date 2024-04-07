@@ -4,6 +4,7 @@ namespace DoCrawler.Models;
 
 public sealed class UrlData
 {
+    // ReSharper disable once ConvertToPrimaryConstructor
     public UrlData(HostModel host, ExtensionModel extension, SchemeModel scheme, string checkedUri, int urlHashCode,
         UrlModel? url)
     {
