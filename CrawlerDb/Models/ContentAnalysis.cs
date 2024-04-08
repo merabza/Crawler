@@ -8,6 +8,7 @@ public sealed class ContentAnalysis
     private UrlModel? _urlNavigation;
 
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ContentAnalysis(int batchPartId, int urlId, int responseStatusCode, DateTime finish)
     {
         BatchPartId = batchPartId;

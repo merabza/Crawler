@@ -5,6 +5,7 @@ namespace CrawlerDb.Models;
 
 public sealed class ExtensionModel : ItemData
 {
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ExtensionModel(string extName)
     {
         ExtName = extName;
