@@ -131,6 +131,7 @@ public sealed class ProcData : IDisposable
                 return _instance;
             lock (SyncRoot) //thread safe singleton
             {
+                // ReSharper disable once DisposableConstructor
                 _instance ??= new ProcData();
             }
 

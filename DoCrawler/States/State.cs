@@ -20,7 +20,7 @@ public /*open*/ class State
     public virtual void Execute()
     {
         //, bp
-        Logger.LogWarning($"Execute was not override in {nameof(State)}", false);
+        Logger.LogWarning($"Execute was not override in {nameof(State)}");
     }
 
     //BackProcessor bp
