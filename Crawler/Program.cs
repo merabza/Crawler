@@ -35,7 +35,8 @@ try
 
     var parametersFileName = argParser.ParametersFileName;
     var servicesCreator = new CrawlerServicesCreator(par);
-    var serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
+    // ReSharper disable once using
+    using var serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
 
     if (serviceProvider == null)
     {

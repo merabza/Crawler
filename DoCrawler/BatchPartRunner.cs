@@ -95,7 +95,8 @@ public sealed class BatchPartRunner
             //StShared.ConsoleWriteInformationLine($"Downloading {uri}");
 
 
-            var response = _client.GetAsync(uri).Result;
+            // ReSharper disable once using
+            using var response = _client.GetAsync(uri).Result;
 
             return response.IsSuccessStatusCode
                 ? (response.StatusCode, response.Content.ReadAsStringAsync().Result)

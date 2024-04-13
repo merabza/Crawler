@@ -40,6 +40,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
+            // ReSharper disable once using
             using var transaction = GetTransaction();
             try
             {
