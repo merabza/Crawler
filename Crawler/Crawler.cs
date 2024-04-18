@@ -3,11 +3,11 @@
 using System;
 using System.Linq;
 using CliMenu;
-using CliParameters.MenuCommands;
+using CliParameters.CliMenuCommands;
 using CliParametersDataEdit;
 using CliParametersDataEdit.Models;
 using CliTools;
-using CliTools.Commands;
+using CliTools.CliMenuCommands;
 using Crawler.Cruders;
 using Crawler.MenuCommands;
 using DbTools;
@@ -52,7 +52,7 @@ public sealed class Crawler : CliAppLoop
 
         //ძირითადი პარამეტრების რედაქტირება
         CrawlerParametersEditor crawlerParametersEditor = new(parameters, _parametersManager, _logger);
-        mainMenuSet.AddMenuItem(new ParametersEditorListCommand(crawlerParametersEditor),
+        mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(crawlerParametersEditor),
             "Crawler Parameters Editor");
 
         if (CheckConnection())
@@ -63,15 +63,15 @@ public sealed class Crawler : CliAppLoop
             {
                 //ჰოსტების რედაქტორი
                 HostCruder hostCruder = new(crawlerRepositoryCreatorFabric);
-                mainMenuSet.AddMenuItem(new CruderListCommand(hostCruder), "Hosts");
+                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(hostCruder), "Hosts");
 
                 //სქემების რედაქტორი
                 SchemeCruder schemeCruder = new(crawlerRepositoryCreatorFabric);
-                mainMenuSet.AddMenuItem(new CruderListCommand(schemeCruder), "Schemes");
+                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(schemeCruder), "Schemes");
 
                 //პაკეტების რედაქტორი
                 BatchCruder batchCruder = new(_logger, crawlerRepositoryCreatorFabric, parameters);
-                mainMenuSet.AddMenuItem(new CruderListCommand(batchCruder), "Batches");
+                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder), "Batches");
 
                 //ამოცანები
                 NewTaskCommand newAppTaskCommand = new(_parametersManager);
@@ -93,7 +93,7 @@ public sealed class Crawler : CliAppLoop
 
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
-        mainMenuSet.AddMenuItem(key, "Exit", new ExitCommand(), key.Length);
+        mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
 
         return true;
     }

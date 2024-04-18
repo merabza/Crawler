@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CliMenu;
-using CliParameters.MenuCommands;
+using CliParameters.CliMenuCommands;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
 using LibDataInput;
@@ -63,7 +63,7 @@ public sealed class TaskSubMenuCommand : CliMenuCommand
         }
 
         var key = ConsoleKey.Escape.Value().ToLower();
-        taskSubMenuSet.AddMenuItem(key, "Exit to Main menu", new ExitToMainMenuCommand(null, null), key.Length);
+        taskSubMenuSet.AddMenuItem(key, "Exit to Main menu", new ExitToMainMenuCliMenuCommand(null, null), key.Length);
 
         return taskSubMenuSet;
     }

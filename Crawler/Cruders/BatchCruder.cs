@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using CliMenu;
 using CliParameters;
+using CliParameters.CliMenuCommands;
 using CliParameters.FieldEditors;
-using CliParameters.MenuCommands;
 using Crawler.MenuCommands;
 using CrawlerDb.Models;
 using DoCrawler.Models;
@@ -110,7 +110,7 @@ public sealed class BatchCruder : Cruder
             "Run this batch");
 
         HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFabric, batch);
-        NewItemCommand newItemCommand = new(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
+        NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
         var hostNames = detailsCruder.GetHostNamesByBatch();

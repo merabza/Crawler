@@ -1,6 +1,6 @@
 ﻿using System;
 using CliMenu;
-using CliParameters.MenuCommands;
+using CliParameters.CliMenuCommands;
 using LibDataInput;
 using LibParameters;
 
@@ -12,6 +12,7 @@ public sealed class StartPointSubMenuCommand : CliMenuCommand
     private readonly string _startPoint;
     private readonly string _taskName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public StartPointSubMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) :
         base(taskName)
     {
@@ -37,7 +38,7 @@ public sealed class StartPointSubMenuCommand : CliMenuCommand
             "Edit Start Point");
 
         var key = ConsoleKey.Escape.Value().ToLower();
-        taskSubMenuSet.AddMenuItem(key, "Exit to Main menu", new ExitToMainMenuCommand(null, null), key.Length);
+        taskSubMenuSet.AddMenuItem(key, "Exit to Main menu", new ExitToMainMenuCliMenuCommand(null, null), key.Length);
 
         return taskSubMenuSet;
     }
