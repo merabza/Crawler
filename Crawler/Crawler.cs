@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using CliMenu;
 using CliParameters.CliMenuCommands;
 using CliParametersDataEdit;
@@ -164,7 +165,7 @@ public sealed class Crawler : CliAppLoop
                         return false;
                     }
 
-                    var testConnectionResult = dc.TestConnection();
+                    var testConnectionResult = dc.TestConnection(true, CancellationToken.None).Result;
                     if (testConnectionResult.IsNone)
                         return true;
 
