@@ -223,7 +223,7 @@ public sealed class BatchPartRunner
                 ETermType.ParagraphFinish => "</p>",
                 ETermType.StatementStart => "<s>",
                 ETermType.StatementFinish => "</s>",
-                ETermType.Word => termContext,
+                ETermType.Word => termContext?.ToLower(),
                 ETermType.Punctuation => termContext,
                 _ => throw new ArgumentOutOfRangeException(nameof(termType), termType, null)
             };

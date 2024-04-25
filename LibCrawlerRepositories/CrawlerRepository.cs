@@ -134,7 +134,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(CreateBatch)}.");
+            _logger.LogError(e, $"Error occurred executing {nameof(RemoveHostNamesByBatch)}.");
             throw;
         }
     }

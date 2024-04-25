@@ -30,7 +30,7 @@ public class UrlModelConfiguration : IEntityTypeConfiguration<UrlModel>
             .HasConstraintName(tableName.CreateConstraintName(nameof(HostModel)));
         builder.HasOne(d => d.ExtensionNavigation).WithMany(p => p.Urls).HasForeignKey(d => d.ExtensionId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(ExtensionModel)));
-        builder.HasOne(d => d.SchemeNavigation).WithMany(p => p.Urls)
+        builder.HasOne(d => d.SchemeNavigation).WithMany(p => p.Urls).HasForeignKey(d => d.SchemeId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(SchemeModel)));
 
     }

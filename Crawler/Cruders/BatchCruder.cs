@@ -61,9 +61,7 @@ public sealed class BatchCruder : Cruder
 
         var repo = GetCrawlerRepository();
 
-        var batch = repo.GetBatchByName(recordKey);
-        if (batch is null)
-            throw new Exception("batch is null");
+        var batch = repo.GetBatchByName(recordKey) ?? throw new Exception("batch is null");
         batch.BatchName = newBatch.BatchName;
         repo.UpdateBatch(batch);
 
