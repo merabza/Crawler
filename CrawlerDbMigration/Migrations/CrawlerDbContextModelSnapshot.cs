@@ -17,7 +17,7 @@ namespace CrawlerDbMigration.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -53,7 +53,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("BatchName")
                         .IsUnique()
-                        .HasDatabaseName("IX_Batches_batchName");
+                        .HasDatabaseName("IX_Batches_batchName_Unique");
 
                     b.ToTable("batches", (string)null);
                 });
@@ -83,7 +83,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("BatchId", "Created")
                         .IsUnique()
-                        .HasDatabaseName("IX_BatchParts_unique");
+                        .HasDatabaseName("IX_BatchParts_batchId_created_Unique");
 
                     b.ToTable("batchParts", (string)null);
                 });
@@ -119,7 +119,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("BatchPartId", "UrlId")
                         .IsUnique()
-                        .HasDatabaseName("IX_ContentAnalyses_unique");
+                        .HasDatabaseName("IX_ContentAnalyses_batchPartId_urlId_Unique");
 
                     b.ToTable("contentAnalyses", (string)null);
                 });
@@ -149,7 +149,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("ExtName")
                         .IsUnique()
-                        .HasDatabaseName("IX_Extensions_extName");
+                        .HasDatabaseName("IX_Extensions_extName_Unique");
 
                     b.ToTable("extensions", (string)null);
                 });
@@ -184,7 +184,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("BatchId", "SchemeId", "HostId")
                         .IsUnique()
-                        .HasDatabaseName("IX_HostsByBatches_unique");
+                        .HasDatabaseName("IX_HostsByBatches_batchId_schemeId_hostId_Unique");
 
                     b.ToTable("hostsByBatches", (string)null);
                 });
@@ -214,7 +214,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("HostName")
                         .IsUnique()
-                        .HasDatabaseName("IX_Hosts_hostName");
+                        .HasDatabaseName("IX_Hosts_hostName_Unique");
 
                     b.ToTable("hosts", (string)null);
                 });
@@ -244,7 +244,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("SchName")
                         .IsUnique()
-                        .HasDatabaseName("IX_Schemes_schName");
+                        .HasDatabaseName("IX_Schemes_schName_Unique");
 
                     b.ToTable("schemes", (string)null);
                 });
@@ -272,7 +272,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("TermText")
                         .IsUnique()
-                        .HasDatabaseName("IX_Terms_termText");
+                        .HasDatabaseName("IX_Terms_termText_Unique");
 
                     b.HasIndex("TermTypeId");
 
@@ -312,7 +312,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("BatchPartId", "UrlId", "Position")
                         .IsUnique()
-                        .HasDatabaseName("IX_TermsByUrls_unique");
+                        .HasDatabaseName("IX_TermsByUrls_batchPartId_urlId_position_Unique");
 
                     b.ToTable("termsByUrls", (string)null);
                 });
@@ -341,7 +341,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("TtKey")
                         .IsUnique()
-                        .HasDatabaseName("IX_TermTypes_ttKey");
+                        .HasDatabaseName("IX_TermTypes_ttKey_Unique");
 
                     b.ToTable("termTypes", (string)null);
                 });
@@ -375,7 +375,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("BatchPartId", "FromUrlId", "GotUrlId")
                         .IsUnique()
-                        .HasDatabaseName("IX_UrlGraphNodes_Unique");
+                        .HasDatabaseName("IX_UrlGraphNodes_batchPartId_fromUrlId_gotUrlId_Unique");
 
                     b.ToTable("urlGraphNodes", (string)null);
                 });
@@ -427,7 +427,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("UrlHashCode", "HostId", "ExtensionId", "SchemeId")
                         .IsUnique()
-                        .HasDatabaseName("IX_Urls_unique");
+                        .HasDatabaseName("IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique");
 
                     b.ToTable("urls", (string)null);
                 });
@@ -458,7 +458,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasForeignKey("UrlId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_ContentAnalyses_urls");
+                        .HasConstraintName("FK_ContentAnalyses_UrlModels");
 
                     b.Navigation("BatchPartNavigation");
 
@@ -479,14 +479,14 @@ namespace CrawlerDbMigration.Migrations
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_HostsByBatches_Hosts");
+                        .HasConstraintName("FK_HostsByBatches_HostModels");
 
                     b.HasOne("CrawlerDb.Models.SchemeModel", "SchemeNavigation")
                         .WithMany("HostsByBatches")
                         .HasForeignKey("SchemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_HostsByBatches_Schemes");
+                        .HasConstraintName("FK_HostsByBatches_SchemeModels");
 
                     b.Navigation("BatchNavigation");
 
@@ -528,7 +528,7 @@ namespace CrawlerDbMigration.Migrations
                         .HasForeignKey("UrlId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_TermsByUrls_Urls");
+                        .HasConstraintName("FK_TermsByUrls_UrlModels");
 
                     b.Navigation("BatchPartNavigation");
 
@@ -550,13 +550,13 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("UrlGraphNodesFrom")
                         .HasForeignKey("FromUrlId")
                         .IsRequired()
-                        .HasConstraintName("FK_UrlGraphNodes_fromUrlId");
+                        .HasConstraintName("FK_UrlGraphNodes_UrlGraphNodes_FromUrlId");
 
                     b.HasOne("CrawlerDb.Models.UrlModel", "GotUrlNavigation")
                         .WithMany("UrlGraphNodesGot")
                         .HasForeignKey("GotUrlId")
                         .IsRequired()
-                        .HasConstraintName("FK_UrlGraphNodes_gotUrlId");
+                        .HasConstraintName("FK_UrlGraphNodes_UrlGraphNodes_GotUrlId");
 
                     b.Navigation("BatchPartNavigation");
 
@@ -572,21 +572,21 @@ namespace CrawlerDbMigration.Migrations
                         .HasForeignKey("ExtensionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Urls_Extensions");
+                        .HasConstraintName("FK_Urls_ExtensionModels");
 
                     b.HasOne("CrawlerDb.Models.HostModel", "HostNavigation")
                         .WithMany("Urls")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Urls_Hosts");
+                        .HasConstraintName("FK_Urls_HostModels");
 
                     b.HasOne("CrawlerDb.Models.SchemeModel", "SchemeNavigation")
                         .WithMany("Urls")
                         .HasForeignKey("SchemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Urls_Schemes");
+                        .HasConstraintName("FK_Urls_SchemeModels");
 
                     b.Navigation("ExtensionNavigation");
 

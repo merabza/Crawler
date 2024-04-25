@@ -123,13 +123,13 @@ namespace CrawlerDbMigration.Migrations
                         principalColumn: "batchId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HostsByBatches_Hosts",
+                        name: "FK_HostsByBatches_HostModels",
                         column: x => x.hostId,
                         principalTable: "hosts",
                         principalColumn: "hostId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HostsByBatches_Schemes",
+                        name: "FK_HostsByBatches_SchemeModels",
                         column: x => x.schemeId,
                         principalTable: "schemes",
                         principalColumn: "schId",
@@ -153,19 +153,19 @@ namespace CrawlerDbMigration.Migrations
                 {
                     table.PrimaryKey("PK_urls", x => x.urlId);
                     table.ForeignKey(
-                        name: "FK_Urls_Extensions",
+                        name: "FK_Urls_ExtensionModels",
                         column: x => x.extensionId,
                         principalTable: "extensions",
                         principalColumn: "extId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Urls_Hosts",
+                        name: "FK_Urls_HostModels",
                         column: x => x.hostId,
                         principalTable: "hosts",
                         principalColumn: "hostId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Urls_Schemes",
+                        name: "FK_Urls_SchemeModels",
                         column: x => x.schemeId,
                         principalTable: "schemes",
                         principalColumn: "schId",
@@ -213,7 +213,7 @@ namespace CrawlerDbMigration.Migrations
                         principalColumn: "bpId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ContentAnalyses_urls",
+                        name: "FK_ContentAnalyses_UrlModels",
                         column: x => x.urlId,
                         principalTable: "urls",
                         principalColumn: "urlId",
@@ -240,12 +240,12 @@ namespace CrawlerDbMigration.Migrations
                         principalColumn: "bpId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UrlGraphNodes_fromUrlId",
+                        name: "FK_UrlGraphNodes_UrlGraphNodes_FromUrlId",
                         column: x => x.fromUrlId,
                         principalTable: "urls",
                         principalColumn: "urlId");
                     table.ForeignKey(
-                        name: "FK_UrlGraphNodes_gotUrlId",
+                        name: "FK_UrlGraphNodes_UrlGraphNodes_GotUrlId",
                         column: x => x.gotUrlId,
                         principalTable: "urls",
                         principalColumn: "urlId");
@@ -278,7 +278,7 @@ namespace CrawlerDbMigration.Migrations
                         principalColumn: "trmId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TermsByUrls_Urls",
+                        name: "FK_TermsByUrls_UrlModels",
                         column: x => x.urlId,
                         principalTable: "urls",
                         principalColumn: "urlId",
@@ -286,19 +286,19 @@ namespace CrawlerDbMigration.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Batches_batchName",
+                name: "IX_Batches_batchName_Unique",
                 table: "batches",
                 column: "batchName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BatchParts_unique",
+                name: "IX_BatchParts_batchId_created_Unique",
                 table: "batchParts",
                 columns: new[] { "batchId", "created" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentAnalyses_unique",
+                name: "IX_ContentAnalyses_batchPartId_urlId_Unique",
                 table: "contentAnalyses",
                 columns: new[] { "batchPartId", "urlId" },
                 unique: true);
@@ -309,15 +309,21 @@ namespace CrawlerDbMigration.Migrations
                 column: "urlId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Extensions_extName",
+                name: "IX_Extensions_extName_Unique",
                 table: "extensions",
                 column: "extName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Hosts_hostName",
+                name: "IX_Hosts_hostName_Unique",
                 table: "hosts",
                 column: "hostName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostsByBatches_batchId_schemeId_hostId_Unique",
+                table: "hostsByBatches",
+                columns: new[] { "batchId", "schemeId", "hostId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -331,19 +337,13 @@ namespace CrawlerDbMigration.Migrations
                 column: "schemeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostsByBatches_unique",
-                table: "hostsByBatches",
-                columns: new[] { "batchId", "schemeId", "hostId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Schemes_schName",
+                name: "IX_Schemes_schName_Unique",
                 table: "schemes",
                 column: "schName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Terms_termText",
+                name: "IX_Terms_termText_Unique",
                 table: "terms",
                 column: "termText",
                 unique: true);
@@ -354,15 +354,15 @@ namespace CrawlerDbMigration.Migrations
                 column: "termTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_termsByUrls_termId",
-                table: "termsByUrls",
-                column: "termId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TermsByUrls_unique",
+                name: "IX_TermsByUrls_batchPartId_urlId_position_Unique",
                 table: "termsByUrls",
                 columns: new[] { "batchPartId", "urlId", "position" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_termsByUrls_termId",
+                table: "termsByUrls",
+                column: "termId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_termsByUrls_urlId",
@@ -370,9 +370,15 @@ namespace CrawlerDbMigration.Migrations
                 column: "urlId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TermTypes_ttKey",
+                name: "IX_TermTypes_ttKey_Unique",
                 table: "termTypes",
                 column: "ttKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UrlGraphNodes_batchPartId_fromUrlId_gotUrlId_Unique",
+                table: "urlGraphNodes",
+                columns: new[] { "batchPartId", "fromUrlId", "gotUrlId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -384,12 +390,6 @@ namespace CrawlerDbMigration.Migrations
                 name: "IX_urlGraphNodes_gotUrlId",
                 table: "urlGraphNodes",
                 column: "gotUrlId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UrlGraphNodes_Unique",
-                table: "urlGraphNodes",
-                columns: new[] { "batchPartId", "fromUrlId", "gotUrlId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_urls_extensionId",
@@ -407,7 +407,7 @@ namespace CrawlerDbMigration.Migrations
                 column: "schemeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Urls_unique",
+                name: "IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique",
                 table: "urls",
                 columns: new[] { "urlHashCode", "hostId", "extensionId", "schemeId" },
                 unique: true);
