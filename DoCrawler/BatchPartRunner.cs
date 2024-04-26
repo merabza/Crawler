@@ -92,9 +92,6 @@ public sealed class BatchPartRunner
     {
         try
         {
-            //StShared.ConsoleWriteInformationLine($"Downloading {uri}");
-
-
             // ReSharper disable once using
             using var response = _client.GetAsync(uri).Result;
 
@@ -104,8 +101,8 @@ public sealed class BatchPartRunner
         }
         catch (Exception e)
         {
-            StShared.WriteErrorLine($"Error when downloading {uri}", true);
-            StShared.WriteException(e, true);
+            StShared.WriteErrorLine($"Error when downloading {uri}", true, _logger, false);
+            //StShared.WriteException(e, true);
         }
 
         return (HttpStatusCode.BadRequest, null);
@@ -188,10 +185,78 @@ public sealed class BatchPartRunner
 
     private void AnalyzeAsSiteMapXml(XElement element, int fromUrlPageId, int batchPartId)
     {
-        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap XML");
+        //არსებობს Sitemap და Sitemap Index
+        //ფორმატების აღწერა ვნახე მისამართზე
+        //https://www.conductor.com/academy/xml-sitemap/
 
-        //FIXME Xml-ის დამუშავება გასაკეთებელია
-        throw new NotImplementedException();
+        //Sitemap Index-ის ნიმუშია
+        /*
+          <?xml version="1.0" encoding="UTF-8"?>
+           <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+           	<sitemap>
+           		<loc>http://www.example.com/sitemap1.xml.gz</loc>
+           		<lastmod>2004-10-01T18:23:17+00:00</lastmod>
+           	</sitemap>
+           	<sitemap>
+           		<loc>http://www.example.com/sitemap2.xml.gz</loc>
+           		<lastmod>2005-01-01</lastmod>
+           	</sitemap>
+           </sitemapindex>
+        */
+
+        //Sitemap-ის ნიმუშია
+        /*
+          <?xml version="1.0" encoding="UTF-8"?>
+           <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+           	<url>
+           		<loc>https://www.contentkingapp.com/</loc>
+           		<lastmod>2017-06-14T19:55:25+02:00</lastmod>
+           	</url>
+           	<url>
+           		<loc>https://www.contentkingapp.com/blog/</loc>
+           		<lastmod>2016-06-24T10:23:20+02:00</lastmod>
+           	</url>
+           </urlset>
+         */
+
+        //პირველ რიგში უნდა დავადგინოთ Sitemap-ს ვაანალიზებთ თუ Sitemap Index-ს
+
+        switch (element.Name.LocalName)
+        {
+            //თუ პირველი ტეგი არის sitemapindex, მაშინ საქმე გვაქვს Sitemap Index-თან
+            case "sitemapindex":
+                AnalyzeSiteMapIndexXml(element.Name.NamespaceName, element, fromUrlPageId, batchPartId);
+                break;
+            //თუ პირველი ტეგი არის urlset, მაშინ საქმე გვაქვს Sitemap-თან
+            case "urlset":
+                AnalyzeSiteMapXml(element.Name.NamespaceName, element, fromUrlPageId, batchPartId);
+                break;
+            default:
+                StShared.WriteErrorLine("Unknown XML Format", true,_logger, false);
+                break;
+        }
+    }
+
+    private void AnalyzeSiteMapXml(string namespaceName, XElement urlsetElement, int fromUrlPageId, int batchPartId)
+    {
+        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Index XML");
+    }
+
+    private void AnalyzeSiteMapIndexXml(string namespaceName, XContainer sitemapindexElement, int fromUrlPageId, int batchPartId)
+    {
+        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Index XML");
+        foreach (var smiNode in sitemapindexElement.Nodes())
+        {
+            var sitemapNode = smiNode as XElement;
+            if (sitemapNode?.Name.LocalName != "sitemap") 
+                continue;
+            foreach (var smNode in sitemapNode.Nodes())
+            {
+                var locNode = smNode as XElement;
+                if (locNode?.Name.LocalName == "loc") 
+                    TrySaveUrl(locNode.Value, fromUrlPageId, batchPartId);
+            }
+        }
     }
 
     private void AnalyzeAsSiteMapText(string content, int fromUrlPageId, int batchPartId)
