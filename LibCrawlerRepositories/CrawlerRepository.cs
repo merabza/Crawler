@@ -70,7 +70,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public HostModel CheckAddHostName(string hostName)
     {
         return _context.Hosts.SingleOrDefault(a => a.HostName == hostName) ??
-               _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
+               _context.Hosts.Add(new HostModel(hostName)).Entity;
     }
 
     public ExtensionModel CheckAddExtensionName(string extensionName)
@@ -93,12 +93,18 @@ public sealed class CrawlerRepository : ICrawlerRepository
         return matchUrls.FirstOrDefault(url => url.UrlName == strUrl);
     }
 
+    //public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
+    //    bool isSiteMap)
+    //{
+    //    throw new NotImplementedException();
+    //}
+
     //public UrlModel AddUrl(string strUrl, int urlHashCode, int hostId, int extensionId, int schemeId)
     public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
-        bool isSiteMap)
+        bool isSiteMap, bool isAllowed)
     {
         return _context.Urls.Add(new UrlModel(strUrl, host, extension,
-            scheme, urlHashCode, isSiteMap)).Entity;
+            scheme, urlHashCode, isSiteMap, isAllowed)).Entity;
     }
 
     public void AddUrlGraph(UrlGraphNode urlGraphNode)
@@ -112,13 +118,14 @@ public sealed class CrawlerRepository : ICrawlerRepository
             batchPartId));
     }
 
-    public List<string> GetHostNamesByBatch(Batch batch)
+    public List<string> GetHostStartUrlNamesByBatch(Batch batch)
     {
-        return _context.HostsByBatches.Where(w => w.BatchId == batch.BatchId).Include(i => i.SchemeNavigation)
-            .Include(i => i.HostNavigation).Select(s => $"{s.SchemeNavigation.SchName}://{s.HostNavigation.HostName}")
-            .ToList();
-        //return _context.HostsByBatches.Where(w => w.BatchId == batch.BatchId).Include(i => i.HostNavigation)
-        //  .Select(s => s.HostNavigation.HostName).ToList();
+        return
+        [
+            .. _context.HostsByBatches.Where(w => w.BatchId == batch.BatchId).Include(i => i.SchemeNavigation)
+                .Include(i => i.HostNavigation)
+                .Select(s => $"{s.SchemeNavigation.SchName}://{s.HostNavigation.HostName}")
+        ];
     }
 
     public void RemoveHostNamesByBatch(Batch batch, string schemeName, string hostName)
@@ -154,7 +161,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
                          _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
 
             var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName) ??
-                       _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
+                       _context.Hosts.Add(new HostModel(hostName)).Entity;
 
             _context.HostsByBatches.Add(new HostByBatch(batch.BatchId, scheme,
                 host));
@@ -206,6 +213,51 @@ public sealed class CrawlerRepository : ICrawlerRepository
         _context.ContentsAnalysis.Remove(contentAnalysis);
     }
 
+    public UrlModel UpdateUrlData(UrlModel urlModel)
+    {
+        try
+        {
+            return _context.Update(urlModel).Entity;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"Error occurred executing {nameof(UpdateUrlData)}.");
+            throw;
+        }
+    }
+
+    //public void ClearUrlAllows(int hostId)
+    //{
+    //    throw new NotImplementedException();
+    //}
+
+    //public void ClearUrlAllows(int hostId)
+    //{
+    //    _context.RemoveRange(_context.UrlAllows.Where(x => x.HostId == hostId));
+    //}
+
+    //public UrlAllowModel AddUrlAllow(int hostId, string patternText, bool isAllowed)
+    //{
+    //    return _context.UrlAllows.Add(new UrlAllowModel(hostId, patternText, isAllowed)).Entity;
+    //}
+
+    public string? LoadRobotsFromBase(int batchPartId, int schemeId, int hostId)
+    {
+        return _context.Robots
+            .SingleOrDefault(x => x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId)
+            ?.RobotsTxt;
+    }
+
+    public void SaveRobotsTxtToBase(int batchPartId, int schemeId, int hostId, string robotsTxt)
+    {
+        var robot = _context.Robots.SingleOrDefault(x => x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId);
+        if (robot is null)
+            return;
+        robot.RobotsTxt = robotsTxt;
+        _context.Robots.Update(robot);
+    }
+
+
     public TermType CheckAddTermType(string termTypeKey)
     {
         return _context.TermTypes.SingleOrDefault(a => a.TtKey == termTypeKey) ??
@@ -249,17 +301,20 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public List<UrlModel> GetOnePortionUrls(int batchPartId, int maxCount)
     {
-        return (
-            from bp in _context.BatchParts
-            join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
-            join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
-            join ca in _context.ContentsAnalysis on new { BatchPartId = bp.BpId, u.UrlId } equals new
-                { ca.BatchPartId, ca.UrlId } into gj
-            from g in gj.DefaultIfEmpty()
-            where g == null
-            where bp.BpId == batchPartId
-            select u
-        ).Take(maxCount).ToList();
+        return
+        [
+            .. (
+                from bp in _context.BatchParts
+                join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
+                join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
+                join ca in _context.ContentsAnalysis on new { BatchPartId = bp.BpId, u.UrlId } equals new
+                    { ca.BatchPartId, ca.UrlId } into gj
+                from g in gj.DefaultIfEmpty()
+                where g == null
+                where bp.BpId == batchPartId && u.DownloadTryCount == 0
+                select u
+            ).Take(maxCount)
+        ];
     }
 
     #region Host cruder

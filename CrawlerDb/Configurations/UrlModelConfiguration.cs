@@ -16,7 +16,7 @@ public class UrlModelConfiguration : IEntityTypeConfiguration<UrlModel>
 
         builder.HasIndex(e => new { e.UrlHashCode, e.HostId, e.ExtensionId, e.SchemeId }).HasDatabaseName(
             tableName.CreateIndexName(true, nameof(UrlModel.UrlHashCode), nameof(UrlModel.HostId),
-                nameof(UrlModel.ExtensionId), nameof(UrlModel.SchemeId))).IsUnique();
+                nameof(UrlModel.ExtensionId), nameof(UrlModel.SchemeId)));
 
         builder.Property(e => e.UrlId).HasColumnName(nameof(UrlModel.UrlId).UnCapitalize());
         builder.Property(e => e.UrlName).HasColumnName(nameof(UrlModel.UrlName).UnCapitalize()).HasMaxLength(2048);
@@ -25,6 +25,10 @@ public class UrlModelConfiguration : IEntityTypeConfiguration<UrlModel>
         builder.Property(e => e.ExtensionId).HasColumnName(nameof(UrlModel.ExtensionId).UnCapitalize());
         builder.Property(e => e.SchemeId).HasColumnName(nameof(UrlModel.SchemeId).UnCapitalize());
         builder.Property(e => e.IsSiteMap).HasColumnName(nameof(UrlModel.IsSiteMap).UnCapitalize()).HasDefaultValue(0);
+        builder.Property(e => e.IsAllowed).HasColumnName(nameof(UrlModel.IsAllowed).UnCapitalize()).HasDefaultValue(0);
+        builder.Property(e => e.LastDownloaded).HasColumnName(nameof(UrlModel.LastDownloaded).UnCapitalize());
+        builder.Property(e => e.DownloadTryCount).HasColumnName(nameof(UrlModel.DownloadTryCount).UnCapitalize())
+            .HasDefaultValue(0);
 
         builder.HasOne(d => d.HostNavigation).WithMany(p => p.Urls).HasForeignKey(d => d.HostId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(HostModel)));

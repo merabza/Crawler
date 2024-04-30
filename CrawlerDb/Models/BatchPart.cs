@@ -31,4 +31,7 @@ public sealed class BatchPart
     public ICollection<UrlGraphNode> UrlGraphNodes { get; set; } = new HashSet<UrlGraphNode>();
     public ICollection<TermByUrl> TermsByUrls { get; set; } = new HashSet<TermByUrl>();
     public ICollection<ContentAnalysis> ContentsAnalysis { get; set; } = new HashSet<ContentAnalysis>();
+    public ICollection<Robot> Robots { get; set; } = new HashSet<Robot>();
+
+
 }

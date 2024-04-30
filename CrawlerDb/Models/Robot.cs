@@ -2,35 +2,35 @@
 
 namespace CrawlerDb.Models;
 
-public sealed class HostByBatch
+public sealed class Robot
 {
-    private Batch? _batchNavigation;
+    private BatchPart? _batchPartNavigation;
     private HostModel? _hostNavigation;
     private SchemeModel? _schemeNavigation;
 
-    public HostByBatch()
+    public Robot()
     {
     }
 
-    public HostByBatch(int batchId, SchemeModel schemeNavigation, HostModel hostNavigation)
+    public Robot(int batchPartId, SchemeModel schemeNavigation, HostModel hostNavigation)
     {
-        BatchId = batchId;
+        BatchPartId = batchPartId;
         SchemeNavigation = schemeNavigation;
         HostNavigation = hostNavigation;
     }
 
-    public int HbbId { get; set; }
-    public int BatchId { get; set; }
+    public int RbtId { get; set; }
+    public int BatchPartId { get; set; }
     public int SchemeId { get; set; }
     public int HostId { get; set; }
-    //public string? RobotsTxt { get; set; }
+    public string? RobotsTxt { get; set; }
 
 
-    public Batch BatchNavigation
+    public BatchPart BatchPartNavigation
     {
-        get => _batchNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchNavigation));
-        set => _batchNavigation = value;
+        get => _batchPartNavigation ??
+               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
+        set => _batchPartNavigation = value;
     }
 
     public SchemeModel SchemeNavigation

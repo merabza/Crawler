@@ -147,7 +147,10 @@ namespace CrawlerDbMigration.Migrations
                     extensionId = table.Column<int>(type: "int", nullable: false),
                     schemeId = table.Column<int>(type: "int", nullable: false),
                     urlHashCode = table.Column<int>(type: "int", nullable: false),
-                    isSiteMap = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    isSiteMap = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    isAllowed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    lastDownloaded = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    downloadTryCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -189,6 +192,40 @@ namespace CrawlerDbMigration.Migrations
                         column: x => x.termTypeId,
                         principalTable: "termTypes",
                         principalColumn: "ttId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "robots",
+                columns: table => new
+                {
+                    rbtId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    batchPartId = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    schemeId = table.Column<int>(type: "int", nullable: false),
+                    hostId = table.Column<int>(type: "int", nullable: false),
+                    robotsTxt = table.Column<string>(type: "ntext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_robots", x => x.rbtId);
+                    table.ForeignKey(
+                        name: "FK_Robots_BatchParts",
+                        column: x => x.batchPartId,
+                        principalTable: "batchParts",
+                        principalColumn: "bpId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Robots_HostModels",
+                        column: x => x.hostId,
+                        principalTable: "hosts",
+                        principalColumn: "hostId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Robots_SchemeModels",
+                        column: x => x.schemeId,
+                        principalTable: "schemes",
+                        principalColumn: "schId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -337,6 +374,22 @@ namespace CrawlerDbMigration.Migrations
                 column: "schemeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Robots_batchPartId_schemeId_hostId_Unique",
+                table: "robots",
+                columns: new[] { "batchPartId", "schemeId", "hostId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_robots_hostId",
+                table: "robots",
+                column: "hostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_robots_schemeId",
+                table: "robots",
+                column: "schemeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Schemes_schName_Unique",
                 table: "schemes",
                 column: "schName",
@@ -409,8 +462,7 @@ namespace CrawlerDbMigration.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique",
                 table: "urls",
-                columns: new[] { "urlHashCode", "hostId", "extensionId", "schemeId" },
-                unique: true);
+                columns: new[] { "urlHashCode", "hostId", "extensionId", "schemeId" });
         }
 
         /// <inheritdoc />
@@ -421,6 +473,9 @@ namespace CrawlerDbMigration.Migrations
 
             migrationBuilder.DropTable(
                 name: "hostsByBatches");
+
+            migrationBuilder.DropTable(
+                name: "robots");
 
             migrationBuilder.DropTable(
                 name: "termsByUrls");

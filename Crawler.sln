@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabasesManagement", "..\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiClientsManagement", "..\ToolsManagement\ApiClientsManagement\ApiClientsManagement.csproj", "{4389E1E7-6EC5-4F14-88EB-63273FEA64D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotsTxt", "RobotsTxt\RobotsTxt.csproj", "{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -345,6 +347,18 @@ Global
 		{4389E1E7-6EC5-4F14-88EB-63273FEA64D4}.Release|x64.Build.0 = Release|Any CPU
 		{4389E1E7-6EC5-4F14-88EB-63273FEA64D4}.Release|x86.ActiveCfg = Release|Any CPU
 		{4389E1E7-6EC5-4F14-88EB-63273FEA64D4}.Release|x86.Build.0 = Release|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Debug|x64.Build.0 = Debug|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Debug|x86.Build.0 = Debug|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Release|x64.ActiveCfg = Release|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Release|x64.Build.0 = Release|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Release|x86.ActiveCfg = Release|Any CPU
+		{127521C8-4E9E-4AA4-A9FB-C5525AC72CC4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

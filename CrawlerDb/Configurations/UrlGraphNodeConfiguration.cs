@@ -25,6 +25,7 @@ public class UrlGraphNodeConfiguration : IEntityTypeConfiguration<UrlGraphNode>
 
         builder.HasOne(d => d.BatchPartNavigation).WithMany(p => p.UrlGraphNodes).HasForeignKey(d => d.BatchPartId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(BatchPart)));
+
         builder.HasOne(d => d.FromUrlNavigation).WithMany(p => p.UrlGraphNodesFrom).HasForeignKey(d => d.FromUrlId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName(tableName.CreateConstraintName(nameof(UrlGraphNode), nameof(UrlGraphNode.FromUrlId)));

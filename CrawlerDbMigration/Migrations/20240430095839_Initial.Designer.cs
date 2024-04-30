@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrawlerDbMigration.Migrations
 {
     [DbContext(typeof(CrawlerDbContext))]
-    [Migration("20240425190348_Initial")]
+    [Migration("20240430095839_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -222,6 +222,45 @@ namespace CrawlerDbMigration.Migrations
                     b.ToTable("hosts", (string)null);
                 });
 
+            modelBuilder.Entity("CrawlerDb.Models.Robot", b =>
+                {
+                    b.Property<int>("RbtId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("rbtId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RbtId"));
+
+                    b.Property<int>("BatchPartId")
+                        .HasMaxLength(50)
+                        .HasColumnType("int")
+                        .HasColumnName("batchPartId");
+
+                    b.Property<int>("HostId")
+                        .HasColumnType("int")
+                        .HasColumnName("hostId");
+
+                    b.Property<string>("RobotsTxt")
+                        .HasColumnType("ntext")
+                        .HasColumnName("robotsTxt");
+
+                    b.Property<int>("SchemeId")
+                        .HasColumnType("int")
+                        .HasColumnName("schemeId");
+
+                    b.HasKey("RbtId");
+
+                    b.HasIndex("HostId");
+
+                    b.HasIndex("SchemeId");
+
+                    b.HasIndex("BatchPartId", "SchemeId", "HostId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Robots_batchPartId_schemeId_hostId_Unique");
+
+                    b.ToTable("robots", (string)null);
+                });
+
             modelBuilder.Entity("CrawlerDb.Models.SchemeModel", b =>
                 {
                     b.Property<int>("SchId")
@@ -392,6 +431,12 @@ namespace CrawlerDbMigration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UrlId"));
 
+                    b.Property<int>("DownloadTryCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("downloadTryCount");
+
                     b.Property<int>("ExtensionId")
                         .HasColumnType("int")
                         .HasColumnName("extensionId");
@@ -400,11 +445,21 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int")
                         .HasColumnName("hostId");
 
+                    b.Property<bool>("IsAllowed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("isAllowed");
+
                     b.Property<bool>("IsSiteMap")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
                         .HasColumnName("isSiteMap");
+
+                    b.Property<DateTime?>("LastDownloaded")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("lastDownloaded");
 
                     b.Property<int>("SchemeId")
                         .HasColumnType("int")
@@ -429,7 +484,6 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("SchemeId");
 
                     b.HasIndex("UrlHashCode", "HostId", "ExtensionId", "SchemeId")
-                        .IsUnique()
                         .HasDatabaseName("IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique");
 
                     b.ToTable("urls", (string)null);
@@ -492,6 +546,36 @@ namespace CrawlerDbMigration.Migrations
                         .HasConstraintName("FK_HostsByBatches_SchemeModels");
 
                     b.Navigation("BatchNavigation");
+
+                    b.Navigation("HostNavigation");
+
+                    b.Navigation("SchemeNavigation");
+                });
+
+            modelBuilder.Entity("CrawlerDb.Models.Robot", b =>
+                {
+                    b.HasOne("CrawlerDb.Models.BatchPart", "BatchPartNavigation")
+                        .WithMany("Robots")
+                        .HasForeignKey("BatchPartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Robots_BatchParts");
+
+                    b.HasOne("CrawlerDb.Models.HostModel", "HostNavigation")
+                        .WithMany("Robots")
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Robots_HostModels");
+
+                    b.HasOne("CrawlerDb.Models.SchemeModel", "SchemeNavigation")
+                        .WithMany("Robots")
+                        .HasForeignKey("SchemeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Robots_SchemeModels");
+
+                    b.Navigation("BatchPartNavigation");
 
                     b.Navigation("HostNavigation");
 
@@ -609,6 +693,8 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Navigation("ContentsAnalysis");
 
+                    b.Navigation("Robots");
+
                     b.Navigation("TermsByUrls");
 
                     b.Navigation("UrlGraphNodes");
@@ -623,12 +709,16 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Navigation("HostsByBatches");
 
+                    b.Navigation("Robots");
+
                     b.Navigation("Urls");
                 });
 
             modelBuilder.Entity("CrawlerDb.Models.SchemeModel", b =>
                 {
                     b.Navigation("HostsByBatches");
+
+                    b.Navigation("Robots");
 
                     b.Navigation("Urls");
                 });

@@ -13,6 +13,7 @@ public sealed class HostByBatchCruder : Cruder
     private readonly Batch _batch;
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public HostByBatchCruder(ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, Batch batch) : base(
         "Host Name", "Host Names")
     {
@@ -28,7 +29,7 @@ public sealed class HostByBatchCruder : Cruder
     public List<string> GetHostNamesByBatch()
     {
         var repo = GetCrawlerRepository();
-        return repo.GetHostNamesByBatch(_batch);
+        return repo.GetHostStartUrlNamesByBatch(_batch);
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()

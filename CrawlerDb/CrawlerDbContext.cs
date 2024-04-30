@@ -24,12 +24,15 @@ public sealed class CrawlerDbContext : DbContext
     public DbSet<ExtensionModel> Extensions => Set<ExtensionModel>();
     public DbSet<HostByBatch> HostsByBatches => Set<HostByBatch>();
     public DbSet<HostModel> Hosts => Set<HostModel>();
+    public DbSet<Robot> Robots => Set<Robot>();
     public DbSet<SchemeModel> Schemes => Set<SchemeModel>();
     public DbSet<Term> Terms => Set<Term>();
     public DbSet<TermByUrl> TermsByUrls => Set<TermByUrl>();
     public DbSet<TermType> TermTypes => Set<TermType>();
     public DbSet<UrlGraphNode> UrlGraphNodes => Set<UrlGraphNode>();
     public DbSet<UrlModel> Urls => Set<UrlModel>();
+    //public DbSet<UrlAllowModel> UrlAllows => Set<UrlAllowModel>();
+    
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -35,11 +35,11 @@ public interface ICrawlerRepository
     UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string strUrl);
 
     UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
-        bool isSiteMap);
+        bool isSiteMap, bool isAllowed);
 
     void AddUrlGraph(UrlGraphNode urlGraphNode);
     void AddUrlGraph(int fromUrlPageId, UrlModel gotUrl, int batchId);
-    List<string> GetHostNamesByBatch(Batch batch);
+    List<string> GetHostStartUrlNamesByBatch(Batch batch);
     void RemoveHostNamesByBatch(Batch batch, string scheme, string host);
     void AddHostNamesByBatch(Batch batch, string scheme, string host);
     BatchPart? GetOpenedBatchPart(int batchId);
@@ -57,4 +57,9 @@ public interface ICrawlerRepository
     void EditTermByUrl(TermByUrl termByUrl, Term term);
     ContentAnalysis? GetContentAnalysis(int batchPartBpId, int urlId);
     void DeleteContentAnalysis(ContentAnalysis contentAnalysis);
+    UrlModel UpdateUrlData(UrlModel urlForProcess);
+    //void ClearUrlAllows(int hostId);
+    //UrlAllowModel AddUrlAllow(int hostId, string patternText, bool isAllowed);
+    string? LoadRobotsFromBase(int batchPartId, int schemeId, int hostId);
+    void SaveRobotsTxtToBase(int batchPartId, int schemeId, int hostId, string robotsTxt);
 }

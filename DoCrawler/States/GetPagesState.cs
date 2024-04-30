@@ -11,6 +11,7 @@ public sealed class GetPagesState : State
     private readonly CrawlerParameters _par;
     private readonly ICrawlerRepository _repository;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public GetPagesState(ILogger logger, ICrawlerRepository repository, CrawlerParameters par, BatchPart batchPart) :
         base(logger, "Get Pages")
     {
@@ -38,7 +39,8 @@ public sealed class GetPagesState : State
     {
         Logger.LogInformation("Loading Urls");
         var urls = _repository.GetOnePortionUrls(_batchPart.BpId, _par.LoadPagesMaxCount);
-        Logger.LogInformation($"Loaded {urls.Count} Urls");
+        var urlsCount = urls.Count;
+        Logger.LogInformation("Loaded {urlsCount} Urls", urlsCount);
         if (urls.Count > 0)
         {
             Logger.LogInformation("Add urls to Queue");
@@ -50,11 +52,11 @@ public sealed class GetPagesState : State
         Logger.LogInformation("Finish Batch Part");
         _repository.FinishBatchPart(_batchPart);
         _repository.SaveChanges();
-        if (_batchPart.BatchNavigation.AutoCreateNextPart)
-        {
-            _repository.TryCreateNewPart(_batchPart.BatchId);
-            _repository.SaveChanges();
-        }
+        if (!_batchPart.BatchNavigation.AutoCreateNextPart) 
+            return false;
+
+        _repository.TryCreateNewPart(_batchPart.BatchId);
+        _repository.SaveChanges();
 
         return false;
     }

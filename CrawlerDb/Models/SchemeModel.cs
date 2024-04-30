@@ -13,4 +13,6 @@ public sealed class SchemeModel : ItemData
 
     public ICollection<UrlModel> Urls { get; set; } = new HashSet<UrlModel>();
     public ICollection<HostByBatch> HostsByBatches { get; set; } = new HashSet<HostByBatch>();
+    public ICollection<Robot> Robots { get; set; } = new HashSet<Robot>();
+
 }

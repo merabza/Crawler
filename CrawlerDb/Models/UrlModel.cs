@@ -18,7 +18,7 @@ public sealed class UrlModel
     }
 
     public UrlModel(string urlName, HostModel hostNavigation, ExtensionModel extensionNavigation,
-        SchemeModel schemeNavigation, int urlHashCode, bool isSiteMap)
+        SchemeModel schemeNavigation, int urlHashCode, bool isSiteMap, bool isAllowed)
     {
         UrlName = urlName;
         HostNavigation = hostNavigation;
@@ -26,6 +26,7 @@ public sealed class UrlModel
         SchemeNavigation = schemeNavigation;
         UrlHashCode = urlHashCode;
         IsSiteMap = isSiteMap;
+        IsAllowed = isAllowed;
     }
 
     public int UrlId { get; set; }
@@ -35,6 +36,9 @@ public sealed class UrlModel
     public int SchemeId { get; set; }
     public int UrlHashCode { get; set; }
     public bool IsSiteMap { get; set; }
+    public bool IsAllowed { get; set; }
+    public DateTime? LastDownloaded { get; set; }
+    public int DownloadTryCount { get; set; }
 
     public HostModel HostNavigation
     {

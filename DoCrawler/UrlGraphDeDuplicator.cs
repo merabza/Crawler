@@ -18,9 +18,10 @@ public sealed class UrlGraphDeDuplicator
 
     public void AddUrlGraph(int fromUrlPageId, UrlModel url, int batchPartId)
     {
-        if (_urlGraphNodes.ContainsKey(url.UrlName))
-            _urlGraphNodes.Add(url.UrlName,
-                new UrlGraphNode(fromUrlPageId, url, batchPartId));
+        if (fromUrlPageId == 0 || batchPartId == 0)
+            return;
+        if (!_urlGraphNodes.ContainsKey(url.UrlName))
+            _urlGraphNodes.Add(url.UrlName, new UrlGraphNode(fromUrlPageId, url, batchPartId));
     }
 
 

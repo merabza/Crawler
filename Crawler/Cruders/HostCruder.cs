@@ -14,6 +14,7 @@ public sealed class HostCruder : Cruder
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public HostCruder(ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric) : base("Host", "Hosts")
     {
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
@@ -50,9 +51,7 @@ public sealed class HostCruder : Cruder
 
         var repo = GetCrawlerRepository();
 
-        var host = repo.GetHostByName(recordKey);
-        if (host is null)
-            throw new Exception("host is null");
+        var host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
         host.HostName = newHost.HostName;
         repo.UpdateHost(host);
 
@@ -72,9 +71,7 @@ public sealed class HostCruder : Cruder
     protected override void RemoveRecordWithKey(string recordKey)
     {
         var repo = GetCrawlerRepository();
-        var host = repo.GetHostByName(recordKey);
-        if (host is null)
-            throw new Exception("host is null");
+        var host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
         repo.DeleteHost(host);
 
         repo.SaveChanges();
@@ -82,7 +79,7 @@ public sealed class HostCruder : Cruder
 
     protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
-        return new HostModel();
+        return new HostModel("");
     }
 
     public override bool CheckValidation(ItemData item)
@@ -95,7 +92,7 @@ public sealed class HostCruder : Cruder
 
         Regex re = new(@"[-a-zA-Z0-9]{1,256}\.([-a-zA-Z0-9]{1,256}\.)*[a-zA-Z0-9()]{1,6}");
         var m = re.Match(newHost.HostName);
-        if (m.Success && m.Groups.Count == 2 && m.Groups[0].Value == newHost.HostName)
+        if (m is { Success: true, Groups.Count: 2 } && m.Groups[0].Value == newHost.HostName)
             return true;
         StShared.WriteErrorLine($"Invalid Host Name {newHost.HostName}.", true);
         return false;

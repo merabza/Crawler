@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using CrawlerDb.Models;
+using RobotsTxt;
 
 namespace DoCrawler;
 
@@ -9,13 +10,14 @@ public sealed class ProcData : IDisposable
 {
     private const int MaxCacheRecordCount = 10000;
     private readonly ConcurrentDictionary<string, ExtensionModel> _extensionsCache = new();
-
-
     private readonly ConcurrentDictionary<string, HostModel> _hostsCache = new();
     private readonly ConcurrentDictionary<string, SchemeModel> _schemesCache = new();
     private readonly ConcurrentDictionary<string, Term> _termCache = new();
     private readonly ConcurrentDictionary<string, TermType> _termTypesCache = new();
     private readonly ConcurrentDictionary<int, UrlModel> _urlCache = new();
+
+    //private readonly ConcurrentDictionary<int, List<UrlAllowModel>> _urlAllowsCache = new();
+    private readonly ConcurrentDictionary<int, Robots?> _robots = new();
 
     public readonly ConcurrentQueue<UrlModel> UrlsQueue = new();
 
@@ -51,6 +53,42 @@ public sealed class ProcData : IDisposable
         if (_termCache.Count > MaxCacheRecordCount)
             _termCache.Clear();
         GC.Collect();
+    }
+
+    //public void ClearUrlAllows(int hostId)
+    //{
+    //    if (_urlAllowsCache.ContainsKey(hostId))
+    //        _urlAllowsCache.Remove(hostId, out _);
+    //}
+
+    //public void AddUrlAllow(int hostId, UrlAllowModel urlAllowModel)
+    //{
+    //    if ( !_urlAllowsCache.ContainsKey(hostId))
+    //        _urlAllowsCache.AddOrUpdate(hostId, [], (_, _) => []);
+    //    _urlAllowsCache[hostId].Add(urlAllowModel);
+    //}
+
+    //public bool IsUrlValidByRobotsRules(UrlData urlData, ICrawlerRepository repository)
+    //{
+    //    var hostId = urlData.Host.HostId;
+    //    Robots? robots;
+    //    if (!_robots.ContainsKey(hostId))
+    //    {//შევეცადოთ ჩავტვირთოთ ბაზიდან, თუ რა თქმა უნდა გადანახული არის
+    //        robots = repository.LoadRobotsFromBase(hostId);
+    //        if (robots is null)
+    //            robots = LoadRobotsFromSite(hostId);
+    //        if (robots is not null)
+    //            repository.SaveRobotsToBase(hostId, robots);
+    //        SetRobotsCache(hostId, robots);
+    //    }
+
+    //    robots = _robots[hostId];
+    //    return robots is null || robots.IsPathAllowed("*", urlData.CheckedUri);
+    //}
+
+    public Robots? GetRobots(int hostId)
+    {
+        return _robots.GetValueOrDefault(hostId);
     }
 
     public void AddUrl(UrlModel url)
@@ -180,4 +218,14 @@ public sealed class ProcData : IDisposable
     }
 
     #endregion
+
+    public void SetRobotsCache(int hostId, Robots? robots)
+    {
+        _robots.AddOrUpdate(hostId, robots, (_, _) => robots);
+    }
+
+    public bool IsHostCachedInRobotsDictionary(int hostId)
+    {
+        return _robots.ContainsKey(hostId);
+    }
 }

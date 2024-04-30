@@ -107,6 +107,12 @@ public sealed class CrawlerRunner
                 batchPart = null;
             }
         }
+        catch (DataInputEscapeException)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Escape... ");
+            StShared.Pause();
+        }
         catch (Exception e)
         {
             StShared.WriteException(e, true);
