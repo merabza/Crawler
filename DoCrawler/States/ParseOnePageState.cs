@@ -218,8 +218,10 @@ public sealed class ParseOnePageState : State
 
     private void ExtractUrl(string uriCandidate)
     {
-        if (uriCandidate.StartsWith("mailto:"))
-            return; //ელექტრონული ფოსტის მისამართების შენახვა არ გვჭირდება
+        //ელექტრონული ფოსტის მისამართების შენახვა არ გვჭირდება
+        //ასევე არ გვჭირდება ისეთი ლინკების შენახვა, რომელიც მხოლოდ ფრაგმენტს აღნიშნავს
+        if (uriCandidate.StartsWith("mailto:") || uriCandidate.StartsWith("#"))
+            return; 
 
         var strUri = uriCandidate.Trim('"', '\'', '#', ' ', '>');
         try
