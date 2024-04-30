@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -109,6 +110,37 @@ public sealed class BatchPartRunner
         return (HttpStatusCode.BadRequest, null);
     }
 
+    private (HttpStatusCode, string?) GetSiteMapGzFileContent(Uri uri)
+    {
+        try
+        {
+            // ReSharper disable once using
+            using var response = _client.GetAsync(uri).Result;
+            if (!response.IsSuccessStatusCode) 
+                return (response.StatusCode, null);
+
+            // ReSharper disable once using
+            using var stream = response.Content.ReadAsStream();
+            // ReSharper disable once using
+            // ReSharper disable once DisposableConstructor
+            using var gzStream = new GZipStream(stream, CompressionMode.Decompress);
+            // ReSharper disable once using
+            // ReSharper disable once DisposableConstructor
+            using var reader = new StreamReader(gzStream);
+            var text = reader.ReadToEnd();
+
+            return (response.StatusCode, text);
+
+        }
+        catch
+        {
+            StShared.WriteErrorLine($"Error when downloading {uri}", true, _logger, false);
+            //StShared.WriteException(e, true);
+        }
+
+        return (HttpStatusCode.BadRequest, null);
+    }
+
     private void AnalyzeAsRobotsText(string content, int fromUrlPageId, int batchPartId, int schemeId, int hostId)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as robots.txt");
@@ -126,41 +158,36 @@ public sealed class BatchPartRunner
             TrySaveUrl(robotsSitemap.Url.ToString(), fromUrlPageId, batchPartId, true);
 
         _urlGraphDeDuplicator.CopyToRepository();
-        //var lines = content.Split(Environment.NewLine);
-
-        //ProcData.Instance.ClearUrlAllows(hostId);
-
-        //ProcData.Instance.SetRobotsCache(hostId, robots);
-
-        //_repository.ClearUrlAllows(hostId);
-
-        //string? currentUserAgent = null;
-        //foreach (var line in lines)
-        //{
-        //    var colonIndex = line.IndexOf(':');
-        //    if (colonIndex <= -1)
-        //        continue;
-        //    var command = line[..colonIndex].Trim();
-        //    var value = line[(colonIndex + 1)..].Trim();
-        //    var comLow = command.ToLower();
-        //    if (comLow.Equals("Sitemap", StringComparison.CurrentCultureIgnoreCase))
-        //        TrySaveUrl(value, fromUrlPageId, batchPartId, true);
-        //    else if (comLow.Equals("User-agent", StringComparison.CurrentCultureIgnoreCase))
-        //        currentUserAgent = value;
-        //    else if (comLow.Equals("Allow", StringComparison.CurrentCultureIgnoreCase))
-        //    {
-        //        if (currentUserAgent == "*") ProcData.Instance.AddUrlAllow(hostId, _repository.AddUrlAllow(hostId, value, true));
-
-        //    }
-        //    else if (comLow.Equals("Disallow", StringComparison.CurrentCultureIgnoreCase))
-        //    {
-        //        if (currentUserAgent == "*")
-        //            ProcData.Instance.AddUrlAllow(hostId, _repository.AddUrlAllow(hostId, value, false));
-        //    }
-        //}
 
         SaveChangesAndReduceCache();
     }
+
+    //private void AnalyzeAsSiteMapArc(string content, int urlId, int bpId, string extName)
+    //{
+    //    if (string.Equals(extName, ".gz", StringComparison.CurrentCultureIgnoreCase))
+    //    {
+
+    //        // ReSharper disable once using
+    //        // ReSharper disable once DisposableConstructor
+    //        //var stream = new MemoryStream();
+    //        //var writer = new StreamWriter(stream);
+            
+    //        var byteArray = Encoding.ASCII.GetBytes(content);
+    //        // ReSharper disable once using
+    //        // ReSharper disable once DisposableConstructor
+    //        using var stream = new MemoryStream(byteArray);
+    //        // ReSharper disable once using
+    //        // ReSharper disable once DisposableConstructor
+    //        using var gzStream = new GZipStream(stream, CompressionMode.Decompress);
+
+    //        // ReSharper disable once using
+    //        // ReSharper disable once DisposableConstructor
+    //        var reader = new StreamReader(gzStream);
+    //        var text = reader.ReadToEnd();
+    //        AnalyzeAsSiteMap(text, urlId, bpId);
+    //    }
+    //    AnalyzeAsSiteMap(content, urlId, bpId);
+    //}
 
     private void AnalyzeAsSiteMap(string content, int urlId, int bpId)
     {
@@ -173,28 +200,23 @@ public sealed class BatchPartRunner
     private void AnalyzeAsHtml(string content, UrlModel url, BatchPart batchPart)
     {
         Uri uri = new(url.UrlName);
-        //StShared.ConsoleWriteInformationLine($"Parsing content from Url {uri}");
+
         _consoleFormatter.WriteInSameLine($"Parsing      {uri}");
         var parseOnePageState = new ParseOnePageState(_logger, _parseOnePageParameters, content, url);
         parseOnePageState.Execute();
-        //StShared.ConsoleWriteInformationLine($"Save URLs from content of Url {uri}");
+
         _consoleFormatter.WriteInSameLine($"Save URLs    {uri}");
         foreach (var childUri in parseOnePageState.ListOfUris)
             TrySaveUrl(childUri, url.UrlId, batchPart.BpId);
         var position = 0;
-        //StShared.ConsoleWriteInformationLine($"Save Terms from content of Url {uri}");
+
         _consoleFormatter.WriteInSameLine($"Save Terms   {uri}");
         foreach (var uriTerm in parseOnePageState.UriTerms)
             TrySaveTerm(uriTerm.TermType, uriTerm.Context, url.UrlId, batchPart.BpId, position++);
-        //StShared.ConsoleWriteInformationLine($"Clear Tail for Url {uri}");
+
         _consoleFormatter.WriteInSameLine($"Clear Tail   {uri}");
         ClearTermsTail(batchPart.BpId, url.UrlId, position);
-        //StShared.ConsoleWriteInformationLine("Save Changes And Reduce Cache");
-        //_consoleFormatter.WriteInSameLine($"Save Changes {uri}");
-        //SaveChangesAndReduceCache();
-        //StShared.ConsoleWriteInformationLine($"Finished Parsing content from Url {uri}");
-        //_consoleFormatter.WriteInSameLine($"Finished     {uri}");
-        //_consoleFormatter.Clear();
+
         _urlGraphDeDuplicator.CopyToRepository();
     }
 
@@ -260,11 +282,11 @@ public sealed class BatchPartRunner
         {
             //თუ პირველი ტეგი არის sitemapindex, მაშინ საქმე გვაქვს Sitemap Index-თან
             case "sitemapindex":
-                AnalyzeSiteMapIndexXml(element.Name.NamespaceName, element, fromUrlPageId, batchPartId);
+                AnalyzeSiteMapXml(element, fromUrlPageId, batchPartId, true);
                 break;
             //თუ პირველი ტეგი არის urlset, მაშინ საქმე გვაქვს Sitemap-თან
             case "urlset":
-                AnalyzeSiteMapXml(element.Name.NamespaceName, element, fromUrlPageId, batchPartId);
+                AnalyzeSiteMapXml(element, fromUrlPageId, batchPartId, false);
                 break;
             default:
                 StShared.WriteErrorLine("Unknown XML Format", true,_logger, false);
@@ -272,28 +294,48 @@ public sealed class BatchPartRunner
         }
     }
 
-    private void AnalyzeSiteMapXml(string namespaceName, XElement urlsetElement, int fromUrlPageId, int batchPartId)
+    private void AnalyzeSiteMapXml(XContainer sitemapElement, int fromUrlPageId, int batchPartId, bool isIndex)
     {
-        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Index XML");
-    }
-
-    private void AnalyzeSiteMapIndexXml(string namespaceName, XContainer sitemapindexElement, int fromUrlPageId, int batchPartId)
-    {
-        StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Index XML");
-        foreach (var smiNode in sitemapindexElement.Nodes())
+        StShared.ConsoleWriteInformationLine(_logger, true, $"Analyze as Sitemap {(isIndex ? "Index " : " ")}XML");
+        var sitemapNodeLocName = isIndex ? "sitemap" : "url";
+        foreach (var smiNode in sitemapElement.Nodes())
         {
             var sitemapNode = smiNode as XElement;
-            if (sitemapNode?.Name.LocalName != "sitemap") 
+            if (sitemapNode?.Name.LocalName != sitemapNodeLocName)
                 continue;
             foreach (var smNode in sitemapNode.Nodes())
             {
                 var locNode = smNode as XElement;
-                if (locNode?.Name.LocalName == "loc") 
-                    TrySaveUrl(locNode.Value, fromUrlPageId, batchPartId);
+                if (locNode?.Name.LocalName == "loc")
+                    TrySaveUrl(locNode.Value, fromUrlPageId, batchPartId, isIndex);
             }
         }
+
         _urlGraphDeDuplicator.CopyToRepository();
     }
+
+    //private void AnalyzeSiteMapXml(string namespaceName, XElement urlsetElement, int fromUrlPageId, int batchPartId)
+    //{
+    //    StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Index XML");
+    //}
+
+    //private void AnalyzeSiteMapIndexXml(string namespaceName, XContainer sitemapindexElement, int fromUrlPageId, int batchPartId)
+    //{
+    //    StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Index XML");
+    //    foreach (var smiNode in sitemapindexElement.Nodes())
+    //    {
+    //        var sitemapNode = smiNode as XElement;
+    //        if (sitemapNode?.Name.LocalName != "sitemap") 
+    //            continue;
+    //        foreach (var smNode in sitemapNode.Nodes())
+    //        {
+    //            var locNode = smNode as XElement;
+    //            if (locNode?.Name.LocalName == "loc") 
+    //                TrySaveUrl(locNode.Value, fromUrlPageId, batchPartId, true);
+    //        }
+    //    }
+    //    _urlGraphDeDuplicator.CopyToRepository();
+    //}
 
     private void AnalyzeAsSiteMapText(string content, int fromUrlPageId, int batchPartId)
     {
@@ -314,12 +356,6 @@ public sealed class BatchPartRunner
         {
             var termTypeInBase = TrySaveTermType(termType);
 
-            //if (termTypeInBase == null)
-            //    return;
-
-            //using var transaction = _repository.GetTransaction();
-            //try
-            //{
             var termText = termType switch
             {
                 ETermType.ParagraphStart => "<p>",
@@ -330,7 +366,6 @@ public sealed class BatchPartRunner
                 ETermType.Punctuation => termContext,
                 _ => throw new ArgumentOutOfRangeException(nameof(termType), termType, null)
             };
-            //bool foundInCache = true;
 
             if (string.IsNullOrWhiteSpace(termText))
             {
@@ -340,7 +375,6 @@ public sealed class BatchPartRunner
 
             var term = ProcData.Instance.GetTermByName(termText);
             if (term == null && termTypeInBase.TtId != 0)
-                //foundInCache = false;
                 term = _repository.GetTerm(termText);
 
             if (term == null)
@@ -358,19 +392,6 @@ public sealed class BatchPartRunner
                 else
                     _repository.EditTermByUrl(termByUrl, term);
             }
-            //if (!foundInCache)
-            //{
-            //}
-
-            //  _repository.SaveChanges();
-            //  transaction.Commit();
-            //}
-            //catch (Exception e)
-            //{
-            //  transaction.Rollback();
-            //  _logger.LogError(e, $"Error occurred executing {nameof(TrySaveTerm)} for {termContext}");
-            //  throw;
-            //}
         }
         catch (Exception e)
         {
@@ -394,7 +415,6 @@ public sealed class BatchPartRunner
 
         termTypeInBase = _repository.CheckAddTermType(termTypeName);
 
-        //if (termTypeInBase != null)
         ProcData.Instance.AddTermType(termTypeInBase);
 
         return termTypeInBase;
@@ -431,14 +451,6 @@ public sealed class BatchPartRunner
                     _urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
 
             }
-
-
-            //if (urlGraphNode != null || fromUrlPageId == 0 || batchPartId == 0) 
-            //    return urlData.Url;
-            
-            //if (urlData.Url is null)
-            //    throw new Exception("urlData.Url is null");
-            //_urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
 
             return urlData.Url;
         }
@@ -508,9 +520,6 @@ public sealed class BatchPartRunner
         var hostModel = TrySaveHostName(host);
         var extensionModel = TrySaveExtension(extension);
         var schemeModel = TrySaveScheme(scheme);
-
-        //if (hostModel == null || extensionModel == null || schemeModel == null)
-        //    return null;
 
         var checkedUri = HttpUtility.UrlDecode(myUri.AbsoluteUri);
 
@@ -583,14 +592,21 @@ public sealed class BatchPartRunner
     {
         try
         {
-            //string siteMapUrl =  result.HostId 
             Uri uri = new(urlForProcess.UrlName);
 
             var startedAt = DateTime.Now;
             _consoleFormatter.WriteFirstLine($"Downloading  {uri}");
 
-            //მოიქაჩოს მისამართის მიხედვით კონტენტი
-            var (statusCode, content) = GetOnePageContent(uri);
+            HttpStatusCode statusCode;
+            string? content;
+
+            if (urlForProcess.IsSiteMap && string.Equals(urlForProcess.ExtensionNavigation.ExtName, ".gz",
+                    StringComparison.CurrentCultureIgnoreCase))
+                //მოიქაჩოს მისამართის მიხედვით Gz კონტენტი გახსნით
+                (statusCode, content) = GetSiteMapGzFileContent(uri);
+            else
+                //მოიქაჩოს მისამართის მიხედვით კონტენტი
+                (statusCode, content) = GetOnePageContent(uri);
 
             if (content == null)
             {
@@ -603,7 +619,6 @@ public sealed class BatchPartRunner
             _repository.UpdateUrlData(urlForProcess);
 
             //გაანალიზდეს კონტენტი კონტენტის ტიპის მიხედვით
-            //StShared.ConsoleWriteInformationLine($"Analyze content of {uri}");
             _consoleFormatter.WriteInSameLine($"Analyze content of {uri}");
 
             //robots.txt, sitemap, html
@@ -629,14 +644,11 @@ public sealed class BatchPartRunner
 
             //დავადასტუროთ, რომ ამ გვერდის გაანალიზება მოხდა.
             _repository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode);
-            //_repository.SaveChanges();
-
 
             _consoleFormatter.WriteInSameLine(
                 $"Finished     {uri} ({DateTime.Now.MillisecondsDifference(startedAt)}ms)");
 
             if (ProcData.Instance.NeedsToReduceCache())
-                //_consoleFormatter.WriteInSameLine($"Save Changes {uri}");
                 SaveChangesAndReduceCache();
         }
         catch (Exception e)

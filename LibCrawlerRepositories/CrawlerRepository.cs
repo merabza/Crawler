@@ -175,7 +175,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public BatchPart? GetOpenedBatchPart(int batchId)
     {
-        return _context.BatchParts.Include(i => i.BatchNavigation)
+        return _context.BatchParts.Include(i => i.BatchNavigation).ThenInclude(x => x.HostsByBatches)
             .SingleOrDefault(s => s.BatchId == batchId && s.Finished == null);
     }
 
@@ -313,7 +313,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
                 where g == null
                 where bp.BpId == batchPartId && u.DownloadTryCount == 0
                 select u
-            ).Take(maxCount)
+            ).Take(maxCount).Include(x => x.ExtensionNavigation)
         ];
     }
 

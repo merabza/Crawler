@@ -10,11 +10,6 @@ public static class RobotsFabric
 {
     public static Robots? AnaliseContentAndCreateRobots(string content)
     {
-        //AllowRuleImplementation = AllowRuleImplementation.MoreSpecific;
-        //HasRules = false;
-        //IsAnyPathDisallowed = false;
-        //Malformed = false;
-        //Raw = content;
         if (string.IsNullOrWhiteSpace(content))
             return null;
         var lines = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)

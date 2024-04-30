@@ -274,11 +274,13 @@ public sealed class ParseOnePageState : State
                 //და მერე კიდევ ქვერის გარეშეც ერთი სტრიქონის მერე
                 AddUriUri(strUri);
             }
-
-            ////ქვერის ნაწილს შეიცავს თუ არა მისამართი ქვერის გარეშე ვარიანტსაც ვინახავთ
-            //strUri = newUri.Scheme + "://" + newUri.Authority +
-            //         newUri.LocalPath; //ფრაგმენტი არა გვჭირდება +AbsUri.Fragment;
-            //AddUriUri(strUri);
+            else
+            {
+                //თუ მისამართი არ შეიცავს ქვერის ნაწილს
+                //ფრაგმენტი არა გვჭირდება +AbsUri.Fragment;
+                strUri = newUri.Scheme + "://" + newUri.Authority + newUri.LocalPath;
+                AddUriUri(strUri);
+            }
         }
         catch (Exception ex)
         {

@@ -154,27 +154,6 @@ public sealed class CrawlerRunner
         return batch;
     }
 
-    //private UrlModel LoadOneUrlData(BatchPart batchPart, string strUrl)
-    //{
-
-    //  StShared.ConsoleWriteInformationLine("Loading Url Data...");
-
-    //  Uri myUri = UriFabric.GetUri(strUrl);
-    //  if (myUri == null)
-    //  {
-    //    StShared.ConsoleWriteInformationLine($"Invalid Uri {strUrl}");
-    //    return null;
-    //  }
-    //  UrlModel url = _repository.GetOneUrlData(batchPart.BpId, myUri.AbsoluteUri);
-
-
-    //  GetPagesState getPagesState = new GetPagesState(_logger, _repository, _par, batchPart);
-    //  getPagesState.Execute();
-    //  StShared.ConsoleWriteInformationLine($"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
-    //  return getPagesState.UrlsLoaded;
-    //}
-
-
     public bool RunOnePage(string strUrl)
     {
         try
