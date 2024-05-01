@@ -71,9 +71,7 @@ public sealed class SchemeCruder : Cruder
     protected override void RemoveRecordWithKey(string recordKey)
     {
         var repo = GetCrawlerRepository();
-        var scheme = repo.GetSchemeByName(recordKey);
-        if (scheme is null)
-            throw new Exception("scheme is null");
+        var scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
         repo.DeleteScheme(scheme);
 
         repo.SaveChanges();

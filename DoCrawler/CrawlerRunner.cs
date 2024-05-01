@@ -6,6 +6,7 @@ using DoCrawler.Models;
 using LibCrawlerRepositories;
 using LibDataInput;
 using Microsoft.Extensions.Logging;
+using RobotsTxt;
 using SystemToolsShared;
 
 namespace DoCrawler;

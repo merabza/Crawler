@@ -4,28 +4,20 @@ namespace RobotsTxt.Entities;
 
 public class Sitemap
 {
+    private Sitemap(Uri url)
+    {
+        Url = url;
+    }
+
     /// <summary>
     /// The URL to the sitemap.
     /// WARNING : This property could be null if the file declared a relative path to the sitemap rather than absolute, which is the standard.
     /// </summary>
     public Uri Url { get; private set; }
 
-    /// <summary>
-    /// Gets value of the sitemap directive.
-    /// </summary>
-    public string Value { get; private set; }
-
-    internal static Sitemap FromLine(Line line)
+    internal static Sitemap? FromLine(string strUrl)
     {
-        var s = new Sitemap { Value = line.Value };
-        try
-        {
-            s.Url = new Uri(line.Value);
-        }
-        catch (UriFormatException)
-        {
-            // fail silently, we can't do anything about the uri being invalid.
-        }
-        return s;
+        var uri = UriFabric.GetUri(strUrl);
+        return uri is null ? null : new Sitemap(uri);
     }
 }

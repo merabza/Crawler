@@ -41,7 +41,7 @@ public static class RobotsFabric
                     userAgent = robotsLine.Value;
                     continue;
                 case LineType.Sitemap:
-                    sitemaps.Add(Sitemap.FromLine(robotsLine));
+                    sitemaps.Add(Sitemap.FromLine(robotsLine.Value));
                     continue;
                 case LineType.AccessRule:
                 case LineType.CrawlDelayRule:

@@ -9,6 +9,7 @@ using DoCrawler.Domain;
 using DoCrawler.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using RobotsTxt;
 
 namespace DoCrawler.States;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DoCrawler;
+namespace RobotsTxt;
 
 public static class UriFabric
 {
