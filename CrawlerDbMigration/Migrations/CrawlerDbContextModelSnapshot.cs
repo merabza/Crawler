@@ -118,7 +118,6 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("UrlId");
 
                     b.HasIndex("BatchPartId", "UrlId")
-                        .IsUnique()
                         .HasDatabaseName("IX_ContentAnalyses_batchPartId_urlId_Unique");
 
                     b.ToTable("contentAnalyses", (string)null);
@@ -301,7 +300,8 @@ namespace CrawlerDbMigration.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("termText");
+                        .HasColumnName("termText")
+                        .UseCollation("SQL_Latin1_General_CP1_CS_AS");
 
                     b.Property<int>("TermTypeId")
                         .HasColumnType("int")
@@ -428,12 +428,6 @@ namespace CrawlerDbMigration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UrlId"));
 
-                    b.Property<int>("DownloadTryCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0)
-                        .HasColumnName("downloadTryCount");
-
                     b.Property<int>("ExtensionId")
                         .HasColumnType("int")
                         .HasColumnName("extensionId");
@@ -453,10 +447,6 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
                         .HasColumnName("isSiteMap");
-
-                    b.Property<DateTime?>("LastDownloaded")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("lastDownloaded");
 
                     b.Property<int>("SchemeId")
                         .HasColumnType("int")

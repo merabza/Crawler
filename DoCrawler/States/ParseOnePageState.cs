@@ -95,7 +95,10 @@ public sealed class ParseOnePageState : State
 
     private void ExtractAllLinks(HtmlNode htmlDocDocumentNode)
     {
-        foreach (var link in htmlDocDocumentNode.SelectNodes("//a[@href]"))
+        var links = htmlDocDocumentNode.SelectNodes("//a[@href]");
+        if (links is null || links.Count == 0)
+            return;
+        foreach (var link in links)
         {
             // Get the value of the HREF attribute
             var hrefValue = link.GetAttributeValue("href", string.Empty);

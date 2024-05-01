@@ -148,9 +148,7 @@ namespace CrawlerDbMigration.Migrations
                     schemeId = table.Column<int>(type: "int", nullable: false),
                     urlHashCode = table.Column<int>(type: "int", nullable: false),
                     isSiteMap = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    isAllowed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    lastDownloaded = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    downloadTryCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                    isAllowed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -181,7 +179,7 @@ namespace CrawlerDbMigration.Migrations
                 {
                     trmId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    termText = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    termText = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, collation: "SQL_Latin1_General_CP1_CS_AS"),
                     termTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -337,8 +335,7 @@ namespace CrawlerDbMigration.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ContentAnalyses_batchPartId_urlId_Unique",
                 table: "contentAnalyses",
-                columns: new[] { "batchPartId", "urlId" },
-                unique: true);
+                columns: new[] { "batchPartId", "urlId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_contentAnalyses_urlId",

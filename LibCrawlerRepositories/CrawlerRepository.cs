@@ -311,7 +311,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
                     { ca.BatchPartId, ca.UrlId } into gj
                 from g in gj.DefaultIfEmpty()
                 where g == null
-                where bp.BpId == batchPartId && u.DownloadTryCount == 0
+                where bp.BpId == batchPartId
                 select u
             ).Take(maxCount).Include(x => x.ExtensionNavigation)
         ];
