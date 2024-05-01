@@ -311,7 +311,6 @@ namespace CrawlerDbMigration.Migrations
                     b.HasKey("TrmId");
 
                     b.HasIndex("TermText")
-                        .IsUnique()
                         .HasDatabaseName("IX_Terms_termText_Unique");
 
                     b.HasIndex("TermTypeId");

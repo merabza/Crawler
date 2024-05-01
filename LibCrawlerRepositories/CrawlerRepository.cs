@@ -272,7 +272,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public Term? GetTerm(string termText)
     {
-        return _context.Terms.SingleOrDefault(s => s.TermText == termText);
+        return _context.Terms.FirstOrDefault(s => s.TermText == termText);
     }
 
     public Term AddTerm(string termText, TermType termTypeInBase)

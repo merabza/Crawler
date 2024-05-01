@@ -6,14 +6,14 @@ using LibParameters;
 
 namespace Crawler.MenuCommands;
 
-public sealed class StartPointSubMenuCommand : CliMenuCommand
+public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
 {
     private readonly ParametersManager _parametersManager;
     private readonly string _startPoint;
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public StartPointSubMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) :
+    public StartPointSubMenuCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) :
         base(taskName)
     {
         _parametersManager = parametersManager;
@@ -31,10 +31,10 @@ public sealed class StartPointSubMenuCommand : CliMenuCommand
         var taskSubMenuSet = new CliMenuSet($" Task => {_taskName},  Start Point => {_startPoint}");
 
         var deleteStartPointCommand =
-            new DeleteStartPointCommand(_parametersManager, _taskName, _startPoint);
+            new DeleteStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint);
         taskSubMenuSet.AddMenuItem(deleteStartPointCommand);
 
-        taskSubMenuSet.AddMenuItem(new EditStartPointCommand(_parametersManager, _taskName, _startPoint),
+        taskSubMenuSet.AddMenuItem(new EditStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint),
             "Edit Start Point");
 
         var key = ConsoleKey.Escape.Value().ToLower();

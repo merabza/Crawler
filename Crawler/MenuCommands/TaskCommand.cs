@@ -12,7 +12,7 @@ using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
-public sealed class TaskCommand : CliMenuCommand
+public sealed class TaskCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
 
@@ -22,7 +22,7 @@ public sealed class TaskCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TaskCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
+    public TaskCliMenuCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
         IParametersManager parametersManager, string taskName)
     {
         _logger = logger;

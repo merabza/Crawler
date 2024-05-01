@@ -10,14 +10,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Crawler.MenuCommands;
 
-public sealed class TaskSubMenuCommand : CliMenuCommand
+public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TaskSubMenuCommand(ILogger logger, ParametersManager parametersManager,
+    public TaskSubMenuCliMenuCommand(ILogger logger, ParametersManager parametersManager,
         ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, string taskName) : base(taskName)
     {
         _logger = logger;
@@ -36,30 +36,30 @@ public sealed class TaskSubMenuCommand : CliMenuCommand
 
         if (Name is not null)
         {
-            DeleteTaskCommand deleteTaskCommand = new(_parametersManager, Name);
+            DeleteTaskCliMenuCommand deleteTaskCommand = new(_parametersManager, Name);
             taskSubMenuSet.AddMenuItem(deleteTaskCommand);
 
 
-            taskSubMenuSet.AddMenuItem(new EditTaskNameCommand(_parametersManager, Name), "Edit  task Name");
+            taskSubMenuSet.AddMenuItem(new EditTaskNameCliMenuCommand(_parametersManager, Name), "Edit  task Name");
 
             taskSubMenuSet.AddMenuItem(
-                new TaskCommand(_logger, _crawlerRepositoryCreatorFabric, _parametersManager, Name),
+                new TaskCliMenuCommand(_logger, _crawlerRepositoryCreatorFabric, _parametersManager, Name),
                 "Run this task");
 
             taskSubMenuSet.AddMenuItem(
-                new TestOnePageCommand(_logger, _crawlerRepositoryCreatorFabric, _parametersManager, Name),
+                new TestOnePageCliMenuCommand(_logger, _crawlerRepositoryCreatorFabric, _parametersManager, Name),
                 "Test One Page");
 
             var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
             var task = parameters.GetTask(Name);
-            NewStartPointCommand newStartPointCommand = new(_parametersManager, Name);
+            NewStartPointCliMenuCommand newStartPointCommand = new(_parametersManager, Name);
             taskSubMenuSet.AddMenuItem(newStartPointCommand);
 
 
             if (task?.StartPoints != null)
                 foreach (var startPoint in task.StartPoints.OrderBy(o => o))
-                    taskSubMenuSet.AddMenuItem(new StartPointSubMenuCommand(_parametersManager, Name, startPoint));
+                    taskSubMenuSet.AddMenuItem(new StartPointSubMenuCliMenuCommand(_parametersManager, Name, startPoint));
         }
 
         var key = ConsoleKey.Escape.Value().ToLower();

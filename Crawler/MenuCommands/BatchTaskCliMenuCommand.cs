@@ -11,7 +11,7 @@ using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
-public sealed class BatchTaskCommand : CliMenuCommand
+public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 {
     private readonly Batch _batch;
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
@@ -20,7 +20,7 @@ public sealed class BatchTaskCommand : CliMenuCommand
     private readonly CrawlerParameters _par;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public BatchTaskCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
+    public BatchTaskCliMenuCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
         CrawlerParameters par, Batch batch)
     {
         _logger = logger;

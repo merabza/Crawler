@@ -4,11 +4,12 @@ using CliParameters;
 
 namespace Crawler.MenuCommands;
 
-public sealed class HostSubMenuCommand : CliMenuCommand
+public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
 {
     private readonly Cruder _cruder;
 
-    public HostSubMenuCommand(Cruder cruder, string hostName, string parentMenuName, bool nameIsStatus = false) : base(
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public HostSubMenuCliMenuCommand(Cruder cruder, string hostName, string parentMenuName, bool nameIsStatus = false) : base(
         hostName, parentMenuName, false, EStatusView.Brackets, nameIsStatus)
     {
         _cruder = cruder;

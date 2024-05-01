@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
@@ -47,62 +46,42 @@ public sealed class CrawlerRunner
     {
         try
         {
-            var par = ParseOnePageParameters.Create(_par);
-            if (par is null)
-            {
-                StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
-                return;
-            }
 
-            var batch = startBatch ?? GetBatchByTaskName();
+            var (batch, batchPart) = PrepareBatchPart(startBatch);
+
             if (batch is null)
-            {
-                StShared.WriteErrorLine("batch is null", true);
                 return;
-            }
 
-            var batchPart = _repository.GetOpenedBatchPart(batch.BatchId);
             BatchPartRunner? batchPartRunner = null;
             while (true)
             {
                 var createNewPart = false;
                 if (batchPart == null)
                 {
-                    createNewPart = batch.AutoCreateNextPart;
-                    if (!batch.AutoCreateNextPart)
-                    {
-                        if (!Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?",
-                                true, false))
+                    createNewPart = IsCreateNewPartAllowed(batch);
+                    if (!createNewPart)
                             return;
-                        createNewPart = true;
-                    }
                 }
 
                 if (createNewPart)
                 {
                     batchPart = _repository.TryCreateNewPart(batch.BatchId);
                     _repository.SaveChanges();
-
-
-                    batchPartRunner =
-                        new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
-
-                    batchPartRunner.InitBachPart(_task?.StartPoints ?? new List<string>(), batch);
-                }
-                else if (batchPart is not null)
-                {
-                    batchPartRunner =
-                        new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
                 }
 
+                if (batchPart is not null)
+                    batchPartRunner = new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
+                
                 if (batchPartRunner is null)
                 {
                     _logger.LogError("batchPartRunner is null");
                     return;
                 }
 
-                batchPartRunner.RunBatchPart();
+                if (createNewPart)
+                    batchPartRunner.InitBachPart(_task?.StartPoints ?? [], batch);
 
+                batchPartRunner.RunBatchPart();
 
                 batchPart = null;
             }
@@ -158,24 +137,39 @@ public sealed class CrawlerRunner
     {
         try
         {
-            var batch = GetBatchByTaskName();
+            var (batch, batchPart) = PrepareBatchPart(null);
+
             if (batch is null)
+                return false;
+
+            var createNewPart = false;
+            if (batchPart == null)
             {
-                StShared.WriteErrorLine("batch is null", true);
+                createNewPart = IsCreateNewPartAllowed(batch);
+                if (!createNewPart)
+                    return false;
+            }
+
+            if (createNewPart)
+            {
+                batchPart = _repository.TryCreateNewPart(batch.BatchId);
+                _repository.SaveChanges();
+            }
+
+            BatchPartRunner? batchPartRunner = null;
+            if (batchPart is not null)
+                batchPartRunner = new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
+                
+            if (batchPartRunner is null)
+            {
+                _logger.LogError("batchPartRunner is null");
                 return false;
             }
 
-            var batchPart = _repository.GetOpenedBatchPart(batch.BatchId);
-            if (batchPart is null)
-            {
-                StShared.WriteErrorLine("batchPart is null", true);
-                return false;
-            }
+            if (createNewPart)
+                batchPartRunner.InitBachPart(_task?.StartPoints ?? [], batch);
 
-
-            BatchPartRunner batchPartRunner = new(_logger, _repository, _par, _parseOnePageParameters, batchPart);
-
-            if (!batchPartRunner.DoOnePage(strUrl, batchPart))
+            if (!batchPartRunner.DoOnePage(strUrl))
                 return false;
         }
         catch (Exception e)
@@ -186,4 +180,35 @@ public sealed class CrawlerRunner
 
         return true;
     }
+
+
+    private static bool IsCreateNewPartAllowed(Batch batch)
+    {
+        if (batch.AutoCreateNextPart) 
+            return true;
+
+        return Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?",
+            true, false);
+    }
+
+    private (Batch?, BatchPart?) PrepareBatchPart(Batch? startBatch = null)
+    {
+        var par = ParseOnePageParameters.Create(_par);
+        if (par is null)
+        {
+            StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
+            return (null, null);
+        }
+
+        var batch = startBatch ?? GetBatchByTaskName();
+
+        if (batch is not null) 
+            return (batch, _repository.GetOpenedBatchPart(batch.BatchId));
+
+        StShared.WriteErrorLine("batch is null", true);
+        return (null, null);
+
+    }
+
+
 }

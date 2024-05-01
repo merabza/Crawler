@@ -5,6 +5,7 @@ namespace DoCrawler.Domain;
 
 public sealed class ParseOnePageParameters
 {
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ParseOnePageParameters(string alphabet, string segmentFinisherPunctuationsRegex, string punctuationsRegex,
         string wordDelimiterRegex)
     {

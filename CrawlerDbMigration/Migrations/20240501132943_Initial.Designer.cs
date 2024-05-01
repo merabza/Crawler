@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrawlerDbMigration.Migrations
 {
     [DbContext(typeof(CrawlerDbContext))]
-    [Migration("20240501115520_Initial")]
+    [Migration("20240501132943_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -314,7 +314,6 @@ namespace CrawlerDbMigration.Migrations
                     b.HasKey("TrmId");
 
                     b.HasIndex("TermText")
-                        .IsUnique()
                         .HasDatabaseName("IX_Terms_termText_Unique");
 
                     b.HasIndex("TermTypeId");

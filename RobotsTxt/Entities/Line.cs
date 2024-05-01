@@ -6,10 +6,18 @@ namespace RobotsTxt.Entities;
 public class Line
 {
     public LineType Type { get; private set; }
-    public string Field { get; private set; }
-    public string Value { get; private set; }
+    public string? Field { get; private set; }
+    public string? Value { get; private set; }
 
-    public Line(string line)
+    // ReSharper disable once ConvertToPrimaryConstructor
+    private Line(LineType type, string? field, string? value)
+    {
+        Type = type;
+        Field = field;
+        Value = value;
+    }
+
+    public static Line Create(string line)
     {
         if (string.IsNullOrWhiteSpace(line))
         {
@@ -18,11 +26,10 @@ public class Line
 
         line = line.Trim();
 
-        if (line.StartsWith("#"))
+        if (line.StartsWith('#'))
         {
             // whole line is comment
-            Type = LineType.Comment;
-            return;
+            return new Line(LineType.Comment, null, null);
         }
 
         // if line contains comments, get rid of them
@@ -34,14 +41,15 @@ public class Line
         var field = GetField(line);
         if (string.IsNullOrWhiteSpace(field))
         {
-            // If could not find the first ':' char or if there wasn't a field declaration before ':'
-            Type = LineType.Unknown;
-            return;
+            //If could not find the first ':' char or if there wasn't a field declaration before ':'
+            return new Line(LineType.Unknown, null, null);
         }
 
-        Field = field.Trim();
-        Type = EnumHelper.GetLineType(field.Trim().ToLowerInvariant());
-        Value = line[(field.Length + 1)..].Trim(); //we remove <field>:
+        field = field.Trim();
+        var type = EnumHelper.GetLineType(field.Trim().ToLowerInvariant());
+        var value = line[(field.Length + 1)..].Trim(); //we remove <field>:
+
+        return new Line(type, field, value);
     }
 
     private static string GetField(string line)

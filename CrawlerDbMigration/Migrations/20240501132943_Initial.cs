@@ -396,8 +396,7 @@ namespace CrawlerDbMigration.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Terms_termText_Unique",
                 table: "terms",
-                column: "termText",
-                unique: true);
+                column: "termText");
 
             migrationBuilder.CreateIndex(
                 name: "IX_terms_termTypeId",

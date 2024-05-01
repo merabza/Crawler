@@ -75,11 +75,11 @@ public sealed class Crawler : CliAppLoop
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder), "Batches");
 
                 //ამოცანები
-                NewTaskCommand newAppTaskCommand = new(_parametersManager);
+                NewTaskCliMenuCommand newAppTaskCommand = new(_parametersManager);
                 mainMenuSet.AddMenuItem(newAppTaskCommand);
 
                 foreach (var kvp in parameters.Tasks.OrderBy(o => o.Key))
-                    mainMenuSet.AddMenuItem(new TaskSubMenuCommand(_logger, _parametersManager,
+                    mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _parametersManager,
                         crawlerRepositoryCreatorFabric,
                         kvp.Key));
             }

@@ -7,18 +7,17 @@ using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
-public sealed class DeleteStartPointCommand : CliMenuCommand
+public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
 {
     private readonly ParametersManager _parametersManager;
-    private readonly string _startPoint;
     private readonly string _taskName;
 
-    public DeleteStartPointCommand(ParametersManager parametersManager, string taskName, string startPoint) : base(
-        "Delete Start Point", taskName)
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public DeleteTaskCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Delete Task",
+        taskName)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;
-        _startPoint = startPoint;
     }
 
     protected override void RunAction()
@@ -27,24 +26,19 @@ public sealed class DeleteStartPointCommand : CliMenuCommand
         {
             var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-            var task = parameters.GetTask(_taskName);
-            if (task == null)
+            var tasks = parameters.Tasks;
+
+            if (!tasks.ContainsKey(_taskName))
             {
-                StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
+                StShared.WriteErrorLine($"Task {_taskName} not found", true);
                 return;
             }
 
-            if (!task.StartPoints.Contains(_startPoint))
-            {
-                StShared.WriteErrorLine($"Start Point {_startPoint} in Task {_taskName} is not found", true);
-                return;
-            }
-
-            if (!Inputer.InputBool($"This will Delete Start Point {_startPoint}. are you sure?", false, false))
+            if (!Inputer.InputBool($"This will Delete  Task {_taskName}. are you sure?", false, false))
                 return;
 
-            task.StartPoints.Remove(_startPoint);
-            _parametersManager.Save(parameters, $"Start Point {_startPoint} deleted.");
+            tasks.Remove(_taskName);
+            _parametersManager.Save(parameters, $"Task {_taskName} deleted.");
 
             MenuAction = EMenuAction.LevelUp;
             return;

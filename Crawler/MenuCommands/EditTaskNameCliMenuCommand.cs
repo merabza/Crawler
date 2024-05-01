@@ -7,17 +7,17 @@ using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
-public sealed class EditStartPointCommand : CliMenuCommand
+public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
 {
     private readonly ParametersManager _parametersManager;
-    private readonly string _startPoint;
     private readonly string _taskName;
 
-    public EditStartPointCommand(ParametersManager parametersManager, string taskName, string startPoint)
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public EditTaskNameCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Edit Task",
+        taskName)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;
-        _startPoint = startPoint;
     }
 
     protected override void RunAction()
@@ -33,49 +33,40 @@ public sealed class EditStartPointCommand : CliMenuCommand
                 return;
             }
 
-            if (!task.StartPoints.Contains(_startPoint))
-            {
-                StShared.WriteErrorLine($"Start Point {_startPoint} in Task {_taskName} is not found", true);
-                return;
-            }
-
-            ////ამოცანის სახელის რედაქტირება
-            //TextDataInput nameInput = new TextDataInput("change Start Point ", _startPoint);
+            //ამოცანის სახელის რედაქტირება
+            //TextDataInput nameInput = new TextDataInput("change  Task Name ", _taskName);
             //if (!nameInput.DoInput())
             //    return;
-            //string newStartPoint = nameInput.Text;
-
-            var newStartPoint = Inputer.InputText("change Start Point ", _startPoint);
-
-            if (string.IsNullOrWhiteSpace(newStartPoint))
+            var newTaskName = Inputer.InputText("change  Task Name ", _taskName);
+            if (string.IsNullOrWhiteSpace(newTaskName))
                 return;
 
-            if (_startPoint == newStartPoint)
+            if (_taskName == newTaskName)
                 return; //თუ ცვლილება მართლაც მოითხოვეს
 
-            if (!task.CheckNewStartPointValid(_startPoint, newStartPoint))
+            if (!parameters.CheckNewTaskNameValid(_taskName, newTaskName))
             {
-                StShared.WriteErrorLine($"New Start Point {newStartPoint} is not valid", true);
+                StShared.WriteErrorLine($"New Name For Task {newTaskName} is not valid", true);
                 return;
             }
 
-            if (!task.RemoveStartPoint(_startPoint))
+            if (!parameters.RemoveTask(_taskName))
             {
                 StShared.WriteErrorLine(
-                    $"Cannot change Start Point {_startPoint} to {newStartPoint}, because cannot remove this Start Point",
+                    $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot remove this  task",
                     true);
                 return;
             }
 
-            if (!task.AddStartPoint(newStartPoint))
+            if (!parameters.AddTask(newTaskName, task))
             {
                 StShared.WriteErrorLine(
-                    $"Cannot change Start Point {_startPoint} to {newStartPoint}, because cannot add this Start Point",
+                    $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot add this  task",
                     true);
                 return;
             }
 
-            _parametersManager.Save(parameters, $" Start Point Changed from {_startPoint} To {newStartPoint}");
+            _parametersManager.Save(parameters, $" Task Renamed from {_taskName} To {newTaskName}");
 
             MenuAction = EMenuAction.LevelUp;
             return;
@@ -92,5 +83,10 @@ public sealed class EditStartPointCommand : CliMenuCommand
         }
 
         MenuAction = EMenuAction.Reload;
+    }
+
+    protected override string GetStatus()
+    {
+        return _taskName;
     }
 }

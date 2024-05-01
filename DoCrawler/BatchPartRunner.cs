@@ -613,7 +613,7 @@ public sealed class BatchPartRunner
         }
     }
 
-    public bool DoOnePage(string strUrl, BatchPart batchPart)
+    public bool DoOnePage(string strUrl)
     {
         var urlData = GetUrlData(strUrl);
         if (urlData == null)
@@ -623,7 +623,7 @@ public sealed class BatchPartRunner
         }
 
         var contentAnalysis = urlData.Url is not null
-            ? _repository.GetContentAnalysis(batchPart.BpId, urlData.Url.UrlId)
+            ? _repository.GetContentAnalysis(_batchPart.BpId, urlData.Url.UrlId)
             : null;
         if (contentAnalysis != null)
         {

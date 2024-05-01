@@ -104,7 +104,7 @@ public sealed class BatchCruder : Cruder
         var batches = batchesList.ToDictionary(k => k.BatchName, v => v);
         var batch = batches[recordKey];
 
-        itemSubMenuSet.AddMenuItem(new BatchTaskCommand(_logger, _crawlerRepositoryCreatorFabric, _par, batch),
+        itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _crawlerRepositoryCreatorFabric, _par, batch),
             "Run this batch");
 
         HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFabric, batch);
@@ -114,7 +114,7 @@ public sealed class BatchCruder : Cruder
         var hostNames = detailsCruder.GetHostNamesByBatch();
 
         foreach (var detailListCommand in hostNames.Select(s =>
-                     new HostSubMenuCommand(detailsCruder, s, recordKey, true)))
+                     new HostSubMenuCliMenuCommand(detailsCruder, s, recordKey, true)))
             itemSubMenuSet.AddMenuItem(detailListCommand);
     }
 }

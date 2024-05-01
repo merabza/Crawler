@@ -7,22 +7,32 @@ public class AccessAllowRule : Rule
     public string Path { get; }
     public bool Allowed { get; private set; }
 
-    public AccessAllowRule(string userAgent, Line line, int order)
-        : base(userAgent, order)
+    
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public AccessAllowRule(string userAgent, string path, bool allowed, int order) : base(userAgent, order)
     {
-        Path = line.Value;
-        if (!string.IsNullOrEmpty(Path))
+        Path = path;
+        Allowed = allowed;
+    }
+
+    public static AccessAllowRule Create(string userAgent, string field, string path, int order)
+    {
+        if (!string.IsNullOrEmpty(path))
         {
             // get rid of the preceding * wild char
-            while (Path.StartsWith("*", StringComparison.Ordinal))
+            while (path.StartsWith("*", StringComparison.Ordinal))
             {
-                Path = Path[1..];
+                path = path[1..];
             }
-            if (!Path.StartsWith('/'))
+            if (!path.StartsWith('/'))
             {
-                Path = "/" + Path;
+                path = "/" + path;
             }
         }
-        Allowed = line.Field.ToLowerInvariant().Equals("allow");
+        var allowed = field.ToLowerInvariant().Equals("allow");
+        return new AccessAllowRule(userAgent, path, allowed, order);
     }
+
+
+
 }

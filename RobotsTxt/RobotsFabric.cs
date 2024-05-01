@@ -32,7 +32,7 @@ public static class RobotsFabric
 
         foreach (var line in lines)
         {
-            var robotsLine = new Line(line);
+            var robotsLine = Line.Create(line);
             switch (robotsLine.Type)
             {
                 case LineType.Comment: //ignore the comments
@@ -52,9 +52,9 @@ public static class RobotsFabric
                         continue;
                     }
 
-                    if (robotsLine.Type == LineType.AccessRule)
+                    if (robotsLine is { Type: LineType.AccessRule, Field: not null, Value: not null })
                     {
-                        var accessRule = new AccessAllowRule(userAgent, robotsLine, ++ruleCount);
+                        var accessRule = AccessAllowRule.Create(userAgent, robotsLine.Field, robotsLine.Value, ++ruleCount);
                         if (accessRule.For.Equals("*"))
                             globalAccessRules.Add(accessRule);
                         else
