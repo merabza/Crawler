@@ -153,10 +153,7 @@ public sealed class ProcData : IDisposable
 
     public void AddTerm(Term term)
     {
-        var termTexToSave = term.TermText;
-        if (term.TermText.Length >= 50)
-            termTexToSave = term.TermText[..50];
-        _termCache.TryAdd(termTexToSave, term);
+        _termCache.TryAdd(term.TermText, term);
     }
 
     #region Singletone

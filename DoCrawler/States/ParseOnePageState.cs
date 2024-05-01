@@ -207,7 +207,8 @@ public sealed class ParseOnePageState : State
         }
         else
         {
-            for (var i = 2; i < strTestParts.Length; i += 3) AddWord(strTestParts[i - 2]);
+            for (var i = 2; i < strTestParts.Length; i += 3) 
+                AddWord(strTestParts[i - 2]);
 
             AddWord(strTestParts[^1]);
         }

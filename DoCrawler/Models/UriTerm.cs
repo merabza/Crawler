@@ -10,12 +10,13 @@ public sealed class UriTerm
     public UriTerm(ETermType termType, string context)
     {
         TermType = termType;
-        Context = context;
+        var contextRightLength = context;
+        if (context.Length >= 50)
+            contextRightLength = context[..50];
+        Context = contextRightLength;
     }
 
     public ETermType TermType { get; set; }
 
     public string? Context { get; set; }
-    //public int UrlId { get; set; }
-    //public int BatchPartId { get; set; }
 }
