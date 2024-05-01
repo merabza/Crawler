@@ -19,6 +19,13 @@ public sealed class Robot
         HostNavigation = hostNavigation;
     }
 
+    public Robot(int batchPartId, int schemeId, int hostId)
+    {
+        BatchPartId = batchPartId;
+        SchemeId = schemeId;
+        HostId = hostId;
+    }
+
     public int RbtId { get; set; }
     public int BatchPartId { get; set; }
     public int SchemeId { get; set; }

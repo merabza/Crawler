@@ -130,6 +130,14 @@ public sealed class ParseOnePageState : State
 
     private void ParseStatements(string context)
     {
+        //თუ კონტენტი ცარიელია, გასაანალიზებელიც არაფერია
+        if (context == string.Empty)
+            return;
+
+        //თუ ტექსტი საერთოდ არ შეიცავს ქართულ ასოებს, მაშინ არ გვაინტერესებს
+        if (!context.Any(c => _par.Alphabet.Contains(c)))
+            return;
+
         Regex re = new(_par.SegmentFinisherPunctuationsRegex);
         var strTestParts = re.Split(context);
         if (strTestParts.Length == 1)
@@ -151,8 +159,12 @@ public sealed class ParseOnePageState : State
             if (strTestParts.Length % 2 != 1)
                 return;
 
+            var lastPart = strTestParts[^1];
+            if (lastPart == string.Empty) 
+                return;
+
             AddStatementStart();
-            ParsePunctuations(strTestParts[^1]);
+            ParsePunctuations(lastPart);
             AddStatementFinish();
         }
     }
@@ -169,6 +181,9 @@ public sealed class ParseOnePageState : State
 
     private void ParsePunctuations(string context)
     {
+        if (context == string.Empty)
+            return;
+
         Regex re = new(_par.PunctuationsRegex); //ყველა პუნქტუაციის ნიშანი
         var strTestParts = re.Split(context);
 
@@ -198,6 +213,9 @@ public sealed class ParseOnePageState : State
 
     private void ParseWords(string context)
     {
+        //ცარელა სტრიქონს არ განვიხილავთ
+        if ( context == string.Empty)
+            return;
         //ყველა ის პუნქტუაციის ნიშანი, რომელიც არ შეიძლება აღიქმებოდეს სიტყვის ნაწილად
         Regex re = new(_par.WordDelimiterRegex);
         var strTestParts = re.Split(context);
@@ -207,10 +225,9 @@ public sealed class ParseOnePageState : State
         }
         else
         {
-            for (var i = 2; i < strTestParts.Length; i += 3) 
-                AddWord(strTestParts[i - 2]);
-
-            AddWord(strTestParts[^1]);
+            for (var i = 0; i < strTestParts.Length; i += 3) 
+                AddWord(strTestParts[i]);
+            //AddWord(strTestParts[^1]);
         }
     }
 

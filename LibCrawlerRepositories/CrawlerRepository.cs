@@ -252,9 +252,15 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         var robot = _context.Robots.SingleOrDefault(x => x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId);
         if (robot is null)
-            return;
-        robot.RobotsTxt = robotsTxt;
-        _context.Robots.Update(robot);
+        {
+            robot = new Robot(batchPartId, schemeId, hostId) { RobotsTxt = robotsTxt };
+            _context.Robots.Add(robot);
+        }
+        else
+        {
+            robot.RobotsTxt = robotsTxt;
+            _context.Robots.Update(robot);
+        }
     }
 
 
