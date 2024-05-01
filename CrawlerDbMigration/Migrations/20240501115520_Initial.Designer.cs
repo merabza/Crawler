@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrawlerDbMigration.Migrations
 {
     [DbContext(typeof(CrawlerDbContext))]
-    [Migration("20240501091436_Initial")]
+    [Migration("20240501115520_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -121,6 +121,7 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("UrlId");
 
                     b.HasIndex("BatchPartId", "UrlId")
+                        .IsUnique()
                         .HasDatabaseName("IX_ContentAnalyses_batchPartId_urlId_Unique");
 
                     b.ToTable("contentAnalyses", (string)null);

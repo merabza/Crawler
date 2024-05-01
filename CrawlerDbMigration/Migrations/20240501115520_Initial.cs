@@ -335,7 +335,8 @@ namespace CrawlerDbMigration.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ContentAnalyses_batchPartId_urlId_Unique",
                 table: "contentAnalyses",
-                columns: new[] { "batchPartId", "urlId" });
+                columns: new[] { "batchPartId", "urlId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_contentAnalyses_urlId",

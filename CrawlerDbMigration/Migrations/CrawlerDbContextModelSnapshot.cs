@@ -118,6 +118,7 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("UrlId");
 
                     b.HasIndex("BatchPartId", "UrlId")
+                        .IsUnique()
                         .HasDatabaseName("IX_ContentAnalyses_batchPartId_urlId_Unique");
 
                     b.ToTable("contentAnalyses", (string)null);
