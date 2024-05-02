@@ -138,7 +138,7 @@ public sealed class CrawlerRunner
     {
         try
         {
-            var (batch, batchPart) = PrepareBatchPart(null);
+            var (batch, batchPart) = PrepareBatchPart();
 
             if (batch is null)
                 return false;

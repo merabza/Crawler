@@ -23,12 +23,13 @@ public static class RobotsFabric
         var specificAccessRules = new List<AccessAllowRule>();
         var crawlDelayRules = new List<CrawlDelayRule>();
         var sitemaps = new List<Sitemap>();
-        var malformed=false;
-        var isAnyPathDisallowed=false;
-        var hasRules=false;
+        var malformed = false;
+        var isAnyPathDisallowed = false;
+        var hasRules = false;
 
         var ruleCount = 0;
-        var userAgent = string.Empty;
+        var lastLineWasUserAgentLine = false;
+        var userAgents = new List<string>();
 
         foreach (var line in lines)
         {
@@ -38,38 +39,56 @@ public static class RobotsFabric
                 case LineType.Comment: //ignore the comments
                     continue;
                 case LineType.UserAgent:
-                    userAgent = robotsLine.Value;
+                    var userAgentFromLine = robotsLine.Value;
+                    if (string.IsNullOrWhiteSpace(userAgentFromLine))
+                        continue;
+                    if (!lastLineWasUserAgentLine)
+                        userAgents.Clear();
+                    userAgents.Add(userAgentFromLine);
+                    lastLineWasUserAgentLine = true;
                     continue;
                 case LineType.Sitemap:
-                    sitemaps.Add(Sitemap.FromLine(robotsLine.Value));
+                    lastLineWasUserAgentLine = false;
+                    var siteMapPath = robotsLine.Value;
+                    if (siteMapPath is null)
+                        continue;
+                    var siteMap = Sitemap.FromLine(siteMapPath);
+                    if (siteMap is not null)
+                        sitemaps.Add(siteMap);
                     continue;
                 case LineType.AccessRule:
                 case LineType.CrawlDelayRule:
+                    lastLineWasUserAgentLine = false;
                     //if there's a rule without user-agent declaration, ignore it
-                    if (string.IsNullOrEmpty(userAgent))
+                    if (userAgents.Count == 0)
                     {
                         malformed = true;
                         continue;
                     }
 
-                    if (robotsLine is { Type: LineType.AccessRule, Field: not null, Value: not null })
+                    foreach (var userAgent in userAgents)
                     {
-                        var accessRule = AccessAllowRule.Create(userAgent, robotsLine.Field, robotsLine.Value, ++ruleCount);
-                        if (accessRule.For.Equals("*"))
-                            globalAccessRules.Add(accessRule);
-                        else
-                            specificAccessRules.Add(accessRule);
+                        if (robotsLine is { Type: LineType.AccessRule, Field: not null, Value: not null })
+                        {
+                            var accessRule = AccessAllowRule.Create(userAgent, robotsLine.Field, robotsLine.Value,
+                                ++ruleCount);
+                            if (accessRule.For.Equals("*"))
+                                globalAccessRules.Add(accessRule);
+                            else
+                                specificAccessRules.Add(accessRule);
 
-                        if (!accessRule.Allowed && !string.IsNullOrEmpty(accessRule.Path))
-                            // We say !String.IsNullOrEmpty(x.Path) because the rule "Disallow: " means nothing is disallowed.
-                            isAnyPathDisallowed = true;
+                            if (!accessRule.Allowed && !string.IsNullOrEmpty(accessRule.Path))
+                                // We say !String.IsNullOrEmpty(x.Path) because the rule "Disallow: " means nothing is disallowed.
+                                isAnyPathDisallowed = true;
+                        }
+                        else
+                            crawlDelayRules.Add(new CrawlDelayRule(userAgent, robotsLine, ++ruleCount));
                     }
-                    else
-                        crawlDelayRules.Add(new CrawlDelayRule(userAgent, robotsLine, ++ruleCount));
 
                     hasRules = true;
                     continue;
                 case LineType.Unknown:
+                    lastLineWasUserAgentLine = false;
                     malformed = true;
                     continue;
                 default:
@@ -77,9 +96,8 @@ public static class RobotsFabric
             }
         }
 
-        return new Robots(globalAccessRules, specificAccessRules, crawlDelayRules, sitemaps, malformed, isAnyPathDisallowed, hasRules,
+        return new Robots(globalAccessRules, specificAccessRules, crawlDelayRules, sitemaps, malformed,
+            isAnyPathDisallowed, hasRules,
             AllowRuleImplementation.MoreSpecific);
     }
-
-
 }

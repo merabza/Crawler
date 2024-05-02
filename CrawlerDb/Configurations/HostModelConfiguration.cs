@@ -17,7 +17,7 @@ public class HostModelConfiguration : IEntityTypeConfiguration<HostModel>
         builder.HasIndex(e => e.HostName).HasDatabaseName(tableName.CreateIndexName(true, nameof(HostModel.HostName)))
             .IsUnique();
         builder.Property(e => e.HostId).HasColumnName(nameof(HostModel.HostId).UnCapitalize());
-        builder.Property(e => e.HostName).HasColumnName(nameof(HostModel.HostName).UnCapitalize()).HasMaxLength(50);
+        builder.Property(e => e.HostName).HasColumnName(nameof(HostModel.HostName).UnCapitalize()).HasMaxLength(253);
         //builder.Property(e => e.RobotsTxt).HasColumnName(nameof(HostModel.RobotsTxt).UnCapitalize())
         //    .HasColumnType(ConfigurationHelper.ColumnTypeNText);
         builder.Property(e => e.HostProhibited).HasColumnName(nameof(HostModel.HostProhibited).UnCapitalize())

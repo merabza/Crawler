@@ -53,7 +53,7 @@ public sealed class HostByBatchCruder : Cruder
         //List<string> hostNames = GetHostNamesByBatch();
         //hostNames?.Remove(recordKey);
         var repo = GetCrawlerRepository();
-        Uri uri = new(recordKey);
+        var uri = new Uri(recordKey);
         repo.RemoveHostNamesByBatch(_batch, uri.Scheme, uri.Host);
 
         repo.SaveChanges();
@@ -71,7 +71,7 @@ public sealed class HostByBatchCruder : Cruder
         //project.RedundantFileNames.Add(recordKey);
 
         var repo = GetCrawlerRepository();
-        Uri uri = new(recordKey);
+        var uri = new Uri(recordKey);
         repo.AddHostNamesByBatch(_batch, uri.Scheme, uri.Host);
         repo.SaveChanges();
     }
