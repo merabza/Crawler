@@ -7,5 +7,6 @@ public enum ETermType
     StatementStart = 2,
     StatementFinish = 3,
     Word = 4,
-    Punctuation = 5
+    Punctuation = 5,
+    ForeignWord = 6
 }

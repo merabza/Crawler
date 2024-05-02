@@ -83,6 +83,15 @@ public sealed class BatchPartRunner
     private bool LoadUrls(BatchPart batchPart)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Loading next part Urls...");
+        
+        var urlsCount = _repository.GetUrlsCount(_batchPart.BpId);
+
+        var loadedUrlsCount = _repository.GetLoadedUrlsCount(_batchPart.BpId);
+
+        var termsCount = _repository.GetTermsCount();
+
+        StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] Urls {loadedUrlsCount}-{urlsCount} terms {termsCount}");
+
         GetPagesState getPagesState = new(_logger, _repository, _par, batchPart);
         getPagesState.Execute();
         StShared.ConsoleWriteInformationLine(_logger, true,
@@ -312,7 +321,8 @@ public sealed class BatchPartRunner
                 ETermType.ParagraphFinish => "</p>",
                 ETermType.StatementStart => "<s>",
                 ETermType.StatementFinish => "</s>",
-                ETermType.Word => termContext, //?.ToLower(),
+                ETermType.ForeignWord => termContext,
+                ETermType.Word => termContext,
                 ETermType.Punctuation => termContext,
                 _ => throw new ArgumentOutOfRangeException(nameof(termType), termType, null)
             };
@@ -535,7 +545,7 @@ public sealed class BatchPartRunner
 
     private void SaveChangesAndReduceCache()
     {
-        StShared.ConsoleWriteInformationLine(_logger, true, "Save Changes");
+        StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] Save Changes");
 
         _repository.SaveChangesWithTransaction();
 

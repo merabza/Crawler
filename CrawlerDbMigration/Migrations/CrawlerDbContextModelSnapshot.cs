@@ -200,8 +200,8 @@ namespace CrawlerDbMigration.Migrations
 
                     b.Property<string>("HostName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(253)
+                        .HasColumnType("nvarchar(253)")
                         .HasColumnName("hostName");
 
                     b.Property<bool>("HostProhibited")

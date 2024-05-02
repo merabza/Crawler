@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using CrawlerDb;
 using CrawlerDb.Models;
+using LanguageExt.ClassInstances.Pred;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -263,6 +264,35 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
     }
 
+    public long GetUrlsCount(int batchPartId)
+    {
+        return (
+            from bp in _context.BatchParts
+            join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
+            join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
+            where bp.BpId == batchPartId && u.IsAllowed
+            select u
+        ).Count();
+    }
+
+    public long GetTermsCount()
+    {
+        return _context.Terms.Count();
+    }
+
+    public long GetLoadedUrlsCount(int batchPartId)
+    {
+        return (
+            from bp in _context.BatchParts
+            join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
+            join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
+            join ca in _context.ContentsAnalysis on new { BatchPartId = bp.BpId, u.UrlId } equals new
+                { ca.BatchPartId, ca.UrlId }
+            where bp.BpId == batchPartId && u.IsAllowed
+            select u
+        ).Count();
+    }
+
 
     public TermType CheckAddTermType(string termTypeKey)
     {
@@ -317,7 +347,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
                     { ca.BatchPartId, ca.UrlId } into gj
                 from g in gj.DefaultIfEmpty()
                 where g == null
-                where bp.BpId == batchPartId
+                where bp.BpId == batchPartId && u.IsAllowed
                 select u
             ).Take(maxCount).Include(x => x.ExtensionNavigation)
         ];

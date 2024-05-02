@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrawlerDbMigration.Migrations
 {
     [DbContext(typeof(CrawlerDbContext))]
-    [Migration("20240501191854_Initial")]
+    [Migration("20240502155627_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -203,8 +203,8 @@ namespace CrawlerDbMigration.Migrations
 
                     b.Property<string>("HostName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(253)
+                        .HasColumnType("nvarchar(253)")
                         .HasColumnName("hostName");
 
                     b.Property<bool>("HostProhibited")

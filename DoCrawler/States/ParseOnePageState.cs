@@ -136,7 +136,7 @@ public sealed class ParseOnePageState : State
             return;
 
         //თუ ტექსტი საერთოდ არ შეიცავს ქართულ ასოებს, მაშინ არ გვაინტერესებს
-        if (!context.Any(c => _par.Alphabet.Contains(c)))
+        if (!ContainsAnyAlphabetSymbols(context))
             return;
 
         Regex re = new(_par.SegmentFinisherPunctuationsRegex);
@@ -168,6 +168,13 @@ public sealed class ParseOnePageState : State
             ParsePunctuations(lastPart);
             AddStatementFinish();
         }
+    }
+
+    //ეს ფუნქცია ამოწმებს შეიცავს თუ არა ჩვენი ანბანის ასოებს
+    //ჩვენს შემთხვევაში ეს არის ქართული ანბანის ასოები
+    private bool ContainsAnyAlphabetSymbols(string context)
+    {
+        return context.Any(c => _par.Alphabet.Contains(c));
     }
 
     private void AddStatementFinish()
@@ -234,15 +241,28 @@ public sealed class ParseOnePageState : State
 
     private void AddWord(string word)
     {
-        if (word != string.Empty)
-            UriTerms.Add(new UriTerm(ETermType.Word, word));
+        //ესე დროებით გავაკეთე, რომ არ შემეშალოს ხელი სხვა ანომალიების აღმოჩენაში
+        //შემდგომში აკრძალული ან დასაშვები სიმბოლოების სია უნდა გაკეთდეს და მას უნდა დავეყრდნოთ
+        var trimmedWord = word.Trim('\x200B');
+
+        //ესეც დროებითია სიტყვის თავში დასმული ვარსკვლავი აღნიშნავს სქოლიოს. მომავალში ისე უნდა გავაკეთო,
+        //რომ სქოლიო გამოვიცნო და აქ ვარსკვლავიანი სწიტყვა აღარ უნდა მოვიდეს
+        //trimmedWord = trimmedWord.TrimStart('*');
+
+        //ცარელა სიტყვის შენახვა არ გვჭირდება
+        if (trimmedWord == string.Empty)
+            return;
+        //თუ ტექსტი საერთოდ არ შეიცავს ქართულ ასოებს, მაშინ არ გვაინტერესებს
+        UriTerms.Add(ContainsAnyAlphabetSymbols(trimmedWord)
+            ? new UriTerm(ETermType.Word, trimmedWord)
+            : new UriTerm(ETermType.ForeignWord, trimmedWord));
     }
 
     private void ExtractUrl(string uriCandidate)
     {
         //ელექტრონული ფოსტის მისამართების შენახვა არ გვჭირდება
         //ასევე არ გვჭირდება ისეთი ლინკების შენახვა, რომელიც მხოლოდ ფრაგმენტს აღნიშნავს
-        if (uriCandidate.StartsWith("mailto:") || uriCandidate.StartsWith("#"))
+        if (uriCandidate.StartsWith("mailto:") || uriCandidate.StartsWith('#'))
             return; 
 
         var strUri = uriCandidate.Trim('"', '\'', '#', ' ', '>');

@@ -46,7 +46,7 @@ namespace CrawlerDbMigration.Migrations
                 {
                     hostId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    hostName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    hostName = table.Column<string>(type: "nvarchar(253)", maxLength: 253, nullable: false),
                     hostProhibited = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>

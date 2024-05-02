@@ -62,4 +62,7 @@ public interface ICrawlerRepository
     //UrlAllowModel AddUrlAllow(int hostId, string patternText, bool isAllowed);
     string? LoadRobotsFromBase(int batchPartId, int schemeId, int hostId);
     void SaveRobotsTxtToBase(int batchPartId, int schemeId, int hostId, string robotsTxt);
+    long GetUrlsCount(int batchPartId);
+    long GetTermsCount();
+    long GetLoadedUrlsCount(int batchPartId);
 }
