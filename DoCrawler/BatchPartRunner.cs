@@ -84,6 +84,17 @@ public sealed class BatchPartRunner
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Loading next part Urls...");
         
+        CountStatistics();
+
+        GetPagesState getPagesState = new(_logger, _repository, _par, batchPart);
+        getPagesState.Execute();
+        StShared.ConsoleWriteInformationLine(_logger, true,
+            $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
+        return getPagesState.UrlsLoaded;
+    }
+
+    private void CountStatistics()
+    {
         var urlsCount = _repository.GetUrlsCount(_batchPart.BpId);
 
         var loadedUrlsCount = _repository.GetLoadedUrlsCount(_batchPart.BpId);
@@ -91,12 +102,6 @@ public sealed class BatchPartRunner
         var termsCount = _repository.GetTermsCount();
 
         StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] Urls {loadedUrlsCount}-{urlsCount} terms {termsCount}");
-
-        GetPagesState getPagesState = new(_logger, _repository, _par, batchPart);
-        getPagesState.Execute();
-        StShared.ConsoleWriteInformationLine(_logger, true,
-            $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
-        return getPagesState.UrlsLoaded;
     }
 
     private (HttpStatusCode, string?) GetOnePageContent(Uri uri)
@@ -550,6 +555,9 @@ public sealed class BatchPartRunner
         _repository.SaveChangesWithTransaction();
 
         ProcData.Instance.ReduceCache();
+
+        CountStatistics();
+
     }
 
     private void ProcessPage(UrlModel urlForProcess, BatchPart batchPart)
