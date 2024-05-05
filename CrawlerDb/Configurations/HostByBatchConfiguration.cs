@@ -19,7 +19,7 @@ public class HostByBatchConfiguration : IEntityTypeConfiguration<HostByBatch>
             nameof(HostByBatch.BatchId), nameof(HostByBatch.SchemeId), nameof(HostByBatch.HostId))).IsUnique();
 
         builder.Property(e => e.HbbId).HasColumnName(nameof(HostByBatch.HbbId).UnCapitalize());
-        builder.Property(e => e.BatchId).HasColumnName(nameof(HostByBatch.BatchId).UnCapitalize()).HasMaxLength(50);
+        builder.Property(e => e.BatchId).HasColumnName(nameof(HostByBatch.BatchId).UnCapitalize());
         builder.Property(e => e.HostId).HasColumnName(nameof(HostByBatch.HostId).UnCapitalize());
         builder.Property(e => e.SchemeId).HasColumnName(nameof(HostByBatch.SchemeId).UnCapitalize());
 

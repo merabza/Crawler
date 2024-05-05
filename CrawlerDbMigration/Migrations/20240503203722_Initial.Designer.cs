@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrawlerDbMigration.Migrations
 {
     [DbContext(typeof(CrawlerDbContext))]
-    [Migration("20240503085836_Initial")]
+    [Migration("20240503203722_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

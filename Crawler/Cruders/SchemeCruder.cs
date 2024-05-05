@@ -49,9 +49,8 @@ public sealed class SchemeCruder : Cruder
 
         var repo = GetCrawlerRepository();
 
-        var scheme = repo.GetSchemeByName(recordKey);
-        if (scheme is null)
-            throw new Exception("scheme is null");
+        var scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
+
         scheme.SchName = newScheme.SchName;
         repo.UpdateScheme(scheme);
 

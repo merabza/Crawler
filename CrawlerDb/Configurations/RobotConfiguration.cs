@@ -20,7 +20,7 @@ public class RobotConfiguration : IEntityTypeConfiguration<Robot>
             nameof(Robot.BatchPartId), nameof(Robot.SchemeId), nameof(Robot.HostId))).IsUnique();
 
         builder.Property(e => e.RbtId).HasColumnName(nameof(Robot.RbtId).UnCapitalize());
-        builder.Property(e => e.BatchPartId).HasColumnName(nameof(Robot.BatchPartId).UnCapitalize()).HasMaxLength(50);
+        builder.Property(e => e.BatchPartId).HasColumnName(nameof(Robot.BatchPartId).UnCapitalize());
         builder.Property(e => e.HostId).HasColumnName(nameof(Robot.HostId).UnCapitalize());
         builder.Property(e => e.SchemeId).HasColumnName(nameof(Robot.SchemeId).UnCapitalize());
         builder.Property(e => e.RobotsTxt).HasColumnName(nameof(Robot.RobotsTxt).UnCapitalize())

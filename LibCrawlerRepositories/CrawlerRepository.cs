@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using CrawlerDb;
 using CrawlerDb.Models;
-using LanguageExt.ClassInstances.Pred;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;

@@ -1,4 +1,6 @@
-﻿namespace DoCrawler.Models;
+﻿using CrawlerDb.Configurations;
+
+namespace DoCrawler.Models;
 
 public sealed class UriTerm
 {
@@ -10,10 +12,7 @@ public sealed class UriTerm
     public UriTerm(ETermType termType, string context)
     {
         TermType = termType;
-        var contextRightLength = context;
-        if (context.Length >= 50)
-            contextRightLength = context[..50];
-        Context = contextRightLength;
+        Context = context.Truncate(TermConfiguration.TermTextLength);
     }
 
     public ETermType TermType { get; set; }

@@ -7,6 +7,8 @@ namespace CrawlerDb.Configurations;
 
 public class ExtensionModelConfiguration : IEntityTypeConfiguration<ExtensionModel>
 {
+    public const int ExtensionNameLength = 50;
+
     public void Configure(EntityTypeBuilder<ExtensionModel> builder)
     {
 
@@ -17,7 +19,8 @@ public class ExtensionModelConfiguration : IEntityTypeConfiguration<ExtensionMod
         builder.HasIndex(e => e.ExtName)
             .HasDatabaseName(tableName.CreateIndexName(true, nameof(ExtensionModel.ExtName))).IsUnique();
         builder.Property(e => e.ExtId).HasColumnName(nameof(ExtensionModel.ExtId).UnCapitalize());
-        builder.Property(e => e.ExtName).HasColumnName(nameof(ExtensionModel.ExtName).UnCapitalize()).HasMaxLength(50);
+        builder.Property(e => e.ExtName).HasColumnName(nameof(ExtensionModel.ExtName).UnCapitalize())
+            .HasMaxLength(ExtensionNameLength);
         builder.Property(e => e.ExtProhibited).HasColumnName(nameof(ExtensionModel.ExtProhibited).UnCapitalize())
             .HasDefaultValue(0);
 

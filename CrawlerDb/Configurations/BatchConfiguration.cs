@@ -7,6 +7,8 @@ namespace CrawlerDb.Configurations;
 
 public class BatchConfiguration : IEntityTypeConfiguration<Batch>
 {
+    public const int BatchNameLength = 50;
+
     public void Configure(EntityTypeBuilder<Batch> builder)
     {
 
@@ -17,7 +19,8 @@ public class BatchConfiguration : IEntityTypeConfiguration<Batch>
         builder.HasIndex(e => e.BatchName).HasDatabaseName(tableName.CreateIndexName(true, nameof(Batch.BatchName)))
             .IsUnique();
         builder.Property(e => e.BatchId).HasColumnName(nameof(Batch.BatchId).UnCapitalize());
-        builder.Property(e => e.BatchName).HasColumnName(nameof(Batch.BatchName).UnCapitalize()).HasMaxLength(50);
+        builder.Property(e => e.BatchName).HasColumnName(nameof(Batch.BatchName).UnCapitalize())
+            .HasMaxLength(BatchNameLength);
         builder.Property(e => e.IsOpen).HasColumnName(nameof(Batch.IsOpen).UnCapitalize()).HasDefaultValue(0);
         builder.Property(e => e.AutoCreateNextPart).HasColumnName(nameof(Batch.AutoCreateNextPart).UnCapitalize())
             .HasDefaultValue(0);

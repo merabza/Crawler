@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
+using CrawlerDb.Configurations;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
 using DoCrawler.Models;
@@ -479,18 +480,27 @@ public sealed class BatchPartRunner
         if (myUri == null)
             return null;
 
-        var host = myUri.Host;
+        var host = myUri.Host.Truncate(HostModelConfiguration.HostNameLength);
+        if (string.IsNullOrWhiteSpace(host))
+            host = "InvalidHostName";
+        
         var absolutePath = myUri.AbsolutePath;
-        var extension = Path.GetExtension(absolutePath);
-        var scheme = myUri.Scheme;
-        if (extension == "")
+        
+        var extension = Path.GetExtension(absolutePath).Truncate(ExtensionModelConfiguration.ExtensionNameLength);
+        if (string.IsNullOrWhiteSpace(extension))
             extension = "NoExtension";
+
+        var scheme = myUri.Scheme.Truncate(SchemeModelConfiguration.SchemeNameLength);
+        if (string.IsNullOrWhiteSpace(scheme))
+            scheme = "InvalidSchemeName";
 
         var hostModel = TrySaveHostName(host);
         var extensionModel = TrySaveExtension(extension);
         var schemeModel = TrySaveScheme(scheme);
 
-        var checkedUri = HttpUtility.UrlDecode(myUri.AbsoluteUri);
+        var checkedUri = HttpUtility.UrlDecode(myUri.AbsoluteUri).Truncate(UrlModelConfiguration.TermTextLength);
+        if (string.IsNullOrWhiteSpace(checkedUri))
+            checkedUri = "InvalidUri";
 
         var urlHashCode = checkedUri.GetDeterministicHashCode();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CrawlerDb.Configurations;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
 using DoCrawler.Models;
@@ -109,12 +110,19 @@ public sealed class CrawlerRunner
             return null;
         }
 
+        var newBatchName = _taskName.Truncate(BatchConfiguration.BatchNameLength);
+        if (newBatchName is null)
+        {
+            _logger.LogError("Invalid task name for new batch");
+            return null;
+        }
+
         //მოიძებნოს ბაზაში Batch სახელით _taskName
         //თუ არ არსებობს Batch სახელით _taskName, შეიქმნას IsOpen=false, AutoCreateNextPart=false
         var batch = _repository.GetBatchByName(_taskName);
         if (batch == null)
         {
-            batch = _repository.CreateBatch(new Batch(_taskName, false, false));
+            batch = _repository.CreateBatch(new Batch(newBatchName, false, false));
             _repository.SaveChanges();
         }
 
@@ -129,7 +137,8 @@ public sealed class CrawlerRunner
 
         _repository.SaveChanges();
 
-        _logger.LogInformation("Crawling for batch {0}", batch.BatchName);
+        var batchName = batch.BatchName;
+        _logger.LogInformation("Crawling for batch {batchName}", batchName);
 
         return batch;
     }
