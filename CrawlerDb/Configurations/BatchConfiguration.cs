@@ -11,7 +11,6 @@ public class BatchConfiguration : IEntityTypeConfiguration<Batch>
 
     public void Configure(EntityTypeBuilder<Batch> builder)
     {
-
         var tableName = nameof(Batch).Pluralize();
 
         builder.HasKey(e => e.BatchId);
@@ -24,6 +23,5 @@ public class BatchConfiguration : IEntityTypeConfiguration<Batch>
         builder.Property(e => e.IsOpen).HasColumnName(nameof(Batch.IsOpen).UnCapitalize()).HasDefaultValue(0);
         builder.Property(e => e.AutoCreateNextPart).HasColumnName(nameof(Batch.AutoCreateNextPart).UnCapitalize())
             .HasDefaultValue(0);
-
     }
 }

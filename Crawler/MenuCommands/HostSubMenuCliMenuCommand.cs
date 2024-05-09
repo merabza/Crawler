@@ -9,8 +9,9 @@ public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
     private readonly Cruder _cruder;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public HostSubMenuCliMenuCommand(Cruder cruder, string hostName, string parentMenuName, bool nameIsStatus = false) : base(
-        hostName, parentMenuName, false, EStatusView.Brackets, nameIsStatus)
+    public HostSubMenuCliMenuCommand(Cruder cruder, string hostName, string parentMenuName, bool nameIsStatus = false) :
+        base(
+            hostName, parentMenuName, false, EStatusView.Brackets, nameIsStatus)
     {
         _cruder = cruder;
     }

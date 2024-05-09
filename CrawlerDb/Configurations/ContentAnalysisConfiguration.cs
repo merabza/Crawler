@@ -9,13 +9,13 @@ public class ContentAnalysisConfiguration : IEntityTypeConfiguration<ContentAnal
 {
     public void Configure(EntityTypeBuilder<ContentAnalysis> builder)
     {
-
         var tableName = nameof(ContentAnalysis).Pluralize();
 
         builder.HasKey(e => e.CaId);
         builder.ToTable(tableName.UnCapitalize());
         builder.HasIndex(e => new { e.BatchPartId, e.UrlId }).HasDatabaseName(
-            tableName.CreateIndexName(true, nameof(ContentAnalysis.BatchPartId), nameof(ContentAnalysis.UrlId))).IsUnique();
+                tableName.CreateIndexName(true, nameof(ContentAnalysis.BatchPartId), nameof(ContentAnalysis.UrlId)))
+            .IsUnique();
         builder.Property(e => e.CaId).HasColumnName(nameof(ContentAnalysis.CaId).UnCapitalize());
         builder.Property(e => e.BatchPartId).HasColumnName(nameof(ContentAnalysis.BatchPartId).UnCapitalize());
         builder.Property(e => e.UrlId).HasColumnName(nameof(ContentAnalysis.UrlId).UnCapitalize());
@@ -28,6 +28,5 @@ public class ContentAnalysisConfiguration : IEntityTypeConfiguration<ContentAnal
 
         builder.HasOne(d => d.UrlNavigation).WithMany(p => p.ContentsAnalysis).HasForeignKey(d => d.UrlId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(UrlModel)));
-
     }
 }

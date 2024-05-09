@@ -48,7 +48,6 @@ public sealed class CrawlerRunner
     {
         try
         {
-
             var (batch, batchPart) = PrepareBatchPart(startBatch);
 
             if (batch is null)
@@ -62,7 +61,7 @@ public sealed class CrawlerRunner
                 {
                     createNewPart = IsCreateNewPartAllowed(batch);
                     if (!createNewPart)
-                            return;
+                        return;
                 }
 
                 if (createNewPart)
@@ -72,8 +71,9 @@ public sealed class CrawlerRunner
                 }
 
                 if (batchPart is not null)
-                    batchPartRunner = new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
-                
+                    batchPartRunner =
+                        new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
+
                 if (batchPartRunner is null)
                 {
                     _logger.LogError("batchPartRunner is null");
@@ -169,7 +169,7 @@ public sealed class CrawlerRunner
             BatchPartRunner? batchPartRunner = null;
             if (batchPart is not null)
                 batchPartRunner = new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
-                
+
             if (batchPartRunner is null)
             {
                 _logger.LogError("batchPartRunner is null");
@@ -194,7 +194,7 @@ public sealed class CrawlerRunner
 
     private static bool IsCreateNewPartAllowed(Batch batch)
     {
-        if (batch.AutoCreateNextPart) 
+        if (batch.AutoCreateNextPart)
             return true;
 
         return Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?",
@@ -212,13 +212,10 @@ public sealed class CrawlerRunner
 
         var batch = startBatch ?? GetBatchByTaskName();
 
-        if (batch is not null) 
+        if (batch is not null)
             return (batch, _repository.GetOpenedBatchPart(batch.BatchId));
 
         StShared.WriteErrorLine("batch is null", true);
         return (null, null);
-
     }
-
-
 }

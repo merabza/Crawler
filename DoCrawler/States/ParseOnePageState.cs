@@ -23,7 +23,8 @@ public sealed class ParseOnePageState : State
     private Uri? _currentUri;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public ParseOnePageState(ILogger logger, ParseOnePageParameters par, string content, UrlModel url) : base(logger, "Parse One Page")
+    public ParseOnePageState(ILogger logger, ParseOnePageParameters par, string content, UrlModel url) : base(logger,
+        "Parse One Page")
     {
         _par = par;
         _content = content;
@@ -161,7 +162,7 @@ public sealed class ParseOnePageState : State
                 return;
 
             var lastPart = strTestParts[^1];
-            if (lastPart == string.Empty) 
+            if (lastPart == string.Empty)
                 return;
 
             AddStatementStart();
@@ -222,26 +223,23 @@ public sealed class ParseOnePageState : State
     private void ParseWords(string context)
     {
         //ცარელა სტრიქონს არ განვიხილავთ
-        if ( context == string.Empty)
+        if (context == string.Empty)
             return;
         //ყველა ის პუნქტუაციის ნიშანი, რომელიც არ შეიძლება აღიქმებოდეს სიტყვის ნაწილად
         Regex re = new(_par.WordDelimiterRegex);
         var strTestParts = re.Split(context);
         if (strTestParts.Length < 3)
-        {
             AddWord(strTestParts[0]);
-        }
         else
-        {
-            for (var i = 0; i < strTestParts.Length; i += 3) 
+            for (var i = 0; i < strTestParts.Length; i += 3)
                 AddWord(strTestParts[i]);
-            //AddWord(strTestParts[^1]);
-        }
+        //AddWord(strTestParts[^1]);
     }
 
     private void AddWord(string word)
     {
-        /*word.Contains("ახლა")*/;
+        /*word.Contains("ახლა")*/
+        ;
         //ესე დროებით გავაკეთე, რომ არ შემეშალოს ხელი სხვა ანომალიების აღმოჩენაში
         //შემდგომში აკრძალული ან დასაშვები სიმბოლოების სია უნდა გაკეთდეს და მას უნდა დავეყრდნოთ
         var trimmedWord = word.Trim('\x200B');
@@ -265,7 +263,7 @@ public sealed class ParseOnePageState : State
         //ელექტრონული ფოსტის მისამართების შენახვა არ გვჭირდება
         //ასევე არ გვჭირდება ისეთი ლინკების შენახვა, რომელიც მხოლოდ ფრაგმენტს აღნიშნავს
         if (uriCandidate.StartsWith("mailto:") || uriCandidate.StartsWith('#'))
-            return; 
+            return;
 
         var strUri = uriCandidate.Trim('"', '\'', '#', ' ', '>');
         try
@@ -284,7 +282,7 @@ public sealed class ParseOnePageState : State
                 newUri = UriFabric.GetUri(strUri);
             }
 
-            if (newUri == null) 
+            if (newUri == null)
                 return;
 
             if (newUri.Scheme != Uri.UriSchemeHttp && newUri.Scheme != Uri.UriSchemeHttps)
@@ -373,5 +371,4 @@ public sealed class ParseOnePageState : State
 
         return "?" + newQuery;
     }
-
 }

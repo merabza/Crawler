@@ -49,14 +49,11 @@ public sealed class BatchPartRunner
         //_urlGraphNodes.Clear();
         var hostsByBatches = _repository.GetHostStartUrlNamesByBatch(batch);
         foreach (var hostName in hostsByBatches)
-        {
             //შევამოწმოთ და თუ არ არსებობს შევქმნათ შემდეგი 2 ჩანაწერი მოსაქაჩი გვერდების სიაში:
             //1. {_hostName}
             //2. {_hostName}robots.txt
             TrySaveUrl($"{hostName}/", 0, _batchPart.BpId);
-            //TrySaveUrl($"{host}/robots.txt", 0, _batchPart.BpId);
-        }
-
+        //TrySaveUrl($"{host}/robots.txt", 0, _batchPart.BpId);
         foreach (var uri in startPoints.Select(UriFabric.GetUri).Where(x => x is not null))
             TrySaveUrl(uri!.AbsoluteUri, 0, _batchPart.BpId);
 
@@ -84,7 +81,7 @@ public sealed class BatchPartRunner
     private bool LoadUrls(BatchPart batchPart)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Loading next part Urls...");
-        
+
         CountStatistics();
 
         GetPagesState getPagesState = new(_logger, _repository, _par, batchPart);
@@ -102,7 +99,8 @@ public sealed class BatchPartRunner
 
         var termsCount = _repository.GetTermsCount();
 
-        StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] Urls {loadedUrlsCount}-{urlsCount} terms {termsCount}");
+        StShared.ConsoleWriteInformationLine(_logger, true,
+            $"[{DateTime.Now}] Urls {loadedUrlsCount}-{urlsCount} terms {termsCount}");
     }
 
     private (HttpStatusCode, string?) GetOnePageContent(Uri uri)
@@ -145,7 +143,6 @@ public sealed class BatchPartRunner
             var text = reader.ReadToEnd();
 
             return (response.StatusCode, text);
-
         }
         catch
         {
@@ -416,7 +413,6 @@ public sealed class BatchPartRunner
                 var urlGraphNode = _repository.GetUrlGraphEntry(fromUrlPageId, urlData.Url.UrlId, batchPartId);
                 if (urlGraphNode is null)
                     _urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
-
             }
 
             return urlData.Url;
@@ -483,9 +479,9 @@ public sealed class BatchPartRunner
         var host = myUri.Host.Truncate(HostModelConfiguration.HostNameLength);
         if (string.IsNullOrWhiteSpace(host))
             host = "InvalidHostName";
-        
+
         var absolutePath = myUri.AbsolutePath;
-        
+
         var extension = Path.GetExtension(absolutePath).Truncate(ExtensionModelConfiguration.ExtensionNameLength);
         if (string.IsNullOrWhiteSpace(extension))
             extension = "NoExtension";
@@ -567,7 +563,6 @@ public sealed class BatchPartRunner
         ProcData.Instance.ReduceCache();
 
         CountStatistics();
-
     }
 
     private void ProcessPage(UrlModel urlForProcess, BatchPart batchPart)

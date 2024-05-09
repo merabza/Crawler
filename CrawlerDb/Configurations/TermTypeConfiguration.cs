@@ -9,7 +9,6 @@ public class TermTypeConfiguration : IEntityTypeConfiguration<TermType>
 {
     public void Configure(EntityTypeBuilder<TermType> builder)
     {
-
         var tableName = nameof(TermType).Pluralize();
 
         builder.HasKey(e => e.TtId);
@@ -19,6 +18,5 @@ public class TermTypeConfiguration : IEntityTypeConfiguration<TermType>
         builder.Property(e => e.TtId).HasColumnName(nameof(TermType.TtId).UnCapitalize());
         builder.Property(e => e.TtKey).HasColumnName(nameof(TermType.TtKey).UnCapitalize()).HasMaxLength(50);
         builder.Property(e => e.TtName).HasColumnName(nameof(TermType.TtName).UnCapitalize()).HasMaxLength(50);
-
     }
 }

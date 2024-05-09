@@ -11,7 +11,6 @@ public class TermConfiguration : IEntityTypeConfiguration<Term>
 
     public void Configure(EntityTypeBuilder<Term> builder)
     {
-
         var tableName = nameof(Term).Pluralize();
 
         builder.HasKey(e => e.TrmId);

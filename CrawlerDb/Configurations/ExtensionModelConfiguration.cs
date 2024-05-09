@@ -11,7 +11,6 @@ public class ExtensionModelConfiguration : IEntityTypeConfiguration<ExtensionMod
 
     public void Configure(EntityTypeBuilder<ExtensionModel> builder)
     {
-
         const string tableName = "Extensions";
 
         builder.HasKey(e => e.ExtId);
@@ -23,6 +22,5 @@ public class ExtensionModelConfiguration : IEntityTypeConfiguration<ExtensionMod
             .HasMaxLength(ExtensionNameLength);
         builder.Property(e => e.ExtProhibited).HasColumnName(nameof(ExtensionModel.ExtProhibited).UnCapitalize())
             .HasDefaultValue(0);
-
     }
 }

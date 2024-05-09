@@ -11,7 +11,6 @@ public class SchemeModelConfiguration : IEntityTypeConfiguration<SchemeModel>
 
     public void Configure(EntityTypeBuilder<SchemeModel> builder)
     {
-
         const string tableName = "Schemes";
 
         builder.HasKey(e => e.SchId);

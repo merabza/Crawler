@@ -250,7 +250,8 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void SaveRobotsTxtToBase(int batchPartId, int schemeId, int hostId, string robotsTxt)
     {
-        var robot = _context.Robots.SingleOrDefault(x => x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId);
+        var robot = _context.Robots.SingleOrDefault(x =>
+            x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId);
         if (robot is null)
         {
             robot = new Robot(batchPartId, schemeId, hostId) { RobotsTxt = robotsTxt };

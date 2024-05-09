@@ -4,10 +4,6 @@ namespace RobotsTxt.Entities;
 
 public class AccessAllowRule : Rule
 {
-    public string Path { get; }
-    public bool Allowed { get; private set; }
-
-    
     // ReSharper disable once ConvertToPrimaryConstructor
     public AccessAllowRule(string userAgent, string path, bool allowed, int order) : base(userAgent, order)
     {
@@ -15,24 +11,19 @@ public class AccessAllowRule : Rule
         Allowed = allowed;
     }
 
+    public string Path { get; }
+    public bool Allowed { get; private set; }
+
     public static AccessAllowRule Create(string userAgent, string field, string path, int order)
     {
         if (!string.IsNullOrEmpty(path))
         {
             // get rid of the preceding * wild char
-            while (path.StartsWith("*", StringComparison.Ordinal))
-            {
-                path = path[1..];
-            }
-            if (!path.StartsWith('/'))
-            {
-                path = "/" + path;
-            }
+            while (path.StartsWith("*", StringComparison.Ordinal)) path = path[1..];
+            if (!path.StartsWith('/')) path = "/" + path;
         }
+
         var allowed = field.ToLowerInvariant().Equals("allow");
         return new AccessAllowRule(userAgent, path, allowed, order);
     }
-
-
-
 }

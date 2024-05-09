@@ -11,7 +11,6 @@ public class HostModelConfiguration : IEntityTypeConfiguration<HostModel>
 
     public void Configure(EntityTypeBuilder<HostModel> builder)
     {
-
         const string tableName = "Hosts";
 
         builder.HasKey(e => e.HostId);

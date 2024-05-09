@@ -9,7 +9,6 @@ public class BatchPartConfiguration : IEntityTypeConfiguration<BatchPart>
 {
     public void Configure(EntityTypeBuilder<BatchPart> builder)
     {
-
         var tableName = nameof(BatchPart).Pluralize();
 
         builder.HasKey(e => e.BpId);
@@ -24,6 +23,5 @@ public class BatchPartConfiguration : IEntityTypeConfiguration<BatchPart>
 
         builder.HasOne(d => d.BatchNavigation).WithMany(p => p.BatchParts).HasForeignKey(d => d.BatchId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(Batch)));
-
     }
 }

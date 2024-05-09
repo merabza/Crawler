@@ -22,6 +22,7 @@ public sealed class HostByBatch
     public int HbbId { get; set; }
     public int BatchId { get; set; }
     public int SchemeId { get; set; }
+
     public int HostId { get; set; }
     //public string? RobotsTxt { get; set; }
 

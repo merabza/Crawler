@@ -11,13 +11,13 @@ public sealed class ProcData : IDisposable
     private const int MaxCacheRecordCount = 10000;
     private readonly ConcurrentDictionary<string, ExtensionModel> _extensionsCache = new();
     private readonly ConcurrentDictionary<string, HostModel> _hostsCache = new();
+
+    //private readonly ConcurrentDictionary<int, List<UrlAllowModel>> _urlAllowsCache = new();
+    private readonly ConcurrentDictionary<int, Robots?> _robots = new();
     private readonly ConcurrentDictionary<string, SchemeModel> _schemesCache = new();
     private readonly ConcurrentDictionary<string, Term> _termCache = new();
     private readonly ConcurrentDictionary<string, TermType> _termTypesCache = new();
     private readonly ConcurrentDictionary<int, UrlModel> _urlCache = new();
-
-    //private readonly ConcurrentDictionary<int, List<UrlAllowModel>> _urlAllowsCache = new();
-    private readonly ConcurrentDictionary<int, Robots?> _robots = new();
 
     public readonly ConcurrentQueue<UrlModel> UrlsQueue = new();
 
@@ -25,7 +25,6 @@ public sealed class ProcData : IDisposable
 
     private ProcData()
     {
-
     }
 
     public UrlModel? GetUrlByHashCode(int hashCode)
@@ -156,6 +155,16 @@ public sealed class ProcData : IDisposable
         _termCache.TryAdd(term.TermText, term);
     }
 
+    public void SetRobotsCache(int hostId, Robots? robots)
+    {
+        _robots.AddOrUpdate(hostId, robots, (_, _) => robots);
+    }
+
+    public bool IsHostCachedInRobotsDictionary(int hostId)
+    {
+        return _robots.ContainsKey(hostId);
+    }
+
     #region Singletone
 
     private static ProcData? _instance;
@@ -218,14 +227,4 @@ public sealed class ProcData : IDisposable
     }
 
     #endregion
-
-    public void SetRobotsCache(int hostId, Robots? robots)
-    {
-        _robots.AddOrUpdate(hostId, robots, (_, _) => robots);
-    }
-
-    public bool IsHostCachedInRobotsDictionary(int hostId)
-    {
-        return _robots.ContainsKey(hostId);
-    }
 }

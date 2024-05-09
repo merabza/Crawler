@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RobotsTxt.Entities;
 using RobotsTxt.Enums;
@@ -8,49 +8,13 @@ namespace RobotsTxt;
 
 public class Robots : IRobotsParser
 {
-
-    ///// <summary>
-    ///// Gets the raw contents of the robots.txt file.
-    ///// </summary>
-    //public string Raw { get; private set; }
-
-    public List<Sitemap> Sitemaps { get; set; }
-
     /// <summary>
-    /// Indicates whether the file has any lines which can't be understood.
-    /// </summary>
-    public bool Malformed { get; set; }
-
-    /// <summary>
-    /// Indicates whether the file has any rules.
-    /// </summary>
-    public bool HasRules { get; set; }
-
-    /// <summary>
-    /// Indicates whether there are any disallowed paths.
-    /// </summary>
-    public bool IsAnyPathDisallowed { get; set; }
-
-    /// <summary>
-    /// How to support the Allow directive. Defaults to <see cref="RobotsTxt.Enums.AllowRuleImplementation.MoreSpecific"/>.
-    /// </summary>
-    public AllowRuleImplementation AllowRuleImplementation { get; set; }
-
-    // We could just have a List<Rules>, since Rule is the base class for AccessRule & CrawlDelayRule... 
-    // But IsPathAllowed() and CrawlDelay() functions need these specific collections everytime they're called, so
-    // it saves us some time to have them pre-populated instead of extracting these lists from a List<Rule> everytime those functions are called.
-    public List<AccessAllowRule> GlobalAccessRules { get; set; }
-    public List<AccessAllowRule> SpecificAccessRules { get; set; }
-    public List<CrawlDelayRule> CrawlDelayRules { get; set; }
-
-    /// <summary>
-    /// Gets the list of sitemaps declared in the file.
+    ///     Gets the list of sitemaps declared in the file.
     /// </summary>
 
     //private readonly bool _malformed;
     //private readonly bool _isAnyPathDisallowed;
     //private readonly bool _hasRules;
-
 
     //List<Sitemap> sitemaps, bool malformed, 
     public Robots(List<AccessAllowRule> globalAccessRules, List<AccessAllowRule> specificAccessRules,
@@ -67,13 +31,50 @@ public class Robots : IRobotsParser
         AllowRuleImplementation = allowRuleImplementation;
     }
 
+    ///// <summary>
+    ///// Gets the raw contents of the robots.txt file.
+    ///// </summary>
+    //public string Raw { get; private set; }
+
+    public List<Sitemap> Sitemaps { get; set; }
+
     /// <summary>
-    /// Checks if the given user-agent can access the given relative path.
+    ///     Indicates whether the file has any lines which can't be understood.
+    /// </summary>
+    public bool Malformed { get; set; }
+
+    /// <summary>
+    ///     Indicates whether the file has any rules.
+    /// </summary>
+    public bool HasRules { get; set; }
+
+    /// <summary>
+    ///     Indicates whether there are any disallowed paths.
+    /// </summary>
+    public bool IsAnyPathDisallowed { get; set; }
+
+    /// <summary>
+    ///     How to support the Allow directive. Defaults to <see cref="RobotsTxt.Enums.AllowRuleImplementation.MoreSpecific" />
+    ///     .
+    /// </summary>
+    public AllowRuleImplementation AllowRuleImplementation { get; set; }
+
+    // We could just have a List<Rules>, since Rule is the base class for AccessRule & CrawlDelayRule... 
+    // But IsPathAllowed() and CrawlDelay() functions need these specific collections everytime they're called, so
+    // it saves us some time to have them pre-populated instead of extracting these lists from a List<Rule> everytime those functions are called.
+    public List<AccessAllowRule> GlobalAccessRules { get; set; }
+    public List<AccessAllowRule> SpecificAccessRules { get; set; }
+    public List<CrawlDelayRule> CrawlDelayRules { get; set; }
+
+    /// <summary>
+    ///     Checks if the given user-agent can access the given relative path.
     /// </summary>
     /// <param name="userAgent">User agent string.</param>
     /// <param name="path">Relative path.</param>
-    /// <exception cref="System.ArgumentException">Thrown when userAgent parameter is null, 
-    /// empty or consists only of white-space characters.</exception>
+    /// <exception cref="System.ArgumentException">
+    ///     Thrown when userAgent parameter is null,
+    ///     empty or consists only of white-space characters.
+    /// </exception>
     public bool IsPathAllowed(string userAgent, string path)
     {
         if (string.IsNullOrWhiteSpace(userAgent))
@@ -119,12 +120,14 @@ public class Robots : IRobotsParser
     }
 
     /// <summary>
-    /// Gets the number of milliseconds to wait between successive requests for this robot.
+    ///     Gets the number of milliseconds to wait between successive requests for this robot.
     /// </summary>
     /// <param name="userAgent">User agent string.</param>
     /// <returns>Returns zero if there's not any matching crawl-delay rules for this robot.</returns>
-    /// <exception cref="System.ArgumentException">Thrown when userAgent parameter is null, 
-    /// empty or consists only of white-space characters.</exception>
+    /// <exception cref="System.ArgumentException">
+    ///     Thrown when userAgent parameter is null,
+    ///     empty or consists only of white-space characters.
+    /// </exception>
     public long CrawlDelay(string userAgent)
     {
         if (string.IsNullOrWhiteSpace(userAgent))
@@ -161,12 +164,10 @@ public class Robots : IRobotsParser
                 case '*':
                 {
                     for (var j = i; j < path.Length; j++)
-                    {
                         // When the '*' wildcard is not the last char,
                         // recursively call the method to see if the part of rulePath after '*' and the rest of the path matches.
                         if (IsPathMatch(path[j..], rulePath[(i + 1)..]))
                             return true;
-                    }
 
                     // There's no match between the rest of the paths...
                     return false;
@@ -186,16 +187,15 @@ public class Robots : IRobotsParser
 
     private static string NormalizePath(string path)
     {
-        if (string.IsNullOrWhiteSpace(path)) 
+        if (string.IsNullOrWhiteSpace(path))
             path = "/";
 
-        if (!path.StartsWith('/') ) 
+        if (!path.StartsWith('/'))
             path = "/" + path;
 
-        while (path.Contains("//")) 
+        while (path.Contains("//"))
             path = path.Replace("//", "/");
 
         return path;
     }
-
 }

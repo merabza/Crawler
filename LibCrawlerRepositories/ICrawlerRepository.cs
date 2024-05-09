@@ -57,7 +57,9 @@ public interface ICrawlerRepository
     void EditTermByUrl(TermByUrl termByUrl, Term term);
     ContentAnalysis? GetContentAnalysis(int batchPartBpId, int urlId);
     void DeleteContentAnalysis(ContentAnalysis contentAnalysis);
+
     UrlModel UpdateUrlData(UrlModel urlForProcess);
+
     //void ClearUrlAllows(int hostId);
     //UrlAllowModel AddUrlAllow(int hostId, string patternText, bool isAllowed);
     string? LoadRobotsFromBase(int batchPartId, int schemeId, int hostId);

@@ -30,9 +30,9 @@ public sealed class CrawlerDbContext : DbContext
     public DbSet<TermByUrl> TermsByUrls => Set<TermByUrl>();
     public DbSet<TermType> TermTypes => Set<TermType>();
     public DbSet<UrlGraphNode> UrlGraphNodes => Set<UrlGraphNode>();
+
     public DbSet<UrlModel> Urls => Set<UrlModel>();
     //public DbSet<UrlAllowModel> UrlAllows => Set<UrlAllowModel>();
-    
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

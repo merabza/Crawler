@@ -9,7 +9,6 @@ public class HostByBatchConfiguration : IEntityTypeConfiguration<HostByBatch>
 {
     public void Configure(EntityTypeBuilder<HostByBatch> builder)
     {
-
         const string tableName = "HostsByBatches";
 
         builder.HasKey(e => e.HbbId);
@@ -29,6 +28,5 @@ public class HostByBatchConfiguration : IEntityTypeConfiguration<HostByBatch>
             .HasConstraintName(tableName.CreateConstraintName(nameof(SchemeModel)));
         builder.HasOne(d => d.HostNavigation).WithMany(p => p.HostsByBatches).HasForeignKey(d => d.HostId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(HostModel)));
-
     }
 }

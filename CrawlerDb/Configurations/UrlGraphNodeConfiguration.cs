@@ -9,7 +9,6 @@ public class UrlGraphNodeConfiguration : IEntityTypeConfiguration<UrlGraphNode>
 {
     public void Configure(EntityTypeBuilder<UrlGraphNode> builder)
     {
-
         var tableName = nameof(UrlGraphNode).Pluralize();
 
         builder.HasKey(e => e.UgnId);
@@ -33,6 +32,5 @@ public class UrlGraphNodeConfiguration : IEntityTypeConfiguration<UrlGraphNode>
         builder.HasOne(d => d.GotUrlNavigation).WithMany(p => p.UrlGraphNodesGot).HasForeignKey(d => d.GotUrlId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName(tableName.CreateConstraintName(nameof(UrlGraphNode), nameof(UrlGraphNode.GotUrlId)));
-
     }
 }

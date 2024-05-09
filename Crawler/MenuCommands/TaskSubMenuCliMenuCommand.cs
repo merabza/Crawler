@@ -59,7 +59,8 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 
             if (task?.StartPoints != null)
                 foreach (var startPoint in task.StartPoints.OrderBy(o => o))
-                    taskSubMenuSet.AddMenuItem(new StartPointSubMenuCliMenuCommand(_parametersManager, Name, startPoint));
+                    taskSubMenuSet.AddMenuItem(
+                        new StartPointSubMenuCliMenuCommand(_parametersManager, Name, startPoint));
         }
 
         var key = ConsoleKey.Escape.Value().ToLower();

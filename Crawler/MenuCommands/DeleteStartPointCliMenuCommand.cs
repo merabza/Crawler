@@ -14,8 +14,9 @@ public sealed class DeleteStartPointCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public DeleteStartPointCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) : base(
-        "Delete Start Point", taskName)
+    public DeleteStartPointCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) :
+        base(
+            "Delete Start Point", taskName)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;

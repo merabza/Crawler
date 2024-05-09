@@ -52,7 +52,7 @@ public sealed class GetPagesState : State
         Logger.LogInformation("Finish Batch Part");
         _repository.FinishBatchPart(_batchPart);
         _repository.SaveChanges();
-        if (!_batchPart.BatchNavigation.AutoCreateNextPart) 
+        if (!_batchPart.BatchNavigation.AutoCreateNextPart)
             return false;
 
         _repository.TryCreateNewPart(_batchPart.BatchId);

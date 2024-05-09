@@ -67,7 +67,6 @@ public static class RobotsFabric
                     }
 
                     foreach (var userAgent in userAgents)
-                    {
                         if (robotsLine is { Type: LineType.AccessRule, Field: not null, Value: not null })
                         {
                             var accessRule = AccessAllowRule.Create(userAgent, robotsLine.Field, robotsLine.Value,
@@ -82,8 +81,9 @@ public static class RobotsFabric
                                 isAnyPathDisallowed = true;
                         }
                         else
+                        {
                             crawlDelayRules.Add(new CrawlDelayRule(userAgent, robotsLine, ++ruleCount));
-                    }
+                        }
 
                     hasRules = true;
                     continue;

@@ -9,7 +9,6 @@ public class RobotConfiguration : IEntityTypeConfiguration<Robot>
 {
     public void Configure(EntityTypeBuilder<Robot> builder)
     {
-
         var tableName = nameof(Robot).Pluralize();
 
         builder.HasKey(e => e.RbtId);
@@ -33,6 +32,5 @@ public class RobotConfiguration : IEntityTypeConfiguration<Robot>
             .HasConstraintName(tableName.CreateConstraintName(nameof(SchemeModel)));
         builder.HasOne(d => d.HostNavigation).WithMany(p => p.Robots).HasForeignKey(d => d.HostId)
             .HasConstraintName(tableName.CreateConstraintName(nameof(HostModel)));
-
     }
 }

@@ -10,8 +10,9 @@ public class Sitemap
     }
 
     /// <summary>
-    /// The URL to the sitemap.
-    /// WARNING : This property could be null if the file declared a relative path to the sitemap rather than absolute, which is the standard.
+    ///     The URL to the sitemap.
+    ///     WARNING : This property could be null if the file declared a relative path to the sitemap rather than absolute,
+    ///     which is the standard.
     /// </summary>
     public Uri Url { get; private set; }
 
