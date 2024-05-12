@@ -38,7 +38,7 @@ public sealed class Crawler : CliAppLoop
     }
 
 
-    protected override bool BuildMainMenu()
+    protected override void BuildMainMenu()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -95,8 +95,6 @@ public sealed class Crawler : CliAppLoop
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
         mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
-
-        return true;
     }
 
 
