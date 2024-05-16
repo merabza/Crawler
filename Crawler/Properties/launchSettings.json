@@ -1,8 +1,0 @@
-{
-    "profiles": {
-        "Crawler": {
-            "commandName": "Project",
-            "commandLineArgs": "--use \"D:\\1WorkSecurity\\Crawler\\Crawler.json\""
-        }
-    }
-}
