@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using CrawlerDb.Configurations;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
@@ -15,17 +16,18 @@ namespace DoCrawler;
 public sealed class CrawlerRunner
 {
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly CrawlerParameters _par;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly ICrawlerRepository _repository;
     private readonly TaskModel? _task;
     private readonly string? _taskName;
 
-    public CrawlerRunner(ILogger logger, ICrawlerRepository repository, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, string taskName,
-        TaskModel task)
+    public CrawlerRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel task)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _repository = repository;
         _par = par;
         _parseOnePageParameters = parseOnePageParameters;
@@ -33,10 +35,11 @@ public sealed class CrawlerRunner
         _task = task;
     }
 
-    public CrawlerRunner(ILogger logger, ICrawlerRepository repository, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters)
+    public CrawlerRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _repository = repository;
         _par = par;
         _parseOnePageParameters = parseOnePageParameters;
@@ -46,59 +49,59 @@ public sealed class CrawlerRunner
 
     public void Run(Batch? startBatch = null)
     {
-        try
+        //try
+        //{
+        var (batch, batchPart) = PrepareBatchPart(startBatch);
+
+        if (batch is null)
+            return;
+
+        BatchPartRunner? batchPartRunner = null;
+        while (true)
         {
-            var (batch, batchPart) = PrepareBatchPart(startBatch);
-
-            if (batch is null)
-                return;
-
-            BatchPartRunner? batchPartRunner = null;
-            while (true)
+            var createNewPart = false;
+            if (batchPart == null)
             {
-                var createNewPart = false;
-                if (batchPart == null)
-                {
-                    createNewPart = IsCreateNewPartAllowed(batch);
-                    if (!createNewPart)
-                        return;
-                }
-
-                if (createNewPart)
-                {
-                    batchPart = _repository.TryCreateNewPart(batch.BatchId);
-                    _repository.SaveChanges();
-                }
-
-                if (batchPart is not null)
-                    batchPartRunner =
-                        new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
-
-                if (batchPartRunner is null)
-                {
-                    _logger.LogError("batchPartRunner is null");
+                createNewPart = IsCreateNewPartAllowed(batch);
+                if (!createNewPart)
                     return;
-                }
-
-                if (createNewPart)
-                    batchPartRunner.InitBachPart(_task?.StartPoints ?? [], batch);
-
-                batchPartRunner.RunBatchPart();
-
-                batchPart = null;
             }
+
+            if (createNewPart)
+            {
+                batchPart = _repository.TryCreateNewPart(batch.BatchId);
+                _repository.SaveChanges();
+            }
+
+            if (batchPart is not null)
+                batchPartRunner = new BatchPartRunner(_logger, _httpClientFactory, _repository, _par,
+                    _parseOnePageParameters, batchPart);
+
+            if (batchPartRunner is null)
+            {
+                _logger.LogError("batchPartRunner is null");
+                return;
+            }
+
+            if (createNewPart)
+                batchPartRunner.InitBachPart(_task?.StartPoints ?? [], batch);
+
+            batchPartRunner.RunBatchPart();
+
+            batchPart = null;
         }
-        catch (DataInputEscapeException)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Escape... ");
-            StShared.Pause();
-        }
-        catch (Exception e)
-        {
-            StShared.WriteException(e, true);
-            throw;
-        }
+        //}
+        //catch (DataInputEscapeException)
+        //{
+        //    Console.WriteLine();
+        //    Console.WriteLine("Escape... ");
+        //    StShared.Pause();
+        //}
+        //catch (Exception e)
+        //{
+        //    StShared.WriteException(e, true);
+        //    throw;
+        //}
     }
 
 
@@ -168,7 +171,8 @@ public sealed class CrawlerRunner
 
             BatchPartRunner? batchPartRunner = null;
             if (batchPart is not null)
-                batchPartRunner = new BatchPartRunner(_logger, _repository, _par, _parseOnePageParameters, batchPart);
+                batchPartRunner = new BatchPartRunner(_logger, _httpClientFactory, _repository, _par,
+                    _parseOnePageParameters, batchPart);
 
             if (batchPartRunner is null)
             {

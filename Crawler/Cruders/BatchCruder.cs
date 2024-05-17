@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using CliMenu;
 using CliParameters;
 using CliParameters.CliMenuCommands;
@@ -18,12 +19,15 @@ public sealed class BatchCruder : Cruder
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly CrawlerParameters _par;
 
-    public BatchCruder(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
-        CrawlerParameters par) : base("Batch", "Batches")
+    public BatchCruder(ILogger logger, IHttpClientFactory httpClientFactory,
+        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par) : base("Batch",
+        "Batches")
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
         _par = par;
 
@@ -104,7 +108,8 @@ public sealed class BatchCruder : Cruder
         var batches = batchesList.ToDictionary(k => k.BatchName, v => v);
         var batch = batches[recordKey];
 
-        itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _crawlerRepositoryCreatorFabric, _par, batch),
+        itemSubMenuSet.AddMenuItem(
+            new BatchTaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric, _par, batch),
             "Run this batch");
 
         HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFabric, batch);

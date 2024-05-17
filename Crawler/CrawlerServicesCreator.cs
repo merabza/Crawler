@@ -27,5 +27,6 @@ public sealed class CrawlerServicesCreator : ServicesCreator
 
         services.AddScoped<ICrawlerRepository, CrawlerRepository>();
         services.AddSingleton<ICrawlerRepositoryCreatorFabric, CrawlerRepositoryCreatorFabric>();
+        services.AddHttpClient();
     }
 }

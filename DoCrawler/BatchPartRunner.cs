@@ -24,19 +24,20 @@ namespace DoCrawler;
 public sealed class BatchPartRunner
 {
     private readonly BatchPart _batchPart;
-    private readonly HttpClient _client = new();
     private readonly ConsoleFormatter _consoleFormatter = new();
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly CrawlerParameters _par;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly ICrawlerRepository _repository;
     private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public BatchPartRunner(ILogger logger, ICrawlerRepository repository, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
+    public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _repository = repository;
         _par = par;
         _parseOnePageParameters = parseOnePageParameters;
@@ -108,7 +109,9 @@ public sealed class BatchPartRunner
         try
         {
             // ReSharper disable once using
-            using var response = _client.GetAsync(uri).Result;
+            var client = _httpClientFactory.CreateClient();
+            // ReSharper disable once using
+            using var response = client.GetAsync(uri).Result;
 
             return response.IsSuccessStatusCode
                 ? (response.StatusCode, response.Content.ReadAsStringAsync().Result)
@@ -128,7 +131,9 @@ public sealed class BatchPartRunner
         try
         {
             // ReSharper disable once using
-            using var response = _client.GetAsync(uri).Result;
+            var client = _httpClientFactory.CreateClient();
+            // ReSharper disable once using
+            using var response = client.GetAsync(uri).Result;
             if (!response.IsSuccessStatusCode)
                 return (response.StatusCode, null);
 

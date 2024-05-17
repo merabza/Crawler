@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net.Http;
 using CliMenu;
 using CrawlerDb.Models;
 using DoCrawler;
@@ -17,13 +18,15 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
 
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly CrawlerParameters _par;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public BatchTaskCliMenuCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
-        CrawlerParameters par, Batch batch)
+    public BatchTaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
+        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par, Batch batch)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
         _par = par;
         _batch = batch;
@@ -49,7 +52,7 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
             return;
         }
 
-        CrawlerRunner crawlerRunner = new(_logger, crawlerRepository, _par, par);
+        CrawlerRunner crawlerRunner = new(_logger, _httpClientFactory, crawlerRepository, _par, par);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();

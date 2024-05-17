@@ -1,5 +1,4 @@
-﻿using System;
-using CliMenu;
+﻿using CliMenu;
 using DoCrawler.Models;
 using LibDataInput;
 using LibParameters;
@@ -22,38 +21,22 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
 
     protected override void RunAction()
     {
-        try
+        var parameters = (CrawlerParameters)_parametersManager.Parameters;
+
+        var tasks = parameters.Tasks;
+
+        if (!tasks.ContainsKey(_taskName))
         {
-            var parameters = (CrawlerParameters)_parametersManager.Parameters;
-
-            var tasks = parameters.Tasks;
-
-            if (!tasks.ContainsKey(_taskName))
-            {
-                StShared.WriteErrorLine($"Task {_taskName} not found", true);
-                return;
-            }
-
-            if (!Inputer.InputBool($"This will Delete  Task {_taskName}. are you sure?", false, false))
-                return;
-
-            tasks.Remove(_taskName);
-            _parametersManager.Save(parameters, $"Task {_taskName} deleted.");
-
-            MenuAction = EMenuAction.LevelUp;
+            StShared.WriteErrorLine($"Task {_taskName} not found", true);
             return;
         }
-        catch (DataInputEscapeException)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Escape... ");
-            StShared.Pause();
-        }
-        catch (Exception e)
-        {
-            StShared.WriteException(e, true);
-        }
 
-        MenuAction = EMenuAction.Reload;
+        if (!Inputer.InputBool($"This will Delete  Task {_taskName}. are you sure?", false, false))
+            return;
+
+        tasks.Remove(_taskName);
+        _parametersManager.Save(parameters, $"Task {_taskName} deleted.");
+
+        MenuAction = EMenuAction.LevelUp;
     }
 }

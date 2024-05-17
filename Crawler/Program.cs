@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using CliParameters;
 using Crawler;
 using DoCrawler.Models;
@@ -51,9 +52,15 @@ try
         return 3;
     }
 
+    var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
+    if (httpClientFactory is null)
+    {
+        StShared.WriteErrorLine("httpClientFactory is null", true);
+        return 5;
+    }
 
-    var crawler =
-        new Crawler.Crawler(logger, new ParametersManager(parametersFileName, par), serviceProvider);
+    var crawler = new Crawler.Crawler(logger, httpClientFactory, new ParametersManager(parametersFileName, par),
+        serviceProvider);
     return crawler.Run() ? 0 : 1;
 }
 catch (Exception e)

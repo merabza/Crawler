@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using CliMenu;
 using CliParameters.CliMenuCommands;
 using DoCrawler.Models;
@@ -14,13 +15,16 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TaskSubMenuCliMenuCommand(ILogger logger, ParametersManager parametersManager,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, string taskName) : base(taskName)
+    public TaskSubMenuCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
+        ParametersManager parametersManager, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
+        string taskName) : base(taskName)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
     }
@@ -43,12 +47,13 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
             taskSubMenuSet.AddMenuItem(new EditTaskNameCliMenuCommand(_parametersManager, Name), "Edit  task Name");
 
             taskSubMenuSet.AddMenuItem(
-                new TaskCliMenuCommand(_logger, _crawlerRepositoryCreatorFabric, _parametersManager, Name),
+                new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric, _parametersManager,
+                    Name),
                 "Run this task");
 
             taskSubMenuSet.AddMenuItem(
-                new TestOnePageCliMenuCommand(_logger, _crawlerRepositoryCreatorFabric, _parametersManager, Name),
-                "Test One Page");
+                new TestOnePageCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric,
+                    _parametersManager, Name), "Test One Page");
 
             var parameters = (CrawlerParameters)_parametersManager.Parameters;
 

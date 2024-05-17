@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using CliMenu;
 using CliParameters.CliMenuCommands;
@@ -26,13 +27,15 @@ namespace Crawler;
 public sealed class Crawler : CliAppLoop
 {
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ParametersManager _parametersManager;
     private readonly ServiceProvider _serviceProvider;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public Crawler(ILogger logger, ParametersManager parametersManager, ServiceProvider serviceProvider)
+    public Crawler(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager, ServiceProvider serviceProvider)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
         _serviceProvider = serviceProvider;
     }
@@ -71,7 +74,7 @@ public sealed class Crawler : CliAppLoop
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(schemeCruder), "Schemes");
 
                 //პაკეტების რედაქტორი
-                BatchCruder batchCruder = new(_logger, crawlerRepositoryCreatorFabric, parameters);
+                BatchCruder batchCruder = new(_logger, _httpClientFactory, crawlerRepositoryCreatorFabric, parameters);
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder), "Batches");
 
                 //ამოცანები
@@ -79,9 +82,7 @@ public sealed class Crawler : CliAppLoop
                 mainMenuSet.AddMenuItem(newAppTaskCommand);
 
                 foreach (var kvp in parameters.Tasks.OrderBy(o => o.Key))
-                    mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _parametersManager,
-                        crawlerRepositoryCreatorFabric,
-                        kvp.Key));
+                    mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _httpClientFactory, _parametersManager, crawlerRepositoryCreatorFabric, kvp.Key));
             }
         }
 

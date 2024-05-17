@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net.Http;
 using CliMenu;
 using DoCrawler;
 using DoCrawler.Domain;
@@ -15,17 +16,18 @@ namespace Crawler.MenuCommands;
 public sealed class TestOnePageCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
-
     private readonly ILogger _logger;
-
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ParametersManager _parametersManager;
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TestOnePageCliMenuCommand(ILogger logger, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
-        ParametersManager parametersManager, string taskName)
+    public TestOnePageCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
+        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, ParametersManager parametersManager,
+        string taskName)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
         _parametersManager = parametersManager;
         _taskName = taskName;
@@ -58,7 +60,8 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
             return;
         }
 
-        CrawlerRunner crawlerRunner = new(_logger, crawlerRepository, parameters, par, _taskName, task);
+        CrawlerRunner crawlerRunner =
+            new(_logger, _httpClientFactory, crawlerRepository, parameters, par, _taskName, task);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();
