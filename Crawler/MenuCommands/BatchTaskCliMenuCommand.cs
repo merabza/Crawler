@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Threading;
 using CliMenu;
 using CrawlerDb.Models;
 using DoCrawler;
@@ -23,7 +24,8 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchTaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par, Batch batch)
+        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par, Batch batch) : base(null,
+        EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -32,36 +34,29 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
         _batch = batch;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
-        //CrawlerParameters parameters = (CrawlerParameters)_parametersManager.Parameters;
-        //TaskModel task = parameters.GetTask(_taskName);
-        //if (task == null)
-        //{
-        //  StShared.ConsoleWriteErrorLine($" ask with name {_taskName} is not found");
-        //  return false;
-        //}
-
         var crawlerRepository = _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
 
         var par = ParseOnePageParameters.Create(_par);
         if (par is null)
         {
             StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
-            return;
+            return false;
         }
 
-        CrawlerRunner crawlerRunner = new(_logger, _httpClientFactory, crawlerRepository, _par, par);
+        CrawlerRunner crawlerRunner = new(_logger, _httpClientFactory, crawlerRepository, _par, par, Name, _batch);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();
         Console.WriteLine("Crawler is running...");
         Console.WriteLine("---");
-        crawlerRunner.Run(_batch);
+        var result = crawlerRunner.Run(CancellationToken.None).Result;
         watch.Stop();
         Console.WriteLine("---");
         Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
         StShared.Pause();
+
+        return result;
     }
 }

@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using CrawlerDb.Configurations;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
 using LibDataInput;
+using LibToolActions;
 using Microsoft.Extensions.Logging;
 using RobotsTxt;
 using SystemToolsShared;
 
 namespace DoCrawler;
 
-public sealed class CrawlerRunner
+public sealed class CrawlerRunner : ToolAction
 {
     private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -21,10 +24,12 @@ public sealed class CrawlerRunner
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly ICrawlerRepository _repository;
     private readonly TaskModel? _task;
+    private readonly Batch? _batch;
     private readonly string? _taskName;
 
     public CrawlerRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
-        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel task)
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel? task,
+        Batch? batch) : base(logger, taskName, null, null, true)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -33,10 +38,12 @@ public sealed class CrawlerRunner
         _parseOnePageParameters = parseOnePageParameters;
         _taskName = taskName;
         _task = task;
+        _batch = batch;
     }
 
     public CrawlerRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
-        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters)
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, string? taskName, Batch? batch) : base(
+        logger, taskName ?? "", null, null, true)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -45,16 +52,15 @@ public sealed class CrawlerRunner
         _parseOnePageParameters = parseOnePageParameters;
         _taskName = null;
         _task = null;
+        _batch = batch;
     }
 
-    public void Run(Batch? startBatch = null)
+    protected override Task<bool> RunAction(CancellationToken cancellationToken)
     {
-        //try
-        //{
-        var (batch, batchPart) = PrepareBatchPart(startBatch);
+        var (batch, batchPart) = PrepareBatchPart(_batch);
 
         if (batch is null)
-            return;
+            return Task.FromResult(false);
 
         BatchPartRunner? batchPartRunner = null;
         while (true)
@@ -64,7 +70,7 @@ public sealed class CrawlerRunner
             {
                 createNewPart = IsCreateNewPartAllowed(batch);
                 if (!createNewPart)
-                    return;
+                    return Task.FromResult(false);
             }
 
             if (createNewPart)
@@ -80,7 +86,7 @@ public sealed class CrawlerRunner
             if (batchPartRunner is null)
             {
                 _logger.LogError("batchPartRunner is null");
-                return;
+                return Task.FromResult(false);
             }
 
             if (createNewPart)
@@ -90,18 +96,6 @@ public sealed class CrawlerRunner
 
             batchPart = null;
         }
-        //}
-        //catch (DataInputEscapeException)
-        //{
-        //    Console.WriteLine();
-        //    Console.WriteLine("Escape... ");
-        //    StShared.Pause();
-        //}
-        //catch (Exception e)
-        //{
-        //    StShared.WriteException(e, true);
-        //    throw;
-        //}
     }
 
 

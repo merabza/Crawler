@@ -10,15 +10,10 @@ public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public HostSubMenuCliMenuCommand(Cruder cruder, string hostName, string parentMenuName, bool nameIsStatus = false) :
-        base(
-            hostName, parentMenuName, false, EStatusView.Brackets, nameIsStatus)
+        base(hostName, EMenuAction.LoadSubMenu, EMenuAction.Reload, parentMenuName, false, EStatusView.Brackets,
+            nameIsStatus)
     {
         _cruder = cruder;
-    }
-
-    protected override void RunAction()
-    {
-        MenuAction = EMenuAction.LoadSubMenu;
     }
 
     public override CliMenuSet GetSubmenu()

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net.Http;
-using CliMenu;
+﻿using CliMenu;
 using DoCrawler;
 using DoCrawler.Domain;
 using DoCrawler.Models;
@@ -9,6 +6,9 @@ using LibCrawlerRepositories;
 using LibDataInput;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Net.Http;
 using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
@@ -24,7 +24,7 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
     // ReSharper disable once ConvertToPrimaryConstructor
     public TestOnePageCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
         ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, ParametersManager parametersManager,
-        string taskName)
+        string taskName) : base(taskName, EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -33,15 +33,14 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
         _taskName = taskName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
         var task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
-            return;
+            return false;
         }
 
         var crawlerRepository = _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
@@ -50,26 +49,27 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
         if (string.IsNullOrWhiteSpace(strUrl))
         {
             StShared.WriteErrorLine("Page for Test is empty", true);
-            return;
+            return false;
         }
 
         var par = ParseOnePageParameters.Create(parameters);
         if (par is null)
         {
             StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
-            return;
+            return false;
         }
 
-        CrawlerRunner crawlerRunner =
-            new(_logger, _httpClientFactory, crawlerRepository, parameters, par, _taskName, task);
+        CrawlerRunner crawlerRunner = new(_logger, _httpClientFactory, crawlerRepository, parameters, par, _taskName,
+            task, null);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();
         Console.WriteLine("Crawler is running...");
         Console.WriteLine("---");
-        crawlerRunner.RunOnePage(strUrl);
+        var result = crawlerRunner.RunOnePage(strUrl);
         watch.Stop();
         Console.WriteLine("---");
         Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
+        return result;
     }
 }

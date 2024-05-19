@@ -14,15 +14,14 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
 
     //ახალი აპლიკაციის ამოცანის შექმნა
     // ReSharper disable once ConvertToPrimaryConstructor
-    public NewTaskCliMenuCommand(ParametersManager parametersManager) : base("New Task")
+    public NewTaskCliMenuCommand(ParametersManager parametersManager) : base("New Task", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
     }
 
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
 
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -32,15 +31,14 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
         //ახალი ამოცანის სახელის შეტანა პროგრამაში
         var newTaskName = Inputer.InputText("New Task Name", null);
         if (string.IsNullOrEmpty(newTaskName))
-            return;
+            return false;
 
         //გადავამოწმოთ ხომ არ არსებობს იგივე სახელით სხვა ამოცანა.
 
         if (parameters.Tasks.Keys.Any(a => a == newTaskName))
         {
-            StShared.WriteErrorLine(
-                $"Task with Name {newTaskName} is already exists. cannot create task with this name. ", true);
-            return;
+            StShared.WriteErrorLine($"Task with Name {newTaskName} is already exists. cannot create task with this name. ", true);
+            return false;
         }
 
         //არსებული ინფორმაციის გამოყენებით ახალი ამოცანის შექმნა დაიწყო
@@ -63,5 +61,6 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
         //StShared.Pause();
 
         //ყველაფერი კარგად დასრულდა
+        return true;
     }
 }

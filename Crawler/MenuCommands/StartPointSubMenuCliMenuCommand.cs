@@ -14,16 +14,11 @@ public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public StartPointSubMenuCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) :
-        base(taskName)
+        base(taskName, EMenuAction.LoadSubMenu)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;
         _startPoint = startPoint;
-    }
-
-    protected override void RunAction()
-    {
-        MenuAction = EMenuAction.LoadSubMenu;
     }
 
     public override CliMenuSet GetSubmenu()

@@ -12,39 +12,37 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public EditTaskNameCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Edit Task",
+    public EditTaskNameCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Edit Task", EMenuAction.LevelUp, EMenuAction.Reload,
         taskName)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
+        
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
         var task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
-            return;
+            return false;
         }
 
         //ამოცანის სახელის რედაქტირება
-        //TextDataInput nameInput = new TextDataInput("change  Task Name ", _taskName);
-        //if (!nameInput.DoInput())
-        //    return;
         var newTaskName = Inputer.InputText("change  Task Name ", _taskName);
         if (string.IsNullOrWhiteSpace(newTaskName))
-            return;
+            return false;
 
         if (_taskName == newTaskName)
-            return; //თუ ცვლილება მართლაც მოითხოვეს
+            return false; //თუ ცვლილება მართლაც მოითხოვეს
 
         if (!parameters.CheckNewTaskNameValid(_taskName, newTaskName))
         {
             StShared.WriteErrorLine($"New Name For Task {newTaskName} is not valid", true);
-            return;
+            return false;
         }
 
         if (!parameters.RemoveTask(_taskName))
@@ -52,7 +50,7 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
             StShared.WriteErrorLine(
                 $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot remove this  task",
                 true);
-            return;
+            return false;
         }
 
         if (!parameters.AddTask(newTaskName, task))
@@ -60,12 +58,12 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
             StShared.WriteErrorLine(
                 $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot add this  task",
                 true);
-            return;
+            return false;
         }
 
         _parametersManager.Save(parameters, $" Task Renamed from {_taskName} To {newTaskName}");
 
-        MenuAction = EMenuAction.LevelUp;
+        return true;
     }
 
     protected override string GetStatus()

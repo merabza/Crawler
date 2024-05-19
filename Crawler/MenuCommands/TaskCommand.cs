@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Threading;
 using CliMenu;
 using DoCrawler;
 using DoCrawler.Domain;
@@ -21,9 +22,7 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, IParametersManager parametersManager,
-        string taskName)
+    public TaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, IParametersManager parametersManager, string taskName):base(null,EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -32,15 +31,14 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
         _taskName = taskName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
         var task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
-            return;
+            return false;
         }
 
         var crawlerRepository = _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
@@ -49,19 +47,20 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
         if (par is null)
         {
             StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
-            return;
+            return false;
         }
 
         CrawlerRunner crawlerRunner =
-            new(_logger, _httpClientFactory, crawlerRepository, parameters, par, _taskName, task);
+            new(_logger, _httpClientFactory, crawlerRepository, parameters, par, _taskName, task, null);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();
         Console.WriteLine("Crawler is running...");
         Console.WriteLine("---");
-        crawlerRunner.Run();
+        var result = crawlerRunner.Run(CancellationToken.None).Result;
         watch.Stop();
         Console.WriteLine("---");
         Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
+        return result;
     }
 }

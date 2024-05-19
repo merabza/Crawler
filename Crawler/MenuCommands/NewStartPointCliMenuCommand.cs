@@ -14,13 +14,13 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public NewStartPointCliMenuCommand(ParametersManager parametersManager, string taskName) : base("New Start Point")
+    public NewStartPointCliMenuCommand(ParametersManager parametersManager, string taskName) : base("New Start Point", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -29,7 +29,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} not found", true);
-            return;
+            return false;
         }
 
         //ამოცანის შექმნის პროცესი დაიწყო
@@ -38,7 +38,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         //ახალი ამოცანის სახელის შეტანა პროგრამაში
         var newStartPoint = Inputer.InputText("New Start Point", null);
         if (string.IsNullOrWhiteSpace(newStartPoint))
-            return;
+            return false;
         //გადავამოწმოთ ხომ არ არსებობს იგივე სახელით სხვა ამოცანა.
 
         if (task.StartPoints.Any(a => a == newStartPoint))
@@ -46,7 +46,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
             StShared.WriteErrorLine(
                 $"Start Point with Name {newStartPoint} is already exists. cannot create Start Point with this name. ",
                 true);
-            return;
+            return false;
         }
 
         //ახალი ამოცანის შექმნა და ჩამატება ამოცანების სიაში
@@ -68,5 +68,6 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         //StShared.Pause();
 
         //ყველაფერი კარგად დასრულდა
+        return true;
     }
 }

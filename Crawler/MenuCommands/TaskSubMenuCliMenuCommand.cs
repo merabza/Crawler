@@ -21,17 +21,12 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
     // ReSharper disable once ConvertToPrimaryConstructor
     public TaskSubMenuCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
         ParametersManager parametersManager, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
-        string taskName) : base(taskName)
+        string taskName) : base(taskName, EMenuAction.LoadSubMenu)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
-    }
-
-    protected override void RunAction()
-    {
-        MenuAction = EMenuAction.LoadSubMenu;
     }
 
     public override CliMenuSet GetSubmenu()
