@@ -1,11 +1,11 @@
 //Created by ProjectParametersClassCreator at 4/22/2021 17:17:01
 
+using DbTools;
+using LibParameters;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using DbTools;
-using LibParameters;
 
 namespace DoCrawler.Models;
 
@@ -39,7 +39,7 @@ public sealed class CrawlerParameters : IParameters
 
     public TaskModel? GetTask(string taskName)
     {
-        return !Tasks.ContainsKey(taskName) ? null : Tasks[taskName];
+        return Tasks.GetValueOrDefault(taskName);
     }
 
     public bool CheckNewTaskNameValid(string oldTaskName, string newTaskName)
@@ -63,10 +63,7 @@ public sealed class CrawlerParameters : IParameters
 
     public bool AddTask(string newTaskName, TaskModel task)
     {
-        if (Tasks.ContainsKey(newTaskName))
-            return false;
-        Tasks.Add(newTaskName, task);
-        return true;
+        return Tasks.TryAdd(newTaskName, task);
     }
 
     public string GetSegmentFinisherPunctuationsRegex()
@@ -124,7 +121,7 @@ public sealed class CrawlerParameters : IParameters
     {
         if (_wordDelimiterRegex == "")
             _wordDelimiterRegex = "({" + GetPunctuationRegex(Punctuations.Where(s => !s.Value.PctCanBePartOfWord)) +
-                                  "|(\\s)|(\\n)})";
+                                  @"|(\s)|(\n)})";
         return _wordDelimiterRegex;
     }
 }
