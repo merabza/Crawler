@@ -17,9 +17,9 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 {
     private readonly Batch _batch;
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly ILogger _logger;
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly CrawlerParameters _par;
 
     // ReSharper disable once ConvertToPrimaryConstructor

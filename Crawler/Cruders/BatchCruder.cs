@@ -18,8 +18,8 @@ namespace Crawler.Cruders;
 public sealed class BatchCruder : Cruder
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
 
     public BatchCruder(ILogger logger, IHttpClientFactory httpClientFactory,

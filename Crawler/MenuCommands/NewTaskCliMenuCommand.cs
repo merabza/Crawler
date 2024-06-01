@@ -22,7 +22,6 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
         //ამოცანის შექმნის პროცესი დაიწყო
@@ -37,7 +36,8 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
 
         if (parameters.Tasks.Keys.Any(a => a == newTaskName))
         {
-            StShared.WriteErrorLine($"Task with Name {newTaskName} is already exists. cannot create task with this name. ", true);
+            StShared.WriteErrorLine(
+                $"Task with Name {newTaskName} is already exists. cannot create task with this name. ", true);
             return false;
         }
 

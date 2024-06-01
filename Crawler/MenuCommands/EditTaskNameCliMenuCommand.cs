@@ -12,7 +12,8 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public EditTaskNameCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Edit Task", EMenuAction.LevelUp, EMenuAction.Reload,
+    public EditTaskNameCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Edit Task",
+        EMenuAction.LevelUp, EMenuAction.Reload,
         taskName)
     {
         _parametersManager = parametersManager;
@@ -21,7 +22,6 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-        
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
         var task = parameters.GetTask(_taskName);

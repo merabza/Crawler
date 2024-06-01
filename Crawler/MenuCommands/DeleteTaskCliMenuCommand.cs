@@ -12,7 +12,8 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public DeleteTaskCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Delete Task", EMenuAction.LevelUp)
+    public DeleteTaskCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Delete Task",
+        EMenuAction.LevelUp)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;

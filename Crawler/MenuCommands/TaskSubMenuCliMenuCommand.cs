@@ -14,8 +14,8 @@ namespace Crawler.MenuCommands;
 public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor

@@ -26,13 +26,14 @@ namespace Crawler;
 
 public sealed class Crawler : CliAppLoop
 {
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
     private readonly ServiceProvider _serviceProvider;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public Crawler(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager, ServiceProvider serviceProvider)
+    public Crawler(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
+        ServiceProvider serviceProvider)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -82,7 +83,8 @@ public sealed class Crawler : CliAppLoop
                 mainMenuSet.AddMenuItem(newAppTaskCommand);
 
                 foreach (var kvp in parameters.Tasks.OrderBy(o => o.Key))
-                    mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _httpClientFactory, _parametersManager, crawlerRepositoryCreatorFabric, kvp.Key));
+                    mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _httpClientFactory,
+                        _parametersManager, crawlerRepositoryCreatorFabric, kvp.Key));
             }
         }
 

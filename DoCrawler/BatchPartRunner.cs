@@ -25,8 +25,8 @@ public sealed class BatchPartRunner
 {
     private readonly BatchPart _batchPart;
     private readonly ConsoleFormatter _consoleFormatter = new();
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly ICrawlerRepository _repository;

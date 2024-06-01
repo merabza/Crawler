@@ -16,13 +16,15 @@ namespace Crawler.MenuCommands;
 public sealed class TaskCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, IParametersManager parametersManager, string taskName):base(null,EMenuAction.Reload)
+    public TaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
+        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, IParametersManager parametersManager,
+        string taskName) : base(null, EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;

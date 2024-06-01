@@ -14,7 +14,8 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public NewStartPointCliMenuCommand(ParametersManager parametersManager, string taskName) : base("New Start Point", EMenuAction.Reload)
+    public NewStartPointCliMenuCommand(ParametersManager parametersManager, string taskName) : base("New Start Point",
+        EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;

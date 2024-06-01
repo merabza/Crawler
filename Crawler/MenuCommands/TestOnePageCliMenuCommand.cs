@@ -1,4 +1,7 @@
-﻿using CliMenu;
+﻿using System;
+using System.Diagnostics;
+using System.Net.Http;
+using CliMenu;
 using DoCrawler;
 using DoCrawler.Domain;
 using DoCrawler.Models;
@@ -6,9 +9,6 @@ using LibCrawlerRepositories;
 using LibDataInput;
 using LibParameters;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
-using System.Net.Http;
 using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
@@ -16,8 +16,8 @@ namespace Crawler.MenuCommands;
 public sealed class TestOnePageCliMenuCommand : CliMenuCommand
 {
     private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
     private readonly string _taskName;
 

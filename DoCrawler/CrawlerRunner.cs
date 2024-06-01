@@ -18,13 +18,13 @@ namespace DoCrawler;
 
 public sealed class CrawlerRunner : ToolAction
 {
-    private readonly ILogger _logger;
+    private readonly Batch? _batch;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly ICrawlerRepository _repository;
     private readonly TaskModel? _task;
-    private readonly Batch? _batch;
     private readonly string? _taskName;
 
     public CrawlerRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
