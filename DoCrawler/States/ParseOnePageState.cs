@@ -239,7 +239,7 @@ public sealed class ParseOnePageState : State
     private void AddWord(string word)
     {
         /*word.Contains("ახლა")*/
-        ;
+        
         //ესე დროებით გავაკეთე, რომ არ შემეშალოს ხელი სხვა ანომალიების აღმოჩენაში
         //შემდგომში აკრძალული ან დასაშვები სიმბოლოების სია უნდა გაკეთდეს და მას უნდა დავეყრდნოთ
         var trimmedWord = word.Trim('\x200B');

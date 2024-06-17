@@ -20,7 +20,7 @@ public sealed class Batch : ItemData
 
 
     public int BatchId { get; set; }
-    public string BatchName { get; set; }
+    public required string BatchName { get; set; }
     public bool IsOpen { get; set; }
     public bool AutoCreateNextPart { get; set; }
 
