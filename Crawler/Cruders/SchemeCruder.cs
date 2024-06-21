@@ -76,8 +76,8 @@ public sealed class SchemeCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override ItemData CreateNewItem(ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
-        return new SchemeModel();
+        return new SchemeModel { SchName = recordKey ?? ""};
     }
 }

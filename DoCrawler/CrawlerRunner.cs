@@ -119,7 +119,8 @@ public sealed class CrawlerRunner : ToolAction
         var batch = _repository.GetBatchByName(_taskName);
         if (batch == null)
         {
-            batch = _repository.CreateBatch(new Batch(newBatchName, false, false));
+            batch = _repository.CreateBatch(new Batch
+                { BatchName = newBatchName, IsOpen = false, AutoCreateNextPart = false });
             _repository.SaveChanges();
         }
 

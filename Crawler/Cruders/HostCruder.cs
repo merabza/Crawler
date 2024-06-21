@@ -77,7 +77,7 @@ public sealed class HostCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override ItemData CreateNewItem(ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
         return new HostModel("");
     }

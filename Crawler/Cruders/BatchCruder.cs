@@ -94,9 +94,9 @@ public sealed class BatchCruder : Cruder
         repo.SaveChanges();
     }
 
-    protected override ItemData CreateNewItem(ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
-        return new Batch();
+        return new Batch { BatchName = recordKey ?? "" };
     }
 
 
