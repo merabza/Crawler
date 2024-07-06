@@ -96,7 +96,7 @@ public sealed class BatchCruder : Cruder
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
-        return new Batch { BatchName = recordKey ?? "" };
+        return new Batch { BatchName = recordKey ?? string.Empty };
     }
 
 

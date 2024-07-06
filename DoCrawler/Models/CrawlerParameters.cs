@@ -11,13 +11,13 @@ namespace DoCrawler.Models;
 
 public sealed class CrawlerParameters : IParameters
 {
-    private string _possibleSymbols = "";
+    private string _possibleSymbols = string.Empty;
 
-    private string _punctuationRegex = "";
+    private string _punctuationRegex = string.Empty;
 
-    private string _segmentFinisherPunctuationRegex = "";
+    private string _segmentFinisherPunctuationRegex = string.Empty; 
 
-    private string _wordDelimiterRegex = "";
+    private string _wordDelimiterRegex = string.Empty;
 
     public string? LogFolder { get; set; }
 
@@ -29,8 +29,8 @@ public sealed class CrawlerParameters : IParameters
     public string? Alphabet { get; set; }
     public string? ExtraSymbols { get; set; }
 
-    public Dictionary<string, TaskModel> Tasks { get; set; } = new();
-    public Dictionary<string, PunctuationModel> Punctuations { get; set; } = new();
+    public Dictionary<string, TaskModel> Tasks { get; set; } = [];
+    public Dictionary<string, PunctuationModel> Punctuations { get; set; } = [];
 
     public bool CheckBeforeSave()
     {
@@ -68,7 +68,7 @@ public sealed class CrawlerParameters : IParameters
 
     public string GetSegmentFinisherPunctuationsRegex()
     {
-        if (_segmentFinisherPunctuationRegex == "")
+        if (_segmentFinisherPunctuationRegex == string.Empty)
             _segmentFinisherPunctuationRegex =
                 GetPunctuationRegex(Punctuations.Where(s => s.Value.PctSentenceFinisher));
         return _segmentFinisherPunctuationRegex;
@@ -76,10 +76,10 @@ public sealed class CrawlerParameters : IParameters
 
     private static string GetPunctuationRegex(IEnumerable<KeyValuePair<string, PunctuationModel>> punctuations)
     {
-        var rex = "";
+        var rex = string.Empty;
         foreach (var pun in punctuations.OrderBy(s => s.Value.PctSortId))
         {
-            if (rex != "")
+            if (rex != string.Empty)
                 rex += "|";
             if (pun.Value.PctRegexPattern == null)
                 rex += "(" + pun.Value.PctPunctuation + ")";
@@ -87,15 +87,16 @@ public sealed class CrawlerParameters : IParameters
                 rex += "(" + pun.Value.PctRegexPattern + ")";
         }
 
-        //if (rex != "")
+        //if (rex != string.Empty)
         //  rex = "([" + rex + "])";
         return rex;
     }
 
     internal string GetPossibleSymbols()
     {
-        if (_possibleSymbols != "") return _possibleSymbols;
-        StringBuilder sb = new();
+        if (_possibleSymbols != string.Empty) 
+            return _possibleSymbols;
+        var sb = new StringBuilder();
         //შეგროვდეს პუნქტუაციის ნიშნებში მონაწილე სიმბოლოები, ისე რომ ერთნაირი სიმბოლოები არ გამეორდეს
         foreach (var pun in Punctuations)
             sb.Append(pun.Value.PctPunctuation);
@@ -112,14 +113,14 @@ public sealed class CrawlerParameters : IParameters
 
     internal string GetPunctuationsRegex()
     {
-        if (_punctuationRegex == "")
+        if (_punctuationRegex == string.Empty)
             _punctuationRegex = GetPunctuationRegex(Punctuations);
         return _punctuationRegex;
     }
 
     internal string GetWordDelimiterRegex()
     {
-        if (_wordDelimiterRegex == "")
+        if (_wordDelimiterRegex == string.Empty)
             _wordDelimiterRegex = "({" + GetPunctuationRegex(Punctuations.Where(s => !s.Value.PctCanBePartOfWord)) +
                                   @"|(\s)|(\n)})";
         return _wordDelimiterRegex;

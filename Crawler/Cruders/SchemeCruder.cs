@@ -78,6 +78,6 @@ public sealed class SchemeCruder : Cruder
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
-        return new SchemeModel { SchName = recordKey ?? ""};
+        return new SchemeModel { SchName = recordKey ?? string.Empty };
     }
 }

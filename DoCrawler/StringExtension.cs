@@ -7,7 +7,7 @@ public static class StringExtension
     public static string TrimStartEnd(this string? strFrom, params char[] trimChars)
     {
         if (strFrom == null)
-            return "";
+            return string.Empty;
         var strToRet = strFrom;
         var atLeastOneTrimmed = true;
         while (atLeastOneTrimmed)
@@ -29,7 +29,7 @@ public static class StringExtension
         //while (strToRet.Length > 1 && strToRet.First() == strToRet.Last() && trimChars.Contains(strToRet.First()))
         //{
         //  if (strToRet.Length == 2)
-        //    strToRet = "";
+        //    strToRet = string.Empty;
         //  else
         //    strToRet = strToRet.Substring(1, strToRet.Length - 2);
         //}

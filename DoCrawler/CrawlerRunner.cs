@@ -43,7 +43,7 @@ public sealed class CrawlerRunner : ToolAction
 
     public CrawlerRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
         CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, string? taskName, Batch? batch) : base(
-        logger, taskName ?? "", null, null, true)
+        logger, taskName ?? string.Empty, null, null, true)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;

@@ -45,7 +45,7 @@ public sealed class ParseOnePageState : State
         var nodeHead = nodeHtml.ChildNodes.FirstOrDefault(s => s.Name == "head");
         var nodeBase = nodeHead?.ChildNodes.FirstOrDefault(s => s.Name == "base");
         var attributeHref = nodeBase?.Attributes.FirstOrDefault(s => s.Name == "href");
-        if (attributeHref != null && attributeHref.Value != "")
+        if (attributeHref != null && attributeHref.Value != string.Empty)
             _currentUri = UriFabric.GetUri(attributeHref.Value);
         if (_currentUri == null)
             return;
@@ -306,7 +306,7 @@ public sealed class ParseOnePageState : State
             //string strUri = NewUri.AbsoluteUri;
             //Uri AbsUri = new Uri(strUri);
             var startQuery = newUri.Query;
-            if (startQuery != "")
+            if (startQuery != string.Empty)
             {
                 //თუ მისამართი შეიცავს ქვერის ნაწილს
                 var newQuery = NormalizeQuery(startQuery, '&');
@@ -359,7 +359,7 @@ public sealed class ParseOnePageState : State
 
         var parts = startQuery[1..].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Distinct()
             .ToArray();
-        var newQuery = "";
+        var newQuery = string.Empty;
         var isLeastOneAdded = false;
         foreach (var p in parts)
         {

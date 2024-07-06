@@ -79,7 +79,7 @@ public sealed class HostCruder : Cruder
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
-        return new HostModel("");
+        return new HostModel(string.Empty);
     }
 
     public override bool CheckValidation(ItemData item)

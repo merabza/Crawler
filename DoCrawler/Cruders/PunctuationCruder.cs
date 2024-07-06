@@ -42,8 +42,7 @@ public sealed class PunctuationCruder : ParCruder
 
     public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
-        var newPunctuation = newRecord as PunctuationModel;
-        if (newPunctuation is null)
+        if (newRecord is not PunctuationModel newPunctuation)
             throw new ArgumentNullException(nameof(newPunctuation));
         var parameters = (CrawlerParameters)ParametersManager.Parameters;
         parameters.Punctuations[recordKey] = newPunctuation;
@@ -51,8 +50,7 @@ public sealed class PunctuationCruder : ParCruder
 
     protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
-        var punctuation = newRecord as PunctuationModel;
-        if (punctuation is null)
+        if (newRecord is not PunctuationModel punctuation)
             throw new ArgumentNullException(nameof(punctuation));
         var parameters = (CrawlerParameters)ParametersManager.Parameters;
         parameters.Punctuations.Add(recordKey, punctuation);

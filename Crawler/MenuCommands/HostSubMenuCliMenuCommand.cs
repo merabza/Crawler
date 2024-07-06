@@ -28,6 +28,6 @@ public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
     {
         if (Name is null)
             throw new Exception("Name is null");
-        return _cruder.GetStatusFor(Name) ?? "";
+        return _cruder.GetStatusFor(Name) ?? string.Empty;
     }
 }
