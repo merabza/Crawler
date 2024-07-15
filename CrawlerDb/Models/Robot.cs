@@ -30,6 +30,7 @@ public sealed class Robot
     public int BatchPartId { get; set; }
     public int SchemeId { get; set; }
     public int HostId { get; set; }
+
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? RobotsTxt { get; set; }
 

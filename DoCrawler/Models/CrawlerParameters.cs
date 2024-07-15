@@ -15,7 +15,7 @@ public sealed class CrawlerParameters : IParameters
 
     private string _punctuationRegex = string.Empty;
 
-    private string _segmentFinisherPunctuationRegex = string.Empty; 
+    private string _segmentFinisherPunctuationRegex = string.Empty;
 
     private string _wordDelimiterRegex = string.Empty;
 
@@ -94,7 +94,7 @@ public sealed class CrawlerParameters : IParameters
 
     internal string GetPossibleSymbols()
     {
-        if (_possibleSymbols != string.Empty) 
+        if (_possibleSymbols != string.Empty)
             return _possibleSymbols;
         var sb = new StringBuilder();
         //შეგროვდეს პუნქტუაციის ნიშნებში მონაწილე სიმბოლოები, ისე რომ ერთნაირი სიმბოლოები არ გამეორდეს
