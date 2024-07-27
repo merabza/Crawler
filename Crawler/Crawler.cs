@@ -43,7 +43,7 @@ public sealed class Crawler : CliAppLoop
     }
 
 
-    protected override void BuildMainMenu()
+    public override CliMenuSet BuildMainMenu()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -54,7 +54,6 @@ public sealed class Crawler : CliAppLoop
         //}
 
         CliMenuSet mainMenuSet = new("Main Menu");
-        AddChangeMenu(mainMenuSet);
 
         //ძირითადი პარამეტრების რედაქტირება
         CrawlerParametersEditor crawlerParametersEditor = new(parameters, _parametersManager, _logger);
@@ -99,6 +98,8 @@ public sealed class Crawler : CliAppLoop
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
         mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
+
+        return mainMenuSet;
     }
 
 
