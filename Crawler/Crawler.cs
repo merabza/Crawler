@@ -57,8 +57,7 @@ public sealed class Crawler : CliAppLoop
 
         //ძირითადი პარამეტრების რედაქტირება
         CrawlerParametersEditor crawlerParametersEditor = new(parameters, _parametersManager, _logger);
-        mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(crawlerParametersEditor),
-            "Crawler Parameters Editor");
+        mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(crawlerParametersEditor));
 
         if (CheckConnection())
         {
@@ -68,15 +67,18 @@ public sealed class Crawler : CliAppLoop
             {
                 //ჰოსტების რედაქტორი
                 HostCruder hostCruder = new(crawlerRepositoryCreatorFabric);
-                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(hostCruder), "Hosts");
+                //"Hosts"
+                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(hostCruder));
 
                 //სქემების რედაქტორი
                 SchemeCruder schemeCruder = new(crawlerRepositoryCreatorFabric);
-                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(schemeCruder), "Schemes");
+                //"Schemes"
+                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(schemeCruder));
 
                 //პაკეტების რედაქტორი
                 BatchCruder batchCruder = new(_logger, _httpClientFactory, crawlerRepositoryCreatorFabric, parameters);
-                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder), "Batches");
+                //"Batches"
+                mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder));
 
                 //ამოცანები
                 NewTaskCliMenuCommand newAppTaskCommand = new(_parametersManager);
@@ -97,7 +99,7 @@ public sealed class Crawler : CliAppLoop
 
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
-        mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
+        mainMenuSet.AddMenuItem(key, new ExitCliMenuCommand(), key.Length);
 
         return mainMenuSet;
     }

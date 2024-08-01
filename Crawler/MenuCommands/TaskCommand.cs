@@ -24,7 +24,7 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
     // ReSharper disable once ConvertToPrimaryConstructor
     public TaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
         ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, IParametersManager parametersManager,
-        string taskName) : base(null, EMenuAction.Reload)
+        string taskName) : base("Run this task", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;

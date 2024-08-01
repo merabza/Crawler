@@ -29,11 +29,10 @@ public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
             new DeleteStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint);
         taskSubMenuSet.AddMenuItem(deleteStartPointCommand);
 
-        taskSubMenuSet.AddMenuItem(new EditStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint),
-            "Edit Start Point");
+        taskSubMenuSet.AddMenuItem(new EditStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint));
 
         var key = ConsoleKey.Escape.Value().ToLower();
-        taskSubMenuSet.AddMenuItem(key, "Exit to Main menu", new ExitToMainMenuCliMenuCommand(null, null), key.Length);
+        taskSubMenuSet.AddMenuItem(key, new ExitToMainMenuCliMenuCommand("Exit to Main menu", null), key.Length);
 
         return taskSubMenuSet;
     }

@@ -24,8 +24,8 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchTaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par, Batch batch) : base(null,
-        EMenuAction.Reload)
+        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par, Batch batch) : base(
+        "Run this batch", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;

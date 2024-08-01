@@ -108,9 +108,8 @@ public sealed class BatchCruder : Cruder
         var batches = batchesList.ToDictionary(k => k.BatchName, v => v);
         var batch = batches[recordKey];
 
-        itemSubMenuSet.AddMenuItem(
-            new BatchTaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric, _par, batch),
-            "Run this batch");
+        itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _httpClientFactory,
+            _crawlerRepositoryCreatorFabric, _par, batch));
 
         HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFabric, batch);
         NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");

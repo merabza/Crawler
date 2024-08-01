@@ -24,7 +24,7 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
     // ReSharper disable once ConvertToPrimaryConstructor
     public TestOnePageCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
         ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, ParametersManager parametersManager,
-        string taskName) : base(taskName, EMenuAction.Reload)
+        string taskName) : base("Test One Page", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;

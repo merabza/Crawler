@@ -14,7 +14,7 @@ public sealed class EditStartPointCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public EditStartPointCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) : base(
-        null, EMenuAction.LevelUp, EMenuAction.Reload, taskName)
+        "Edit Start Point", EMenuAction.LevelUp, EMenuAction.Reload, taskName)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;
