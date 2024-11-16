@@ -15,15 +15,17 @@ try
 {
     Console.WriteLine("Loading...");
 
-    //პროგრამის ატრიბუტების დაყენება 
-    StatProgramAttr.SetAttr();
+    const string appName = "Crawler";
 
-    IArgumentsParser argParser = new ArgumentsParser<CrawlerParameters>(args, "Crawler", null);
+    //პროგრამის ატრიბუტების დაყენება 
+    ProgramAttributes.Instance.AppName = appName;
+
+    IArgumentsParser argParser = new ArgumentsParser<CrawlerParameters>(args, appName, null);
     switch (argParser.Analysis())
     {
         case EParseResult.Ok: break;
         case EParseResult.Usage: return 1;
-        case EParseResult.Error: return 1;
+        case EParseResult.Error: return 2;
         default: throw new ArgumentOutOfRangeException();
     }
 

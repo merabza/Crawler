@@ -161,7 +161,7 @@ public sealed class Crawler : CliAppLoop
 
                     var dc = DbClientFabric.GetDbClient(_logger, true, parameters.DataProvider,
                         databaseServerConnectionData.ServerAddress, dbAuthSettings,
-                        ProgramAttributes.Instance.GetAttribute<string>("AppName"),
+                        databaseServerConnectionData.TrustServerCertificate, ProgramAttributes.Instance.AppName,
                         databaseServerConnectionData.DatabaseName);
 
                     if (dc is null)
