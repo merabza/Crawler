@@ -20,7 +20,7 @@ try
     //პროგრამის ატრიბუტების დაყენება 
     ProgramAttributes.Instance.AppName = appName;
 
-    IArgumentsParser argParser = new ArgumentsParser<CrawlerParameters>(args, appName, null);
+    var argParser = new ArgumentsParser<CrawlerParameters>(args, appName, null);
     switch (argParser.Analysis())
     {
         case EParseResult.Ok: break;
