@@ -55,12 +55,12 @@ public sealed class CrawlerRunner : ToolAction
         _batch = batch;
     }
 
-    protected override Task<bool> RunAction(CancellationToken cancellationToken)
+    protected override ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         var (batch, batchPart) = PrepareBatchPart(_batch);
 
         if (batch is null)
-            return Task.FromResult(false);
+            return ValueTask.FromResult(false);
 
         BatchPartRunner? batchPartRunner = null;
         while (true)
@@ -70,7 +70,7 @@ public sealed class CrawlerRunner : ToolAction
             {
                 createNewPart = IsCreateNewPartAllowed(batch);
                 if (!createNewPart)
-                    return Task.FromResult(false);
+                    return ValueTask.FromResult(false);
             }
 
             if (createNewPart)
@@ -86,7 +86,7 @@ public sealed class CrawlerRunner : ToolAction
             if (batchPartRunner is null)
             {
                 _logger.LogError("batchPartRunner is null");
-                return Task.FromResult(false);
+                return ValueTask.FromResult(false);
             }
 
             if (createNewPart)
