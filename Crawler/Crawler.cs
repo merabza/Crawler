@@ -16,6 +16,7 @@ using DbTools;
 using DbToolsFabric;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
+using LibDatabaseParameters;
 using LibDataInput;
 using LibParameters;
 using Microsoft.Extensions.DependencyInjection;
@@ -127,7 +128,7 @@ public sealed class Crawler : CliAppLoop
 
             switch (parameters.DataProvider)
             {
-                case EDataProvider.Sql:
+                case EDatabaseProvider.SqlServer:
 
                     if (dbConnectionParameters is not SqlServerConnectionParameters databaseServerConnectionData)
                     {
@@ -179,7 +180,7 @@ public sealed class Crawler : CliAppLoop
                     Console.WriteLine("Database test connection failed");
                     return false;
 
-                case EDataProvider.SqLite:
+                case EDatabaseProvider.SqLite:
                     return
                         false; //აქ ფაილის შემოწმება არის გასაკეთებელი. ჭეშმარიტი დაბრუნდეს, თუ ფაილი არსებობს და იხსნება
             }

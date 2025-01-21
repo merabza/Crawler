@@ -1,6 +1,8 @@
-﻿using CrawlerDb;
+﻿using CliParametersDataEdit;
+using CrawlerDb;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
+using LibDatabaseParameters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SystemToolsShared;
@@ -21,6 +23,17 @@ public sealed class CrawlerServicesCreator : ServicesCreator
     protected override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);
+
+        
+        DatabaseServerConnections databaseServerConnections = new(_par.DatabaseServerConnections);
+
+        var (devDataProvider, devConnectionString) =
+            DbConnectionFabric.GetDataProviderAndConnectionString(_par.DatabaseParameters,
+                databaseServerConnections);
+
+
+
+
 
         if (!string.IsNullOrEmpty(_par.ConnectionString))
             services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(_par.ConnectionString));

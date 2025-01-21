@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using DbTools;
+using LibDatabaseParameters;
 using LibParameters;
 
 namespace DoCrawler.Models;
@@ -22,15 +22,19 @@ public sealed class CrawlerParameters : IParameters
     public string? LogFolder { get; set; }
 
     //public string? LogFileName { get; set; }
-    public EDataProvider DataProvider { get; set; }
-    public string? ConnectionString { get; set; }
+    //public EDatabaseProvider DataProvider { get; set; }
+    //public string? ConnectionString { get; set; }
+    public string? DatabaseConnectionName { get; set; }
+    
     public int CommandTimeOut { get; set; }
     public int LoadPagesMaxCount { get; set; }
     public string? Alphabet { get; set; }
     public string? ExtraSymbols { get; set; }
 
     public Dictionary<string, TaskModel> Tasks { get; set; } = [];
-    public Dictionary<string, PunctuationModel> Punctuations { get; set; } = [];
+    public Dictionary<string, PunctuationModel> Punctuations { get; init; } = [];
+    public Dictionary<string, DatabaseServerConnectionData> DatabaseServerConnections { get; init; } = [];
+    public DatabaseParameters? DatabaseParameters { get; init; }
 
     public bool CheckBeforeSave()
     {
