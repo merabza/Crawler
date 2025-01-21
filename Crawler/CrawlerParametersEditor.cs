@@ -27,6 +27,7 @@ public sealed class CrawlerParametersEditor : ParametersEditor
             logger));
         FieldEditors.Add(new DatabaseServerConnectionsFieldEditor(logger, httpClientFactory, parametersManager,
             nameof(CrawlerParameters.DatabaseServerConnections)));
-
+        FieldEditors.Add(new DatabaseParametersFieldEditor(logger, httpClientFactory,
+            nameof(CrawlerParameters.DatabaseParameters), parametersManager));
     }
 }

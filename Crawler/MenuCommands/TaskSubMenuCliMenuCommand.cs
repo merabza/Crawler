@@ -42,9 +42,8 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
         taskSubMenuSet.AddMenuItem(new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric,
             _parametersManager, Name));
 
-        taskSubMenuSet.AddMenuItem(
-            new TestOnePageCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric,
-                _parametersManager, Name));
+        taskSubMenuSet.AddMenuItem(new TestOnePageCliMenuCommand(_logger, _httpClientFactory,
+            _crawlerRepositoryCreatorFabric, _parametersManager, Name));
 
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -55,8 +54,7 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 
         if (task?.StartPoints != null)
             foreach (var startPoint in task.StartPoints.OrderBy(o => o))
-                taskSubMenuSet.AddMenuItem(
-                    new StartPointSubMenuCliMenuCommand(_parametersManager, Name, startPoint));
+                taskSubMenuSet.AddMenuItem(new StartPointSubMenuCliMenuCommand(_parametersManager, Name, startPoint));
 
         var key = ConsoleKey.Escape.Value().ToLower();
         taskSubMenuSet.AddMenuItem(key, new ExitToMainMenuCliMenuCommand("Exit to Main menu", null), key.Length);

@@ -47,16 +47,14 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
         if (!parameters.RemoveTask(_taskName))
         {
             StShared.WriteErrorLine(
-                $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot remove this  task",
-                true);
+                $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot remove this  task", true);
             return false;
         }
 
         if (!parameters.AddTask(newTaskName, task))
         {
             StShared.WriteErrorLine(
-                $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot add this  task",
-                true);
+                $"Cannot change  Task with name {_taskName} to {newTaskName}, because cannot add this  task", true);
             return false;
         }
 

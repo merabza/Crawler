@@ -103,8 +103,8 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
         bool isSiteMap, bool isAllowed)
     {
-        return _context.Urls.Add(new UrlModel(strUrl, host, extension,
-            scheme, urlHashCode, isSiteMap, isAllowed)).Entity;
+        return _context.Urls.Add(new UrlModel(strUrl, host, extension, scheme, urlHashCode, isSiteMap, isAllowed))
+            .Entity;
     }
 
     public void AddUrlGraph(UrlGraphNode urlGraphNode)
@@ -114,8 +114,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void AddUrlGraph(int fromUrlPageId, UrlModel gotUrl, int batchPartId)
     {
-        _context.UrlGraphNodes.Add(new UrlGraphNode(fromUrlPageId, gotUrl,
-            batchPartId));
+        _context.UrlGraphNodes.Add(new UrlGraphNode(fromUrlPageId, gotUrl, batchPartId));
     }
 
     public List<string> GetHostStartUrlNamesByBatch(Batch batch)
@@ -163,8 +162,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
             var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName) ??
                        _context.Hosts.Add(new HostModel(hostName)).Entity;
 
-            _context.HostsByBatches.Add(new HostByBatch(batch.BatchId, scheme,
-                host));
+            _context.HostsByBatches.Add(new HostByBatch(batch.BatchId, scheme, host));
         }
         catch (Exception e)
         {
@@ -199,8 +197,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void CreateContentAnalysisRecord(int batchPartBpId, int urlId, HttpStatusCode statusCode)
     {
-        _context.ContentsAnalysis.Add(new ContentAnalysis(batchPartBpId, urlId,
-            (int)statusCode, DateTime.Now));
+        _context.ContentsAnalysis.Add(new ContentAnalysis(batchPartBpId, urlId, (int)statusCode, DateTime.Now));
     }
 
     public ContentAnalysis? GetContentAnalysis(int batchPartBpId, int urlId)
@@ -266,13 +263,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public long GetUrlsCount(int batchPartId)
     {
-        return (
-            from bp in _context.BatchParts
+        return (from bp in _context.BatchParts
             join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
             join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
             where bp.BpId == batchPartId && u.IsAllowed
-            select u
-        ).Count();
+            select u).Count();
     }
 
     public long GetTermsCount()
@@ -282,15 +277,15 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public long GetLoadedUrlsCount(int batchPartId)
     {
-        return (
-            from bp in _context.BatchParts
+        return (from bp in _context.BatchParts
             join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
             join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
             join ca in _context.ContentsAnalysis on new { BatchPartId = bp.BpId, u.UrlId } equals new
-                { ca.BatchPartId, ca.UrlId }
+            {
+                ca.BatchPartId, ca.UrlId
+            }
             where bp.BpId == batchPartId && u.IsAllowed
-            select u
-        ).Count();
+            select u).Count();
     }
 
 
@@ -312,8 +307,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void AddTermByUrl(int batchPartId, int urlId, Term term, int position)
     {
-        _context.TermsByUrls.Add(new TermByUrl(batchPartId, urlId, term,
-            position));
+        _context.TermsByUrls.Add(new TermByUrl(batchPartId, urlId, term, position));
     }
 
     public TermByUrl? GeTermByUrlEntry(int batchPartId, int urlId, int position)
@@ -339,17 +333,17 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         return
         [
-            .. (
-                from bp in _context.BatchParts
+            .. (from bp in _context.BatchParts
                 join hbb in _context.HostsByBatches on bp.BatchId equals hbb.BatchId
                 join u in _context.Urls on new { hbb.HostId, hbb.SchemeId } equals new { u.HostId, u.SchemeId }
                 join ca in _context.ContentsAnalysis on new { BatchPartId = bp.BpId, u.UrlId } equals new
-                    { ca.BatchPartId, ca.UrlId } into gj
+                {
+                    ca.BatchPartId, ca.UrlId
+                } into gj
                 from g in gj.DefaultIfEmpty()
                 where g == null
                 where bp.BpId == batchPartId && u.IsAllowed
-                select u
-            ).Take(maxCount).Include(x => x.ExtensionNavigation)
+                select u).Take(maxCount).Include(x => x.ExtensionNavigation)
         ];
     }
 

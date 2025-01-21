@@ -37,22 +37,24 @@ public sealed class Robot
 
     public BatchPart BatchPartNavigation
     {
-        get => _batchPartNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
+        get =>
+            _batchPartNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
         set => _batchPartNavigation = value;
     }
 
     public SchemeModel SchemeNavigation
     {
-        get => _schemeNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(SchemeNavigation));
+        get =>
+            _schemeNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(SchemeNavigation));
         set => _schemeNavigation = value;
     }
 
     public HostModel HostNavigation
     {
-        get => _hostNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(HostNavigation));
+        get =>
+            _hostNavigation ?? throw new InvalidOperationException("Uninitialized property: " + nameof(HostNavigation));
         set => _hostNavigation = value;
     }
 }

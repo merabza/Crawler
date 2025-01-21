@@ -25,8 +25,7 @@ public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
     {
         var taskSubMenuSet = new CliMenuSet($" Task => {_taskName},  Start Point => {_startPoint}");
 
-        var deleteStartPointCommand =
-            new DeleteStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint);
+        var deleteStartPointCommand = new DeleteStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint);
         taskSubMenuSet.AddMenuItem(deleteStartPointCommand);
 
         taskSubMenuSet.AddMenuItem(new EditStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint));

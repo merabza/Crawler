@@ -120,7 +120,9 @@ public sealed class CrawlerRunner : ToolAction
         if (batch == null)
         {
             batch = _repository.CreateBatch(new Batch
-                { BatchName = newBatchName, IsOpen = false, AutoCreateNextPart = false });
+            {
+                BatchName = newBatchName, IsOpen = false, AutoCreateNextPart = false
+            });
             _repository.SaveChanges();
         }
 
@@ -196,8 +198,7 @@ public sealed class CrawlerRunner : ToolAction
         if (batch.AutoCreateNextPart)
             return true;
 
-        return Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?",
-            true, false);
+        return Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?", true, false);
     }
 
     private (Batch?, BatchPart?) PrepareBatchPart(Batch? startBatch = null)

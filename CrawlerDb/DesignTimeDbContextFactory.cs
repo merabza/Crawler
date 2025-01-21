@@ -38,8 +38,7 @@ public /*open*/ class DesignTimeDbContextFactory<T> : IDesignTimeDbContextFactor
         //Console.WriteLine("Pass 1...");
 
         //თუ პარამეტრების json ფაილის სახელი პირდაპირ არ არის გადმოცემული, ვიყენებთ სტანდარტულ სახელს appsettings.json
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+        var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile(_parametersJsonFileName ?? "appsettings.json", false, true)
             //.AddEncryptedJsonFile(Path.Combine(pathToContentRoot, "appsettingsEncoded.json"), optional: false, reloadOnChange: true, Key,
             //  Path.Combine(pathToContentRoot, "appsetenkeys.json"))

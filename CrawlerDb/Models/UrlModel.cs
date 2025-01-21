@@ -43,22 +43,24 @@ public sealed class UrlModel
 
     public HostModel HostNavigation
     {
-        get => _hostNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(HostNavigation));
+        get =>
+            _hostNavigation ?? throw new InvalidOperationException("Uninitialized property: " + nameof(HostNavigation));
         set => _hostNavigation = value;
     }
 
     public ExtensionModel ExtensionNavigation
     {
-        get => _extensionNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(ExtensionNavigation));
+        get =>
+            _extensionNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(ExtensionNavigation));
         set => _extensionNavigation = value;
     }
 
     public SchemeModel SchemeNavigation
     {
-        get => _schemeNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(SchemeNavigation));
+        get =>
+            _schemeNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(SchemeNavigation));
         set => _schemeNavigation = value;
     }
 

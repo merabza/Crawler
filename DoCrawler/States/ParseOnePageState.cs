@@ -357,8 +357,7 @@ public sealed class ParseOnePageState : State
         if (startQuery.Length <= 1)
             return startQuery;
 
-        var parts = startQuery[1..].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Distinct()
-            .ToArray();
+        var parts = startQuery[1..].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
         var newQuery = string.Empty;
         var isLeastOneAdded = false;
         foreach (var p in parts)

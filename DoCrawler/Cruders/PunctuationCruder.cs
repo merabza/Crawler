@@ -14,8 +14,7 @@ public sealed class PunctuationCruder : ParCruder
     private readonly ILogger _logger;
 
     public PunctuationCruder(ParametersManager parametersManager, ILogger logger) : base(parametersManager,
-        "Punctuation",
-        "Punctuations")
+        "Punctuation", "Punctuations")
     {
         _logger = logger;
         //FieldEditors.Add(new TextFieldEditor(nameof(PunctuationModel.PctKey)));

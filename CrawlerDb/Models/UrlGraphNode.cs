@@ -26,22 +26,25 @@ public sealed class UrlGraphNode
 
     public BatchPart BatchPartNavigation
     {
-        get => _batchPartNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
+        get =>
+            _batchPartNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
         set => _batchPartNavigation = value;
     }
 
     public UrlModel FromUrlNavigation
     {
-        get => _fromUrlNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(FromUrlNavigation));
+        get =>
+            _fromUrlNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(FromUrlNavigation));
         set => _fromUrlNavigation = value;
     }
 
     public UrlModel GotUrlNavigation
     {
-        get => _gotUrlNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(GotUrlNavigation));
+        get =>
+            _gotUrlNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(GotUrlNavigation));
         set => _gotUrlNavigation = value;
     }
 }

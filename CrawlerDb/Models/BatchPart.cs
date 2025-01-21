@@ -23,8 +23,9 @@ public sealed class BatchPart
 
     public Batch BatchNavigation
     {
-        get => _batchNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchNavigation));
+        get =>
+            _batchNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(BatchNavigation));
         set => _batchNavigation = value;
     }
 

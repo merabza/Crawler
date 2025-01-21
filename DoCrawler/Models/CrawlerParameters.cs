@@ -25,7 +25,7 @@ public sealed class CrawlerParameters : IParameters
     //public EDatabaseProvider DataProvider { get; set; }
     //public string? ConnectionString { get; set; }
     public string? DatabaseConnectionName { get; set; }
-    
+
     public int CommandTimeOut { get; set; }
     public int LoadPagesMaxCount { get; set; }
     public string? Alphabet { get; set; }

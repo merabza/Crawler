@@ -1,4 +1,5 @@
-﻿using CliParametersDataEdit;
+﻿using System;
+using CliParametersDataEdit;
 using CrawlerDb;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
@@ -24,19 +25,26 @@ public sealed class CrawlerServicesCreator : ServicesCreator
     {
         base.ConfigureServices(services);
 
-        
         DatabaseServerConnections databaseServerConnections = new(_par.DatabaseServerConnections);
 
-        var (devDataProvider, devConnectionString) =
-            DbConnectionFabric.GetDataProviderAndConnectionString(_par.DatabaseParameters,
-                databaseServerConnections);
+        var (dataProvider, connectionString) =
+            DbConnectionFabric.GetDataProviderAndConnectionString(_par.DatabaseParameters, databaseServerConnections);
 
-
-
-
-
-        if (!string.IsNullOrEmpty(_par.ConnectionString))
-            services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(_par.ConnectionString));
+        if (!string.IsNullOrEmpty(connectionString))
+            switch (dataProvider)
+            {
+                case EDatabaseProvider.SqlServer:
+                    services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString));
+                    break;
+                case EDatabaseProvider.None:
+                case EDatabaseProvider.SqLite:
+                case EDatabaseProvider.OleDb:
+                case EDatabaseProvider.WebAgent:
+                case null:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dataProvider));
+            }
 
         services.AddScoped<ICrawlerRepository, CrawlerRepository>();
         services.AddSingleton<ICrawlerRepositoryCreatorFabric, CrawlerRepositoryCreatorFabric>();

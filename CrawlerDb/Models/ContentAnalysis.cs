@@ -25,15 +25,16 @@ public sealed class ContentAnalysis
 
     public BatchPart BatchPartNavigation
     {
-        get => _batchPartNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
+        get =>
+            _batchPartNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
         set => _batchPartNavigation = value;
     }
 
     public UrlModel UrlNavigation
     {
-        get => _urlNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(UrlNavigation));
+        get =>
+            _urlNavigation ?? throw new InvalidOperationException("Uninitialized property: " + nameof(UrlNavigation));
         set => _urlNavigation = value;
     }
 }

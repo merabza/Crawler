@@ -28,22 +28,23 @@ public sealed class TermByUrl
 
     public UrlModel UrlNavigation
     {
-        get => _urlNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(UrlNavigation));
+        get =>
+            _urlNavigation ?? throw new InvalidOperationException("Uninitialized property: " + nameof(UrlNavigation));
         set => _urlNavigation = value;
     }
 
     public Term TermNavigation
     {
-        get => _termNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(TermNavigation));
+        get =>
+            _termNavigation ?? throw new InvalidOperationException("Uninitialized property: " + nameof(TermNavigation));
         set => _termNavigation = value;
     }
 
     public BatchPart BatchPartNavigation
     {
-        get => _batchPartNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
+        get =>
+            _batchPartNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(BatchPartNavigation));
         set => _batchPartNavigation = value;
     }
 }

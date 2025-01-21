@@ -316,8 +316,7 @@ public sealed class BatchPartRunner
         _urlGraphDeDuplicator.CopyToRepository();
     }
 
-    private void TrySaveTerm(ETermType termType, string? termContext, int termUrlId, int termBatchPartId,
-        int position)
+    private void TrySaveTerm(ETermType termType, string? termContext, int termUrlId, int termBatchPartId, int position)
     {
         try
         {

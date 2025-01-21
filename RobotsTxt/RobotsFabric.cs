@@ -97,7 +97,6 @@ public static class RobotsFabric
         }
 
         return new Robots(globalAccessRules, specificAccessRules, crawlDelayRules, sitemaps, malformed,
-            isAnyPathDisallowed, hasRules,
-            AllowRuleImplementation.MoreSpecific);
+            isAnyPathDisallowed, hasRules, AllowRuleImplementation.MoreSpecific);
     }
 }

@@ -26,8 +26,9 @@ public sealed class Term
 
     public TermType TermTypeNavigation
     {
-        get => _termTypeNavigation ??
-               throw new InvalidOperationException("Uninitialized property: " + nameof(TermTypeNavigation));
+        get =>
+            _termTypeNavigation ??
+            throw new InvalidOperationException("Uninitialized property: " + nameof(TermTypeNavigation));
         set => _termTypeNavigation = value;
     }
 

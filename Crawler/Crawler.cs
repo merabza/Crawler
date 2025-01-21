@@ -57,13 +57,13 @@ public sealed class Crawler : CliAppLoop
         CliMenuSet mainMenuSet = new("Main Menu");
 
         //ძირითადი პარამეტრების რედაქტირება
-        CrawlerParametersEditor crawlerParametersEditor = new(parameters, _parametersManager, _logger);
+        CrawlerParametersEditor crawlerParametersEditor =
+            new(parameters, _parametersManager, _logger, _httpClientFactory);
         mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(crawlerParametersEditor));
 
         if (CheckConnection())
         {
-            var crawlerRepositoryCreatorFabric =
-                _serviceProvider.GetService<ICrawlerRepositoryCreatorFabric>();
+            var crawlerRepositoryCreatorFabric = _serviceProvider.GetService<ICrawlerRepositoryCreatorFabric>();
             if (crawlerRepositoryCreatorFabric is not null)
             {
                 //ჰოსტების რედაქტორი
@@ -110,23 +110,38 @@ public sealed class Crawler : CliAppLoop
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        if (string.IsNullOrWhiteSpace(parameters.ConnectionString))
+        var databaseParameters = parameters.DatabaseParameters;
+
+        if (databaseParameters is null)
         {
-            Console.WriteLine("ConnectionString is empty");
+            Console.WriteLine("databaseParameters is null");
             return false;
         }
+
+
+        var databaseServerConnections = new DatabaseServerConnections(parameters.DatabaseServerConnections);
+
+        var (dataProvider, connectionString) =
+            DbConnectionFabric.GetDataProviderAndConnectionString(databaseParameters, databaseServerConnections);
+
+        if (dataProvider is null || connectionString is null)
+        {
+            Console.WriteLine("dataProvider is null || connectionString is null");
+            return false;
+        }
+
 
         try
         {
             var dbConnectionParameters =
-                DbConnectionFabric.GetDbConnectionParameters(parameters.DataProvider, parameters.ConnectionString);
+                DbConnectionFabric.GetDbConnectionParameters(dataProvider.Value, connectionString);
             if (dbConnectionParameters is null)
             {
                 Console.WriteLine("dbConnectionParameters is null");
                 return false;
             }
 
-            switch (parameters.DataProvider)
+            switch (dataProvider.Value)
             {
                 case EDatabaseProvider.SqlServer:
 
@@ -153,15 +168,18 @@ public sealed class Crawler : CliAppLoop
                         return false;
                     }
 
-                    var dbAuthSettings = DbAuthSettingsCreator.Create(
+                    var dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
                         databaseServerConnectionData.WindowsNtIntegratedSecurity,
-                        databaseServerConnectionData.ServerUser, databaseServerConnectionData.ServerPass);
+                        databaseServerConnectionData.ServerUser, databaseServerConnectionData.ServerPass, true);
 
-                    if (dbAuthSettings is null)
+                    if (dbAuthSettingsCreateResult.IsT1)
+                    {
+                        Err.PrintErrorsOnConsole(dbAuthSettingsCreateResult.AsT1);
                         return false;
+                    }
 
-                    var dc = DbClientFabric.GetDbClient(_logger, true, parameters.DataProvider,
-                        databaseServerConnectionData.ServerAddress, dbAuthSettings,
+                    var dc = DbClientFabric.GetDbClient(_logger, true, dataProvider.Value,
+                        databaseServerConnectionData.ServerAddress, dbAuthSettingsCreateResult.AsT0,
                         databaseServerConnectionData.TrustServerCertificate, ProgramAttributes.Instance.AppName,
                         databaseServerConnectionData.DatabaseName);
 

@@ -15,8 +15,7 @@ public class RobotConfiguration : IEntityTypeConfiguration<Robot>
         builder.ToTable(tableName.UnCapitalize());
 
         builder.HasIndex(e => new { e.BatchPartId, e.SchemeId, e.HostId }).HasDatabaseName(tableName.CreateIndexName(
-            true,
-            nameof(Robot.BatchPartId), nameof(Robot.SchemeId), nameof(Robot.HostId))).IsUnique();
+            true, nameof(Robot.BatchPartId), nameof(Robot.SchemeId), nameof(Robot.HostId))).IsUnique();
 
         builder.Property(e => e.RbtId).HasColumnName(nameof(Robot.RbtId).UnCapitalize());
         builder.Property(e => e.BatchPartId).HasColumnName(nameof(Robot.BatchPartId).UnCapitalize());

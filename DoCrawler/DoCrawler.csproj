@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\AppCliTools\CliParameters\CliParameters.csproj" />
-    <ProjectReference Include="..\..\DatabaseTools\DbTools\DbTools.csproj" />
     <ProjectReference Include="..\..\ParametersManagement\LibDatabaseParameters\LibDatabaseParameters.csproj" />
     <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />

@@ -14,8 +14,7 @@ public class TermByUrlConfiguration : IEntityTypeConfiguration<TermByUrl>
         builder.HasKey(e => e.TbuId);
         builder.ToTable(tableName.UnCapitalize());
         builder.HasIndex(e => new { e.BatchPartId, e.UrlId, e.Position }).HasDatabaseName(tableName.CreateIndexName(
-            true,
-            nameof(TermByUrl.BatchPartId), nameof(TermByUrl.UrlId), nameof(TermByUrl.Position))).IsUnique();
+            true, nameof(TermByUrl.BatchPartId), nameof(TermByUrl.UrlId), nameof(TermByUrl.Position))).IsUnique();
         builder.Property(e => e.TbuId).HasColumnName(nameof(TermByUrl.TbuId).UnCapitalize());
         builder.Property(e => e.BatchPartId).HasColumnName(nameof(TermByUrl.BatchPartId).UnCapitalize());
         builder.Property(e => e.UrlId).HasColumnName(nameof(TermByUrl.UrlId).UnCapitalize());
