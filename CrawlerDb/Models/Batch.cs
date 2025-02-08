@@ -7,18 +7,6 @@ namespace CrawlerDb.Models;
 
 public sealed class Batch : ItemData
 {
-    //public Batch()
-    //{
-    //}
-
-    //public Batch(string batchName, bool isOpen, bool autoCreateNextPart)
-    //{
-    //    BatchName = batchName;
-    //    IsOpen = isOpen;
-    //    AutoCreateNextPart = autoCreateNextPart;
-    //}
-
-
     public int BatchId { get; set; }
     public required string BatchName { get; set; }
     public bool IsOpen { get; set; }

@@ -179,7 +179,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public BatchPart TryCreateNewPart(int batchId)
     {
-        BatchPart newBatchPart = new(batchId, DateTime.Now);
+        var newBatchPart = new BatchPart { BatchId = batchId, Created = DateTime.Now };
         return _context.BatchParts.Add(newBatchPart).Entity;
     }
 
