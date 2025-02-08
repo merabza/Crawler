@@ -8,18 +8,6 @@ public sealed class TermByUrl
     private Term? _termNavigation;
     private UrlModel? _urlNavigation;
 
-    public TermByUrl()
-    {
-    }
-
-    public TermByUrl(int batchPartId, int urlId, Term termNavigation, int position)
-    {
-        BatchPartId = batchPartId;
-        UrlId = urlId;
-        TermNavigation = termNavigation;
-        Position = position;
-    }
-
     public int TbuId { get; set; }
     public int BatchPartId { get; set; }
     public int UrlId { get; set; }

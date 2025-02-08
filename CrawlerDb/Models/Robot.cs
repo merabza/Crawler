@@ -8,24 +8,6 @@ public sealed class Robot
     private HostModel? _hostNavigation;
     private SchemeModel? _schemeNavigation;
 
-    public Robot()
-    {
-    }
-
-    public Robot(int batchPartId, SchemeModel schemeNavigation, HostModel hostNavigation)
-    {
-        BatchPartId = batchPartId;
-        SchemeNavigation = schemeNavigation;
-        HostNavigation = hostNavigation;
-    }
-
-    public Robot(int batchPartId, int schemeId, int hostId)
-    {
-        BatchPartId = batchPartId;
-        SchemeId = schemeId;
-        HostId = hostId;
-    }
-
     public int RbtId { get; set; }
     public int BatchPartId { get; set; }
     public int SchemeId { get; set; }

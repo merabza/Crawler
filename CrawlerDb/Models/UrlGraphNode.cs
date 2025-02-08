@@ -8,17 +8,6 @@ public sealed class UrlGraphNode
     private UrlModel? _fromUrlNavigation;
     private UrlModel? _gotUrlNavigation;
 
-    public UrlGraphNode()
-    {
-    }
-
-    public UrlGraphNode(int fromUrlId, UrlModel gotUrlNavigation, int batchPartId)
-    {
-        FromUrlId = fromUrlId;
-        GotUrlNavigation = gotUrlNavigation;
-        BatchPartId = batchPartId;
-    }
-
     public int UgnId { get; set; }
     public int BatchPartId { get; set; }
     public int FromUrlId { get; set; }

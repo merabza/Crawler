@@ -12,7 +12,6 @@ public sealed class Batch : ItemData
     public bool IsOpen { get; set; }
     public bool AutoCreateNextPart { get; set; }
 
-
     public ICollection<HostByBatch> HostsByBatches { get; set; } = new HashSet<HostByBatch>();
     public ICollection<BatchPart> BatchParts { get; set; } = new HashSet<BatchPart>();
 }

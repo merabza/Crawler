@@ -9,13 +9,6 @@ public sealed class BatchPart
 {
     private Batch? _batchNavigation;
 
-    //// ReSharper disable once ConvertToPrimaryConstructor
-    //public BatchPart(int batchId, DateTime created)
-    //{
-    //    BatchId = batchId;
-    //    Created = created;
-    //}
-
     public int BpId { get; set; }
     public int BatchId { get; set; }
     public DateTime Created { get; set; }

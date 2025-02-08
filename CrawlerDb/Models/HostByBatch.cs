@@ -8,24 +8,10 @@ public sealed class HostByBatch
     private HostModel? _hostNavigation;
     private SchemeModel? _schemeNavigation;
 
-    public HostByBatch()
-    {
-    }
-
-    public HostByBatch(int batchId, SchemeModel schemeNavigation, HostModel hostNavigation)
-    {
-        BatchId = batchId;
-        SchemeNavigation = schemeNavigation;
-        HostNavigation = hostNavigation;
-    }
-
     public int HbbId { get; set; }
     public int BatchId { get; set; }
     public int SchemeId { get; set; }
-
     public int HostId { get; set; }
-    //public string? RobotsTxt { get; set; }
-
 
     public Batch BatchNavigation
     {

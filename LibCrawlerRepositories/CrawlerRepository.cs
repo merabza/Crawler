@@ -70,13 +70,13 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public HostModel CheckAddHostName(string hostName)
     {
         return _context.Hosts.SingleOrDefault(a => a.HostName == hostName) ??
-               _context.Hosts.Add(new HostModel(hostName)).Entity;
+               _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
     }
 
     public ExtensionModel CheckAddExtensionName(string extensionName)
     {
         return _context.Extensions.SingleOrDefault(a => a.ExtName == extensionName) ??
-               _context.Extensions.Add(new ExtensionModel(extensionName)).Entity;
+               _context.Extensions.Add(new ExtensionModel { ExtName = extensionName }).Entity;
     }
 
     public SchemeModel CheckAddSchemeName(string schemeName)
@@ -103,8 +103,16 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
         bool isSiteMap, bool isAllowed)
     {
-        return _context.Urls.Add(new UrlModel(strUrl, host, extension, scheme, urlHashCode, isSiteMap, isAllowed))
-            .Entity;
+        return _context.Urls.Add(new UrlModel
+        {
+            UrlName = strUrl,
+            HostNavigation = host,
+            ExtensionNavigation = extension,
+            SchemeNavigation = scheme,
+            UrlHashCode = urlHashCode,
+            IsSiteMap = isSiteMap,
+            IsAllowed = isAllowed
+        }).Entity;
     }
 
     public void AddUrlGraph(UrlGraphNode urlGraphNode)
@@ -114,7 +122,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void AddUrlGraph(int fromUrlPageId, UrlModel gotUrl, int batchPartId)
     {
-        _context.UrlGraphNodes.Add(new UrlGraphNode(fromUrlPageId, gotUrl, batchPartId));
+        _context.UrlGraphNodes.Add(new UrlGraphNode
+        {
+            FromUrlId = fromUrlPageId, GotUrlNavigation = gotUrl, BatchPartId = batchPartId
+        });
     }
 
     public List<string> GetHostStartUrlNamesByBatch(Batch batch)
@@ -160,9 +171,12 @@ public sealed class CrawlerRepository : ICrawlerRepository
                          _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
 
             var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName) ??
-                       _context.Hosts.Add(new HostModel(hostName)).Entity;
+                       _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
 
-            _context.HostsByBatches.Add(new HostByBatch(batch.BatchId, scheme, host));
+            _context.HostsByBatches.Add(new HostByBatch
+            {
+                BatchId = batch.BatchId, SchemeNavigation = scheme, HostNavigation = host
+            });
         }
         catch (Exception e)
         {
@@ -197,7 +211,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void CreateContentAnalysisRecord(int batchPartBpId, int urlId, HttpStatusCode statusCode)
     {
-        _context.ContentsAnalysis.Add(new ContentAnalysis(batchPartBpId, urlId, (int)statusCode, DateTime.Now));
+        _context.ContentsAnalysis.Add(new ContentAnalysis
+        {
+            BatchPartId = batchPartBpId, UrlId = urlId, ResponseStatusCode = (int)statusCode, Finish = DateTime.Now
+        });
     }
 
     public ContentAnalysis? GetContentAnalysis(int batchPartBpId, int urlId)
@@ -251,7 +268,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
             x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId);
         if (robot is null)
         {
-            robot = new Robot(batchPartId, schemeId, hostId) { RobotsTxt = robotsTxt };
+            robot = new Robot
+            {
+                BatchPartId = batchPartId, SchemeId = schemeId, HostId = hostId, RobotsTxt = robotsTxt
+            };
             _context.Robots.Add(robot);
         }
         else
@@ -292,7 +312,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public TermType CheckAddTermType(string termTypeKey)
     {
         return _context.TermTypes.SingleOrDefault(a => a.TtKey == termTypeKey) ??
-               _context.TermTypes.Add(new TermType(termTypeKey)).Entity;
+               _context.TermTypes.Add(new TermType { TtKey = termTypeKey }).Entity;
     }
 
     public Term? GetTerm(string termText)
@@ -302,12 +322,15 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public Term AddTerm(string termText, TermType termTypeInBase)
     {
-        return _context.Terms.Add(new Term(termText, termTypeInBase)).Entity;
+        return _context.Terms.Add(new Term { TermText = termText, TermTypeNavigation = termTypeInBase }).Entity;
     }
 
     public void AddTermByUrl(int batchPartId, int urlId, Term term, int position)
     {
-        _context.TermsByUrls.Add(new TermByUrl(batchPartId, urlId, term, position));
+        _context.TermsByUrls.Add(new TermByUrl
+        {
+            BatchPartId = batchPartId, UrlId = urlId, TermNavigation = term, Position = position
+        });
     }
 
     public TermByUrl? GeTermByUrlEntry(int batchPartId, int urlId, int position)

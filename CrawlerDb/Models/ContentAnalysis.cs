@@ -7,16 +7,6 @@ public sealed class ContentAnalysis
     private BatchPart? _batchPartNavigation;
     private UrlModel? _urlNavigation;
 
-
-    // ReSharper disable once ConvertToPrimaryConstructor
-    public ContentAnalysis(int batchPartId, int urlId, int responseStatusCode, DateTime finish)
-    {
-        BatchPartId = batchPartId;
-        UrlId = urlId;
-        ResponseStatusCode = responseStatusCode;
-        Finish = finish;
-    }
-
     public int CaId { get; set; }
     public int BatchPartId { get; set; }
     public int UrlId { get; set; }

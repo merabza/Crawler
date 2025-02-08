@@ -21,7 +21,8 @@ public sealed class UrlGraphDeDuplicator
         if (fromUrlPageId == 0 || batchPartId == 0)
             return;
         if (!_urlGraphNodes.ContainsKey(url.UrlName))
-            _urlGraphNodes.Add(url.UrlName, new UrlGraphNode(fromUrlPageId, url, batchPartId));
+            _urlGraphNodes.Add(url.UrlName,
+                new UrlGraphNode { FromUrlId = fromUrlPageId, GotUrlNavigation = url, BatchPartId = batchPartId });
     }
 
 

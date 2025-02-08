@@ -12,25 +12,8 @@ public sealed class UrlModel
     private HostModel? _hostNavigation;
     private SchemeModel? _schemeNavigation;
 
-    public UrlModel(string urlName)
-    {
-        UrlName = urlName;
-    }
-
-    public UrlModel(string urlName, HostModel hostNavigation, ExtensionModel extensionNavigation,
-        SchemeModel schemeNavigation, int urlHashCode, bool isSiteMap, bool isAllowed)
-    {
-        UrlName = urlName;
-        HostNavigation = hostNavigation;
-        ExtensionNavigation = extensionNavigation;
-        SchemeNavigation = schemeNavigation;
-        UrlHashCode = urlHashCode;
-        IsSiteMap = isSiteMap;
-        IsAllowed = isAllowed;
-    }
-
     public int UrlId { get; set; }
-    public string UrlName { get; set; }
+    public required string UrlName { get; set; }
     public int HostId { get; set; }
     public int ExtensionId { get; set; }
     public int SchemeId { get; set; }

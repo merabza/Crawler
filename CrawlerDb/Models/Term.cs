@@ -9,19 +9,8 @@ public sealed class Term
 {
     private TermType? _termTypeNavigation;
 
-    public Term(string termText)
-    {
-        TermText = termText;
-    }
-
-    public Term(string termText, TermType termTypeNavigation)
-    {
-        TermText = termText;
-        TermTypeNavigation = termTypeNavigation;
-    }
-
     public int TrmId { get; set; }
-    public string TermText { get; set; }
+    public required string TermText { get; set; }
     public int TermTypeId { get; set; }
 
     public TermType TermTypeNavigation
