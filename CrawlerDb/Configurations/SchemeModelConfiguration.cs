@@ -12,15 +12,12 @@ public class SchemeModelConfiguration : IEntityTypeConfiguration<SchemeModel>
     public void Configure(EntityTypeBuilder<SchemeModel> builder)
     {
         const string tableName = "Schemes";
+        builder.ToTable(tableName.UnCapitalize());
 
         builder.HasKey(e => e.SchId);
-        builder.ToTable(tableName.UnCapitalize());
-        builder.HasIndex(e => e.SchName).HasDatabaseName(tableName.CreateIndexName(true, nameof(SchemeModel.SchName)))
-            .IsUnique();
-        builder.Property(e => e.SchId).HasColumnName(nameof(SchemeModel.SchId).UnCapitalize());
-        builder.Property(e => e.SchName).HasColumnName(nameof(SchemeModel.SchName).UnCapitalize())
-            .HasMaxLength(SchemeNameLength);
-        builder.Property(e => e.SchProhibited).HasColumnName(nameof(SchemeModel.SchProhibited).UnCapitalize())
-            .HasDefaultValue(0);
+        builder.HasIndex(e => e.SchName).IsUnique();
+
+        builder.Property(e => e.SchName).HasMaxLength(SchemeNameLength);
+        builder.Property(e => e.SchProhibited).HasDefaultValue(0);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CrawlerDb.Models;
+using DatabaseToolsShared;
 using Microsoft.EntityFrameworkCore;
 
 namespace CrawlerDb;
@@ -38,5 +39,10 @@ public sealed class CrawlerDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Conventions.Add(_ => new DatabaseEntitiesDefaultConvention());
     }
 }
