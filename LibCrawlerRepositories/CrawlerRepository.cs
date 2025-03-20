@@ -35,7 +35,6 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
     }
 
-
     public int SaveChangesWithTransaction()
     {
         try
@@ -307,7 +306,6 @@ public sealed class CrawlerRepository : ICrawlerRepository
             where bp.BpId == batchPartId && u.IsAllowed
             select u).Count();
     }
-
 
     public TermType CheckAddTermType(string termTypeKey)
     {

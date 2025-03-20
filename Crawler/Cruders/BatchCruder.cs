@@ -31,8 +31,8 @@ public sealed class BatchCruder : Cruder
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
         _par = par;
 
-        FieldEditors.Add(new BoolFieldEditor(nameof(Batch.IsOpen), false));
-        FieldEditors.Add(new BoolFieldEditor(nameof(Batch.AutoCreateNextPart), false));
+        FieldEditors.Add(new BoolFieldEditor(nameof(Batch.IsOpen)));
+        FieldEditors.Add(new BoolFieldEditor(nameof(Batch.AutoCreateNextPart)));
     }
 
     private ICrawlerRepository GetCrawlerRepository()
@@ -98,7 +98,6 @@ public sealed class BatchCruder : Cruder
     {
         return new Batch { BatchName = recordKey ?? string.Empty };
     }
-
 
     public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordKey)
     {

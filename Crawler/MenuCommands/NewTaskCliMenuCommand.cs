@@ -19,7 +19,6 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
         _parametersManager = parametersManager;
     }
 
-
     protected override bool RunBody()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;

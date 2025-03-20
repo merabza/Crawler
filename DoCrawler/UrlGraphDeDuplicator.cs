@@ -15,7 +15,6 @@ public sealed class UrlGraphDeDuplicator
         _repository = repository;
     }
 
-
     public void AddUrlGraph(int fromUrlPageId, UrlModel url, int batchPartId)
     {
         if (fromUrlPageId == 0 || batchPartId == 0)
@@ -24,7 +23,6 @@ public sealed class UrlGraphDeDuplicator
             _urlGraphNodes.Add(url.UrlName,
                 new UrlGraphNode { FromUrlId = fromUrlPageId, GotUrlNavigation = url, BatchPartId = batchPartId });
     }
-
 
     public void CopyToRepository()
     {

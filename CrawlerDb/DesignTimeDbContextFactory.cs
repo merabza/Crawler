@@ -32,7 +32,6 @@ public /*open*/ class DesignTimeDbContextFactory<T> : IDesignTimeDbContextFactor
         Console.WriteLine($"DesignTimeDbContextFactory parametersJsonFileName = {parametersJsonFileName}");
     }
 
-
     public T CreateDbContext(string[] args)
     {
         //Console.WriteLine("Pass 1...");

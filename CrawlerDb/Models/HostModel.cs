@@ -11,7 +11,6 @@ public sealed class HostModel : ItemData
     public required string HostName { get; set; }
     public bool HostProhibited { get; set; }
 
-
     public ICollection<UrlModel> Urls { get; set; } = new HashSet<UrlModel>();
     public ICollection<HostByBatch> HostsByBatches { get; set; } = new HashSet<HostByBatch>();
     public ICollection<Robot> Robots { get; set; } = new HashSet<Robot>();

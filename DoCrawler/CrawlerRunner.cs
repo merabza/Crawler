@@ -98,7 +98,6 @@ public sealed class CrawlerRunner : ToolAction
         }
     }
 
-
     private Batch? GetBatchByTaskName()
     {
         if (_taskName == null || _task == null || _task.StartPoints.Count == 0)
@@ -125,7 +124,6 @@ public sealed class CrawlerRunner : ToolAction
             });
             _repository.SaveChanges();
         }
-
 
         //მოხდეს _task.StartPoints-ების განხილვა. თითოეულისათვის:
         //გამოიყოს საწყისი მისამართიდან ჰოსტი და სქემა,
@@ -191,7 +189,6 @@ public sealed class CrawlerRunner : ToolAction
 
         return true;
     }
-
 
     private static bool IsCreateNewPartAllowed(Batch batch)
     {

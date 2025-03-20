@@ -20,7 +20,6 @@ public sealed class CrawlerServicesCreator : ServicesCreator
         _par = par;
     }
 
-
     protected override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);

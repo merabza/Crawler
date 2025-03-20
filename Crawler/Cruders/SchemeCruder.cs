@@ -16,7 +16,7 @@ public sealed class SchemeCruder : Cruder
     public SchemeCruder(ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric) : base("Scheme", "Schemes")
     {
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
-        FieldEditors.Add(new BoolFieldEditor(nameof(SchemeModel.SchProhibited), false));
+        FieldEditors.Add(new BoolFieldEditor(nameof(SchemeModel.SchProhibited)));
     }
 
     private ICrawlerRepository GetCrawlerRepository()

@@ -7,7 +7,6 @@ public sealed class TaskModel : ItemData
 {
     public List<string> StartPoints { get; set; } = new();
 
-
     public bool CheckNewStartPointValid(string oldStartPoint, string newStartPoint)
     {
         if (oldStartPoint == newStartPoint)

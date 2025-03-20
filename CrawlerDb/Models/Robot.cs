@@ -16,7 +16,6 @@ public sealed class Robot
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? RobotsTxt { get; set; }
 
-
     public BatchPart BatchPartNavigation
     {
         get =>

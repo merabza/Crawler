@@ -22,8 +22,8 @@ public sealed class PunctuationCruder : ParCruder
         FieldEditors.Add(new TextFieldEditor(nameof(PunctuationModel.PctPunctuation)));
         FieldEditors.Add(new TextFieldEditor(nameof(PunctuationModel.PctRegexPattern)));
         FieldEditors.Add(new IntFieldEditor(nameof(PunctuationModel.PctSortId)));
-        FieldEditors.Add(new BoolFieldEditor(nameof(PunctuationModel.PctSentenceFinisher), false));
-        FieldEditors.Add(new BoolFieldEditor(nameof(PunctuationModel.PctCanBePartOfWord), false));
+        FieldEditors.Add(new BoolFieldEditor(nameof(PunctuationModel.PctSentenceFinisher)));
+        FieldEditors.Add(new BoolFieldEditor(nameof(PunctuationModel.PctCanBePartOfWord)));
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()

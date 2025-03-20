@@ -23,7 +23,6 @@ public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
         return _cruder.GetItemMenu(Name);
     }
 
-
     protected override string GetStatus()
     {
         if (Name is null)

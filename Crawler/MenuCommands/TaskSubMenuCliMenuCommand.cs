@@ -36,7 +36,6 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
         DeleteTaskCliMenuCommand deleteTaskCommand = new(_parametersManager, Name);
         taskSubMenuSet.AddMenuItem(deleteTaskCommand);
 
-
         taskSubMenuSet.AddMenuItem(new EditTaskNameCliMenuCommand(_parametersManager, Name));
 
         taskSubMenuSet.AddMenuItem(new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric,
@@ -50,7 +49,6 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
         var task = parameters.GetTask(Name);
         NewStartPointCliMenuCommand newStartPointCommand = new(_parametersManager, Name);
         taskSubMenuSet.AddMenuItem(newStartPointCommand);
-
 
         if (task?.StartPoints != null)
             foreach (var startPoint in task.StartPoints.OrderBy(o => o))

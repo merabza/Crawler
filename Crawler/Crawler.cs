@@ -43,7 +43,6 @@ public sealed class Crawler : CliAppLoop
         _serviceProvider = serviceProvider;
     }
 
-
     public override CliMenuSet BuildMainMenu()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
@@ -91,12 +90,10 @@ public sealed class Crawler : CliAppLoop
             }
         }
 
-
         //ქრაულერის ამოცანების სია
         //CruderListCommand crawlerTaskListCommand =
         //  new CruderListCommand(new CrawlerTaskCruder(_logger, _parametersManager, _crawlerRepositoryCreatorFabric));
         //mainMenuSet.AddMenuItem(crawlerTaskListCommand.Name, crawlerTaskListCommand);
-
 
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
@@ -104,7 +101,6 @@ public sealed class Crawler : CliAppLoop
 
         return mainMenuSet;
     }
-
 
     private bool CheckConnection()
     {
@@ -118,7 +114,6 @@ public sealed class Crawler : CliAppLoop
             return false;
         }
 
-
         var databaseServerConnections = new DatabaseServerConnections(parameters.DatabaseServerConnections);
 
         var (dataProvider, connectionString) =
@@ -129,7 +124,6 @@ public sealed class Crawler : CliAppLoop
             Console.WriteLine("dataProvider is null || connectionString is null");
             return false;
         }
-
 
         try
         {
@@ -151,9 +145,7 @@ public sealed class Crawler : CliAppLoop
                         return false;
                     }
 
-
                     //Console.WriteLine("Try connect to server...");
-
 
                     //მოისინჯოს ბაზასთან დაკავშირება.
                     //თუ დაკავშირება ვერ მოხერხდა, გამოვიდეს ამის შესახებ შეტყობინება და შევთავაზოთ მონაცემების შეყვანის გაგრძელება, ან გაჩერება
