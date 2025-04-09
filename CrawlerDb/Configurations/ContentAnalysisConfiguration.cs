@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CrawlerDb.Configurations;
 
-public class ContentAnalysisConfiguration : IEntityTypeConfiguration<ContentAnalysis>
+public sealed class ContentAnalysisConfiguration : IEntityTypeConfiguration<ContentAnalysis>
 {
     public void Configure(EntityTypeBuilder<ContentAnalysis> builder)
     {

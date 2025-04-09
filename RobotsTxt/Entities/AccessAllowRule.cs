@@ -2,7 +2,7 @@
 
 namespace RobotsTxt.Entities;
 
-public class AccessAllowRule : Rule
+public sealed class AccessAllowRule : Rule
 {
     // ReSharper disable once ConvertToPrimaryConstructor
     public AccessAllowRule(string userAgent, string path, bool allowed, int order) : base(userAgent, order)

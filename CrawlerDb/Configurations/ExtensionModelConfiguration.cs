@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class ExtensionModelConfiguration : IEntityTypeConfiguration<ExtensionModel>
+public sealed class ExtensionModelConfiguration : IEntityTypeConfiguration<ExtensionModel>
 {
     public const int ExtensionNameLength = 50;
 

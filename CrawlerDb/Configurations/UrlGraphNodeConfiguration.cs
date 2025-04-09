@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CrawlerDb.Configurations;
 
-public class UrlGraphNodeConfiguration : IEntityTypeConfiguration<UrlGraphNode>
+public sealed class UrlGraphNodeConfiguration : IEntityTypeConfiguration<UrlGraphNode>
 {
     public void Configure(EntityTypeBuilder<UrlGraphNode> builder)
     {

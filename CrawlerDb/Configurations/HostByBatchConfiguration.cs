@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class HostByBatchConfiguration : IEntityTypeConfiguration<HostByBatch>
+public sealed class HostByBatchConfiguration : IEntityTypeConfiguration<HostByBatch>
 {
     public void Configure(EntityTypeBuilder<HostByBatch> builder)
     {

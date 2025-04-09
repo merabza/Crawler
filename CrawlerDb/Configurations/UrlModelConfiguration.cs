@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class UrlModelConfiguration : IEntityTypeConfiguration<UrlModel>
+public sealed class UrlModelConfiguration : IEntityTypeConfiguration<UrlModel>
 {
     public const int TermTextLength = 2048;
 

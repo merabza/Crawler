@@ -6,7 +6,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class RobotConfiguration : IEntityTypeConfiguration<Robot>
+public sealed class RobotConfiguration : IEntityTypeConfiguration<Robot>
 {
     public void Configure(EntityTypeBuilder<Robot> builder)
     {

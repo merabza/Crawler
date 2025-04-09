@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class TermByUrlConfiguration : IEntityTypeConfiguration<TermByUrl>
+public sealed class TermByUrlConfiguration : IEntityTypeConfiguration<TermByUrl>
 {
     public void Configure(EntityTypeBuilder<TermByUrl> builder)
     {

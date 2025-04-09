@@ -2,7 +2,7 @@
 
 namespace RobotsTxt.Entities;
 
-public class CrawlDelayRule : Rule
+public sealed class CrawlDelayRule : Rule
 {
     public CrawlDelayRule(string userAgent, Line line, int order) : base(userAgent, order)
     {

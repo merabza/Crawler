@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class HostModelConfiguration : IEntityTypeConfiguration<HostModel>
+public sealed class HostModelConfiguration : IEntityTypeConfiguration<HostModel>
 {
     public const int HostNameLength = 253;
 

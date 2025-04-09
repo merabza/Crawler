@@ -2,7 +2,7 @@
 
 namespace RobotsTxt.Entities;
 
-public class Sitemap
+public sealed class Sitemap
 {
     private Sitemap(Uri url)
     {

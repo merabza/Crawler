@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CrawlerDb.Configurations;
 
-public class BatchPartConfiguration : IEntityTypeConfiguration<BatchPart>
+public sealed class BatchPartConfiguration : IEntityTypeConfiguration<BatchPart>
 {
     public void Configure(EntityTypeBuilder<BatchPart> builder)
     {

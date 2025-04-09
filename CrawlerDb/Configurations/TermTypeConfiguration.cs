@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class TermTypeConfiguration : IEntityTypeConfiguration<TermType>
+public sealed class TermTypeConfiguration : IEntityTypeConfiguration<TermType>
 {
     public void Configure(EntityTypeBuilder<TermType> builder)
     {

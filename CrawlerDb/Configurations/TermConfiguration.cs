@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class TermConfiguration : IEntityTypeConfiguration<Term>
+public sealed class TermConfiguration : IEntityTypeConfiguration<Term>
 {
     public const int TermTextLength = 50;
 

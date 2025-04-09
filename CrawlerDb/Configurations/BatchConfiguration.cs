@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CrawlerDb.Configurations;
 
-public class BatchConfiguration : IEntityTypeConfiguration<Batch>
+public sealed class BatchConfiguration : IEntityTypeConfiguration<Batch>
 {
     public const int BatchNameLength = 50;
 

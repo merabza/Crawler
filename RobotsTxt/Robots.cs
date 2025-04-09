@@ -6,7 +6,7 @@ using RobotsTxt.Enums;
 
 namespace RobotsTxt;
 
-public class Robots : IRobotsParser
+public sealed class Robots : IRobotsParser
 {
     /// <summary>
     ///     Gets the list of sitemaps declared in the file.

@@ -3,7 +3,7 @@ using RobotsTxt.Enums;
 
 namespace RobotsTxt.Entities;
 
-public class Line
+public sealed class Line
 {
     // ReSharper disable once ConvertToPrimaryConstructor
     private Line(LineType type, string? field, string? value)

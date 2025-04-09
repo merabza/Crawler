@@ -5,7 +5,7 @@ using SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
-public class SchemeModelConfiguration : IEntityTypeConfiguration<SchemeModel>
+public sealed class SchemeModelConfiguration : IEntityTypeConfiguration<SchemeModel>
 {
     public const int SchemeNameLength = 50;
 
