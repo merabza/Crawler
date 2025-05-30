@@ -21,7 +21,7 @@ public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
         _startPoint = startPoint;
     }
 
-    public override CliMenuSet GetSubmenu()
+    public override CliMenuSet GetSubMenu()
     {
         var taskSubMenuSet = new CliMenuSet($" Task => {_taskName},  Start Point => {_startPoint}");
 

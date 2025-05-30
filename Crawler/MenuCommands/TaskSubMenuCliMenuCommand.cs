@@ -29,7 +29,7 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
         _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
     }
 
-    public override CliMenuSet GetSubmenu()
+    public override CliMenuSet GetSubMenu()
     {
         CliMenuSet taskSubMenuSet = new($" Task => {Name}");
 

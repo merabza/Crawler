@@ -16,7 +16,7 @@ public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
         _cruder = cruder;
     }
 
-    public override CliMenuSet GetSubmenu()
+    public override CliMenuSet GetSubMenu()
     {
         if (Name is null)
             throw new Exception("Name is null");
