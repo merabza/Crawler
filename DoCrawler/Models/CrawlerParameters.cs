@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using LibApiClientParameters;
 using LibDatabaseParameters;
-using LibParameters;
+using LibFileParameters.Interfaces;
+using LibFileParameters.Models;
 
 namespace DoCrawler.Models;
 
-public sealed class CrawlerParameters : IParameters
+public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections, IParametersWithApiClients, IParametersWithSmartSchemas
 {
     private string _possibleSymbols = string.Empty;
 
@@ -21,9 +23,6 @@ public sealed class CrawlerParameters : IParameters
 
     public string? LogFolder { get; set; }
 
-    //public string? LogFileName { get; set; }
-    //public EDatabaseProvider DataProvider { get; set; }
-    //public string? ConnectionString { get; set; }
     public string? DatabaseConnectionName { get; set; }
 
     public int CommandTimeOut { get; set; }
@@ -33,8 +32,10 @@ public sealed class CrawlerParameters : IParameters
 
     public Dictionary<string, TaskModel> Tasks { get; set; } = [];
     public Dictionary<string, PunctuationModel> Punctuations { get; init; } = [];
-    public Dictionary<string, DatabaseServerConnectionData> DatabaseServerConnections { get; init; } = [];
     public DatabaseParameters? DatabaseParameters { get; init; }
+    public Dictionary<string, ApiClientSettings> ApiClients { get; } = [];
+    public Dictionary<string, DatabaseServerConnectionData> DatabaseServerConnections { get; init; } = [];
+    public Dictionary<string, SmartSchema> SmartSchemas { get; } = [];
 
     public bool CheckBeforeSave()
     {
@@ -59,10 +60,7 @@ public sealed class CrawlerParameters : IParameters
 
     public bool RemoveTask(string taskName)
     {
-        if (!Tasks.ContainsKey(taskName))
-            return false;
-        Tasks.Remove(taskName);
-        return true;
+        return Tasks.Remove(taskName);
     }
 
     public bool AddTask(string newTaskName, TaskModel task)
@@ -129,4 +127,5 @@ public sealed class CrawlerParameters : IParameters
                                   @"|(\s)|(\n)})";
         return _wordDelimiterRegex;
     }
+
 }
