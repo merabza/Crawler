@@ -15,7 +15,7 @@ namespace Crawler.MenuCommands;
 
 public sealed class TestOnePageCliMenuCommand : CliMenuCommand
 {
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
@@ -23,12 +23,12 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public TestOnePageCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, ParametersManager parametersManager,
+        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, ParametersManager parametersManager,
         string taskName) : base("Test One Page", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _parametersManager = parametersManager;
         _taskName = taskName;
     }
@@ -43,7 +43,7 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRepository = _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
+        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
 
         var strUrl = Inputer.InputText("Page for Test", null);
         if (string.IsNullOrWhiteSpace(strUrl))

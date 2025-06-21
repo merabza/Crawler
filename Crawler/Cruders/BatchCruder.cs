@@ -17,18 +17,18 @@ namespace Crawler.Cruders;
 
 public sealed class BatchCruder : Cruder
 {
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
 
     public BatchCruder(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par) : base("Batch",
+        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par) : base("Batch",
         "Batches")
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _par = par;
 
         FieldEditors.Add(new BoolFieldEditor(nameof(Batch.IsOpen)));
@@ -37,7 +37,7 @@ public sealed class BatchCruder : Cruder
 
     private ICrawlerRepository GetCrawlerRepository()
     {
-        return _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
+        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
     }
 
     private List<Batch> GetBatches()
@@ -108,9 +108,9 @@ public sealed class BatchCruder : Cruder
         var batch = batches[recordKey];
 
         itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFabric, _par, batch));
+            _crawlerRepositoryCreatorFactory, _par, batch));
 
-        HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFabric, batch);
+        HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFactory, batch);
         NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 

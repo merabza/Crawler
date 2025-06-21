@@ -55,7 +55,7 @@ public sealed class BatchPartRunner
             //2. {_hostName}robots.txt
             TrySaveUrl($"{hostName}/", 0, _batchPart.BpId);
         //TrySaveUrl($"{host}/robots.txt", 0, _batchPart.BpId);
-        foreach (var uri in startPoints.Select(UriFabric.GetUri).Where(x => x is not null))
+        foreach (var uri in startPoints.Select(UriFactory.GetUri).Where(x => x is not null))
             TrySaveUrl(uri!.AbsoluteUri, 0, _batchPart.BpId);
 
         //_urlGraphDeDuplicator.CopyToRepository();
@@ -164,7 +164,7 @@ public sealed class BatchPartRunner
 
         _repository.SaveRobotsTxtToBase(batchPartId, schemeId, hostId, content);
 
-        var robots = RobotsFabric.AnaliseContentAndCreateRobots(content);
+        var robots = RobotsFactory.AnaliseContentAndCreateRobots(content);
 
         if (robots is null)
             return;
@@ -471,12 +471,12 @@ public sealed class BatchPartRunner
     private Robots? RobotsFromBase(int schemeId, int hostId)
     {
         var robotsTxt = _repository.LoadRobotsFromBase(_batchPart.BpId, schemeId, hostId);
-        return robotsTxt is not null ? RobotsFabric.AnaliseContentAndCreateRobots(robotsTxt) : null;
+        return robotsTxt is not null ? RobotsFactory.AnaliseContentAndCreateRobots(robotsTxt) : null;
     }
 
     private UrlData? GetUrlData(string strUrl)
     {
-        var myUri = UriFabric.GetUri(strUrl);
+        var myUri = UriFactory.GetUri(strUrl);
         if (myUri == null)
             return null;
 

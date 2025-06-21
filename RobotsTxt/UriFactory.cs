@@ -2,7 +2,7 @@
 
 namespace RobotsTxt;
 
-public static class UriFabric
+public static class UriFactory
 {
     public static Uri? GetUri(string strRef)
     {

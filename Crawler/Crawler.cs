@@ -13,7 +13,7 @@ using CliTools.CliMenuCommands;
 using Crawler.Cruders;
 using Crawler.MenuCommands;
 using DbTools;
-using DbToolsFabric;
+using DbToolsFactory;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
 using LibDatabaseParameters;
@@ -62,21 +62,21 @@ public sealed class Crawler : CliAppLoop
 
         if (CheckConnection())
         {
-            var crawlerRepositoryCreatorFabric = _serviceProvider.GetService<ICrawlerRepositoryCreatorFabric>();
-            if (crawlerRepositoryCreatorFabric is not null)
+            var crawlerRepositoryCreatorFactory = _serviceProvider.GetService<ICrawlerRepositoryCreatorFactory>();
+            if (crawlerRepositoryCreatorFactory is not null)
             {
                 //ჰოსტების რედაქტორი
-                HostCruder hostCruder = new(crawlerRepositoryCreatorFabric);
+                HostCruder hostCruder = new(crawlerRepositoryCreatorFactory);
                 //"Hosts"
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(hostCruder));
 
                 //სქემების რედაქტორი
-                SchemeCruder schemeCruder = new(crawlerRepositoryCreatorFabric);
+                SchemeCruder schemeCruder = new(crawlerRepositoryCreatorFactory);
                 //"Schemes"
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(schemeCruder));
 
                 //პაკეტების რედაქტორი
-                BatchCruder batchCruder = new(_logger, _httpClientFactory, crawlerRepositoryCreatorFabric, parameters);
+                BatchCruder batchCruder = new(_logger, _httpClientFactory, crawlerRepositoryCreatorFactory, parameters);
                 //"Batches"
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder));
 
@@ -86,13 +86,13 @@ public sealed class Crawler : CliAppLoop
 
                 foreach (var kvp in parameters.Tasks.OrderBy(o => o.Key))
                     mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _httpClientFactory,
-                        _parametersManager, crawlerRepositoryCreatorFabric, kvp.Key));
+                        _parametersManager, crawlerRepositoryCreatorFactory, kvp.Key));
             }
         }
 
         //ქრაულერის ამოცანების სია
         //CruderListCommand crawlerTaskListCommand =
-        //  new CruderListCommand(new CrawlerTaskCruder(_logger, _parametersManager, _crawlerRepositoryCreatorFabric));
+        //  new CruderListCommand(new CrawlerTaskCruder(_logger, _parametersManager, _crawlerRepositoryCreatorFactory));
         //mainMenuSet.AddMenuItem(crawlerTaskListCommand.Name, crawlerTaskListCommand);
 
         //გასასვლელი
@@ -117,7 +117,7 @@ public sealed class Crawler : CliAppLoop
         var databaseServerConnections = new DatabaseServerConnections(parameters.DatabaseServerConnections);
 
         var (dataProvider, connectionString) =
-            DbConnectionFabric.GetDataProviderAndConnectionString(databaseParameters, databaseServerConnections);
+            DbConnectionFactory.GetDataProviderAndConnectionString(databaseParameters, databaseServerConnections);
 
         if (dataProvider is null || connectionString is null)
         {
@@ -128,7 +128,7 @@ public sealed class Crawler : CliAppLoop
         try
         {
             var dbConnectionParameters =
-                DbConnectionFabric.GetDbConnectionParameters(dataProvider.Value, connectionString);
+                DbConnectionFactory.GetDbConnectionParameters(dataProvider.Value, connectionString);
             if (dbConnectionParameters is null)
             {
                 Console.WriteLine("dbConnectionParameters is null");
@@ -170,7 +170,7 @@ public sealed class Crawler : CliAppLoop
                         return false;
                     }
 
-                    var dc = DbClientFabric.GetDbClient(_logger, true, dataProvider.Value,
+                    var dc = DbClientFactory.GetDbClient(_logger, true, dataProvider.Value,
                         databaseServerConnectionData.ServerAddress, dbAuthSettingsCreateResult.AsT0,
                         databaseServerConnectionData.TrustServerCertificate, ProgramAttributes.Instance.AppName,
                         databaseServerConnectionData.DatabaseName);

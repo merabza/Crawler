@@ -6,7 +6,7 @@ using RobotsTxt.Enums;
 
 namespace RobotsTxt;
 
-public static class RobotsFabric
+public static class RobotsFactory
 {
     public static Robots? AnaliseContentAndCreateRobots(string content)
     {

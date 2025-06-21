@@ -3,12 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LibCrawlerRepositories;
 
-public sealed class CrawlerRepositoryCreatorFabric : ICrawlerRepositoryCreatorFabric
+public sealed class CrawlerRepositoryCreatorFactory : ICrawlerRepositoryCreatorFactory
 {
     private readonly IServiceProvider _services;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public CrawlerRepositoryCreatorFabric(IServiceProvider services)
+    public CrawlerRepositoryCreatorFactory(IServiceProvider services)
     {
         _services = services;
     }

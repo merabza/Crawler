@@ -130,7 +130,7 @@ public sealed class CrawlerRunner : ToolAction
         //შემოწმდეს და თუ არ არსებობს ბაზაში ასეთი ჰოსტი ან სქემა, დარეგისტრირდეს თითოეული.
         //ამ სქემისა და ჰოსტის წყვილისთვის შემოწმდეს არის თუ არა დარეგისტრირებული HostByBatch ცხრილში
         //თუ არ არის დარეგისტრირებული, დარეგისტრირდეს.
-        foreach (var myUri in _task.StartPoints.Select(UriFabric.GetUri).Where(myUri => myUri != null))
+        foreach (var myUri in _task.StartPoints.Select(UriFactory.GetUri).Where(myUri => myUri != null))
             _repository.AddHostNamesByBatch(batch, myUri!.Scheme, myUri.Host);
 
         _repository.SaveChanges();

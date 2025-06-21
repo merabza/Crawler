@@ -11,17 +11,17 @@ namespace Crawler.Cruders;
 
 public sealed class SchemeCruder : Cruder
 {
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
-    public SchemeCruder(ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric) : base("Scheme", "Schemes")
+    public SchemeCruder(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) : base("Scheme", "Schemes")
     {
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         FieldEditors.Add(new BoolFieldEditor(nameof(SchemeModel.SchProhibited)));
     }
 
     private ICrawlerRepository GetCrawlerRepository()
     {
-        return _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
+        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
     }
 
     private List<SchemeModel> GetSchemes()

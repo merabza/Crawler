@@ -9,18 +9,18 @@
 //public sealed class HostFieldEditor : FieldEditor<string>
 //{
 //    //private readonly ParametersManager _parametersManager;
-//    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+//    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
-//    public HostFieldEditor(string propertyName, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric) :
+//    public HostFieldEditor(string propertyName, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) :
 //        base(propertyName)
 //    {
 //        //_parametersManager = parametersManager;
-//        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+//        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
 //    }
 
 //    public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
 //    {
-//        HostCruder hostCruder = new HostCruder(_crawlerRepositoryCreatorFabric);
+//        HostCruder hostCruder = new HostCruder(_crawlerRepositoryCreatorFactory);
 //        List<string> keys = hostCruder.GetKeys();
 //        string? def = keys.Count > 1 ? null : hostCruder.GetKeys().SingleOrDefault();
 //        SetValue(recordForUpdate,

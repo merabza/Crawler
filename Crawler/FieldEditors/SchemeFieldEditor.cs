@@ -7,17 +7,17 @@ namespace Crawler.FieldEditors;
 
 public sealed class SchemeFieldEditor : FieldEditor<string>
 {
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
-    public SchemeFieldEditor(string propertyName, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric) :
+    public SchemeFieldEditor(string propertyName, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) :
         base(propertyName)
     {
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
     }
 
     public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
     {
-        SchemeCruder schemeCruder = new(_crawlerRepositoryCreatorFabric);
+        SchemeCruder schemeCruder = new(_crawlerRepositoryCreatorFactory);
         var keys = schemeCruder.GetKeys();
         var def = keys.Count > 1 ? null : schemeCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,

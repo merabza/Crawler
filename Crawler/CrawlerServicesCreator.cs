@@ -27,7 +27,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
         DatabaseServerConnections databaseServerConnections = new(_par.DatabaseServerConnections);
 
         var (dataProvider, connectionString) =
-            DbConnectionFabric.GetDataProviderAndConnectionString(_par.DatabaseParameters, databaseServerConnections);
+            DbConnectionFactory.GetDataProviderAndConnectionString(_par.DatabaseParameters, databaseServerConnections);
 
         if (!string.IsNullOrEmpty(connectionString))
             switch (dataProvider)
@@ -46,7 +46,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
             }
 
         services.AddScoped<ICrawlerRepository, CrawlerRepository>();
-        services.AddSingleton<ICrawlerRepositoryCreatorFabric, CrawlerRepositoryCreatorFabric>();
+        services.AddSingleton<ICrawlerRepositoryCreatorFactory, CrawlerRepositoryCreatorFactory>();
         services.AddHttpClient();
     }
 }

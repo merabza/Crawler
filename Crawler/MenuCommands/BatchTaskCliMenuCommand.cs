@@ -16,7 +16,7 @@ namespace Crawler.MenuCommands;
 public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 {
     private readonly Batch _batch;
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly ILogger _logger;
@@ -24,19 +24,19 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchTaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, CrawlerParameters par, Batch batch) : base(
+        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par, Batch batch) : base(
         "Run this batch", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _par = par;
         _batch = batch;
     }
 
     protected override bool RunBody()
     {
-        var crawlerRepository = _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
+        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
 
         var par = ParseOnePageParameters.Create(_par);
         if (par is null)

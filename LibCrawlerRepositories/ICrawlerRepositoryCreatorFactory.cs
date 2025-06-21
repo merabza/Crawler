@@ -1,6 +1,6 @@
 ﻿namespace LibCrawlerRepositories;
 
-public interface ICrawlerRepositoryCreatorFabric
+public interface ICrawlerRepositoryCreatorFactory
 {
     ICrawlerRepository GetCrawlerRepository();
 }

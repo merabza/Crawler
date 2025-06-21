@@ -13,20 +13,20 @@ namespace Crawler.MenuCommands;
 
 public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 {
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public TaskSubMenuCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ParametersManager parametersManager, ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric,
+        ParametersManager parametersManager, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory,
         string taskName) : base(taskName, EMenuAction.LoadSubMenu)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
     }
 
     public override CliMenuSet GetSubMenu()
@@ -38,11 +38,11 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 
         taskSubMenuSet.AddMenuItem(new EditTaskNameCliMenuCommand(_parametersManager, Name));
 
-        taskSubMenuSet.AddMenuItem(new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFabric,
+        taskSubMenuSet.AddMenuItem(new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory,
             _parametersManager, Name));
 
         taskSubMenuSet.AddMenuItem(new TestOnePageCliMenuCommand(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFabric, _parametersManager, Name));
+            _crawlerRepositoryCreatorFactory, _parametersManager, Name));
 
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 

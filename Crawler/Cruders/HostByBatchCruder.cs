@@ -11,19 +11,19 @@ namespace Crawler.Cruders;
 public sealed class HostByBatchCruder : Cruder
 {
     private readonly Batch _batch;
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public HostByBatchCruder(ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric, Batch batch) : base(
+    public HostByBatchCruder(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, Batch batch) : base(
         "Host Name", "Host Names")
     {
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _batch = batch;
     }
 
     private ICrawlerRepository GetCrawlerRepository()
     {
-        return _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
+        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
     }
 
     public List<string> GetHostNamesByBatch()

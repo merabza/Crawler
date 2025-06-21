@@ -18,7 +18,7 @@ public sealed class Sitemap
 
     internal static Sitemap? FromLine(string strUrl)
     {
-        var uri = UriFabric.GetUri(strUrl);
+        var uri = UriFactory.GetUri(strUrl);
         return uri is null ? null : new Sitemap(uri);
     }
 }

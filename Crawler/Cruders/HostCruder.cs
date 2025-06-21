@@ -12,18 +12,18 @@ namespace Crawler.Cruders;
 
 public sealed class HostCruder : Cruder
 {
-    private readonly ICrawlerRepositoryCreatorFabric _crawlerRepositoryCreatorFabric;
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public HostCruder(ICrawlerRepositoryCreatorFabric crawlerRepositoryCreatorFabric) : base("Host", "Hosts")
+    public HostCruder(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) : base("Host", "Hosts")
     {
-        _crawlerRepositoryCreatorFabric = crawlerRepositoryCreatorFabric;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         //FieldEditors.Add(new TextFieldEditor(nameof(HostModel.HostName)));
     }
 
     private ICrawlerRepository GetCrawlerRepository()
     {
-        return _crawlerRepositoryCreatorFabric.GetCrawlerRepository();
+        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
     }
 
     private List<HostModel> GetHosts()

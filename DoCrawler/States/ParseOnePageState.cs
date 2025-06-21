@@ -33,7 +33,7 @@ public sealed class ParseOnePageState : State
 
     public override void Execute()
     {
-        _currentUri = UriFabric.GetUri(_url.UrlName);
+        _currentUri = UriFactory.GetUri(_url.UrlName);
 
         HtmlDocument htmlDoc = new();
         htmlDoc.LoadHtml(_content);
@@ -46,7 +46,7 @@ public sealed class ParseOnePageState : State
         var nodeBase = nodeHead?.ChildNodes.FirstOrDefault(s => s.Name == "base");
         var attributeHref = nodeBase?.Attributes.FirstOrDefault(s => s.Name == "href");
         if (attributeHref != null && attributeHref.Value != string.Empty)
-            _currentUri = UriFabric.GetUri(attributeHref.Value);
+            _currentUri = UriFactory.GetUri(attributeHref.Value);
         if (_currentUri == null)
             return;
         ExtractAllLinks(htmlDoc.DocumentNode);
@@ -268,18 +268,18 @@ public sealed class ParseOnePageState : State
         var strUri = uriCandidate.Trim('"', '\'', '#', ' ', '>');
         try
         {
-            var newUri = UriFabric.GetUri(strUri);
+            var newUri = UriFactory.GetUri(strUri);
             if (newUri == null || !newUri.IsAbsoluteUri)
             {
                 if (_currentUri is null)
                     return;
-                var tempUri = UriFabric.GetUri(_currentUri, strUri);
+                var tempUri = UriFactory.GetUri(_currentUri, strUri);
                 if (tempUri == null)
                     return;
                 strUri = GetAbsoluteUri(tempUri);
                 if (strUri == null)
                     return;
-                newUri = UriFabric.GetUri(strUri);
+                newUri = UriFactory.GetUri(strUri);
             }
 
             if (newUri == null)
