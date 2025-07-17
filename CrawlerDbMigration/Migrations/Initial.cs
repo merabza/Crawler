@@ -1,508 +1,283 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
+namespace CrawlerDbMigration.Migrations;
 
-namespace CrawlerDbMigration.Migrations
+/// <inheritdoc />
+public partial class Initial : Migration
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.CreateTable(
-                name: "batches",
-                columns: table => new
-                {
-                    batchId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    isOpen = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    autoCreateNextPart = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_batches", x => x.batchId);
-                });
+        migrationBuilder.CreateTable("batches",
+            table => new
+            {
+                batchId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchName = table.Column<string>("nvarchar(50)", maxLength: 50, nullable: false),
+                isOpen = table.Column<bool>("bit", nullable: false, defaultValue: false),
+                autoCreateNextPart = table.Column<bool>("bit", nullable: false, defaultValue: false)
+            }, constraints: table => { table.PrimaryKey("PK_batches", x => x.batchId); });
 
-            migrationBuilder.CreateTable(
-                name: "extensions",
-                columns: table => new
-                {
-                    extId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    extName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    extProhibited = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_extensions", x => x.extId);
-                });
+        migrationBuilder.CreateTable("extensions",
+            table => new
+            {
+                extId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                extName = table.Column<string>("nvarchar(50)", maxLength: 50, nullable: false),
+                extProhibited = table.Column<bool>("bit", nullable: false, defaultValue: false)
+            }, constraints: table => { table.PrimaryKey("PK_extensions", x => x.extId); });
 
-            migrationBuilder.CreateTable(
-                name: "hosts",
-                columns: table => new
-                {
-                    hostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    hostName = table.Column<string>(type: "nvarchar(253)", maxLength: 253, nullable: false),
-                    hostProhibited = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_hosts", x => x.hostId);
-                });
+        migrationBuilder.CreateTable("hosts",
+            table => new
+            {
+                hostId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                hostName = table.Column<string>("nvarchar(253)", maxLength: 253, nullable: false),
+                hostProhibited = table.Column<bool>("bit", nullable: false, defaultValue: false)
+            }, constraints: table => { table.PrimaryKey("PK_hosts", x => x.hostId); });
 
-            migrationBuilder.CreateTable(
-                name: "schemes",
-                columns: table => new
-                {
-                    schId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    schName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    schProhibited = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_schemes", x => x.schId);
-                });
+        migrationBuilder.CreateTable("schemes",
+            table => new
+            {
+                schId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                schName = table.Column<string>("nvarchar(50)", maxLength: 50, nullable: false),
+                schProhibited = table.Column<bool>("bit", nullable: false, defaultValue: false)
+            }, constraints: table => { table.PrimaryKey("PK_schemes", x => x.schId); });
 
-            migrationBuilder.CreateTable(
-                name: "termTypes",
-                columns: table => new
-                {
-                    ttId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ttKey = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ttName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_termTypes", x => x.ttId);
-                });
+        migrationBuilder.CreateTable("termTypes",
+            table => new
+            {
+                ttId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                ttKey = table.Column<string>("nvarchar(50)", maxLength: 50, nullable: false),
+                ttName = table.Column<string>("nvarchar(50)", maxLength: 50, nullable: true)
+            }, constraints: table => { table.PrimaryKey("PK_termTypes", x => x.ttId); });
 
-            migrationBuilder.CreateTable(
-                name: "batchParts",
-                columns: table => new
-                {
-                    bpId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchId = table.Column<int>(type: "int", nullable: false),
-                    created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    finished = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_batchParts", x => x.bpId);
-                    table.ForeignKey(
-                        name: "FK_BatchParts_Batches",
-                        column: x => x.batchId,
-                        principalTable: "batches",
-                        principalColumn: "batchId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("batchParts",
+            table => new
+            {
+                bpId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchId = table.Column<int>("int", nullable: false),
+                created = table.Column<DateTime>("datetime2", nullable: false),
+                finished = table.Column<DateTime>("datetime2", nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_batchParts", x => x.bpId);
+                table.ForeignKey("FK_BatchParts_Batches", x => x.batchId, "batches", "batchId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "hostsByBatches",
-                columns: table => new
-                {
-                    hbbId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchId = table.Column<int>(type: "int", maxLength: 50, nullable: false),
-                    schemeId = table.Column<int>(type: "int", nullable: false),
-                    hostId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_hostsByBatches", x => x.hbbId);
-                    table.ForeignKey(
-                        name: "FK_HostsByBatches_Batches",
-                        column: x => x.batchId,
-                        principalTable: "batches",
-                        principalColumn: "batchId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_HostsByBatches_HostModels",
-                        column: x => x.hostId,
-                        principalTable: "hosts",
-                        principalColumn: "hostId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_HostsByBatches_SchemeModels",
-                        column: x => x.schemeId,
-                        principalTable: "schemes",
-                        principalColumn: "schId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("hostsByBatches",
+            table => new
+            {
+                hbbId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchId = table.Column<int>("int", maxLength: 50, nullable: false),
+                schemeId = table.Column<int>("int", nullable: false),
+                hostId = table.Column<int>("int", nullable: false)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_hostsByBatches", x => x.hbbId);
+                table.ForeignKey("FK_HostsByBatches_Batches", x => x.batchId, "batches", "batchId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_HostsByBatches_HostModels", x => x.hostId, "hosts", "hostId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_HostsByBatches_SchemeModels", x => x.schemeId, "schemes", "schId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "urls",
-                columns: table => new
-                {
-                    urlId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    urlName = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    hostId = table.Column<int>(type: "int", nullable: false),
-                    extensionId = table.Column<int>(type: "int", nullable: false),
-                    schemeId = table.Column<int>(type: "int", nullable: false),
-                    urlHashCode = table.Column<int>(type: "int", nullable: false),
-                    isSiteMap = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    isAllowed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_urls", x => x.urlId);
-                    table.ForeignKey(
-                        name: "FK_Urls_ExtensionModels",
-                        column: x => x.extensionId,
-                        principalTable: "extensions",
-                        principalColumn: "extId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Urls_HostModels",
-                        column: x => x.hostId,
-                        principalTable: "hosts",
-                        principalColumn: "hostId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Urls_SchemeModels",
-                        column: x => x.schemeId,
-                        principalTable: "schemes",
-                        principalColumn: "schId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("urls",
+            table => new
+            {
+                urlId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                urlName = table.Column<string>("nvarchar(2048)", maxLength: 2048, nullable: false),
+                hostId = table.Column<int>("int", nullable: false),
+                extensionId = table.Column<int>("int", nullable: false),
+                schemeId = table.Column<int>("int", nullable: false),
+                urlHashCode = table.Column<int>("int", nullable: false),
+                isSiteMap = table.Column<bool>("bit", nullable: false, defaultValue: false),
+                isAllowed = table.Column<bool>("bit", nullable: false, defaultValue: false)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_urls", x => x.urlId);
+                table.ForeignKey("FK_Urls_ExtensionModels", x => x.extensionId, "extensions", "extId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_Urls_HostModels", x => x.hostId, "hosts", "hostId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_Urls_SchemeModels", x => x.schemeId, "schemes", "schId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "terms",
-                columns: table => new
-                {
-                    trmId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    termText = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, collation: "SQL_Latin1_General_CP1_CS_AS"),
-                    termTypeId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_terms", x => x.trmId);
-                    table.ForeignKey(
-                        name: "FK_Terms_TermTypes",
-                        column: x => x.termTypeId,
-                        principalTable: "termTypes",
-                        principalColumn: "ttId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("terms",
+            table => new
+            {
+                trmId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                termText = table.Column<string>("nvarchar(50)", maxLength: 50, nullable: false,
+                    collation: "SQL_Latin1_General_CP1_CS_AS"),
+                termTypeId = table.Column<int>("int", nullable: false)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_terms", x => x.trmId);
+                table.ForeignKey("FK_Terms_TermTypes", x => x.termTypeId, "termTypes", "ttId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "robots",
-                columns: table => new
-                {
-                    rbtId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchPartId = table.Column<int>(type: "int", maxLength: 50, nullable: false),
-                    schemeId = table.Column<int>(type: "int", nullable: false),
-                    hostId = table.Column<int>(type: "int", nullable: false),
-                    robotsTxt = table.Column<string>(type: "ntext", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_robots", x => x.rbtId);
-                    table.ForeignKey(
-                        name: "FK_Robots_BatchParts",
-                        column: x => x.batchPartId,
-                        principalTable: "batchParts",
-                        principalColumn: "bpId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Robots_HostModels",
-                        column: x => x.hostId,
-                        principalTable: "hosts",
-                        principalColumn: "hostId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Robots_SchemeModels",
-                        column: x => x.schemeId,
-                        principalTable: "schemes",
-                        principalColumn: "schId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("robots",
+            table => new
+            {
+                rbtId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchPartId = table.Column<int>("int", maxLength: 50, nullable: false),
+                schemeId = table.Column<int>("int", nullable: false),
+                hostId = table.Column<int>("int", nullable: false),
+                robotsTxt = table.Column<string>("ntext", nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_robots", x => x.rbtId);
+                table.ForeignKey("FK_Robots_BatchParts", x => x.batchPartId, "batchParts", "bpId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_Robots_HostModels", x => x.hostId, "hosts", "hostId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_Robots_SchemeModels", x => x.schemeId, "schemes", "schId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "contentAnalyses",
-                columns: table => new
-                {
-                    caId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchPartId = table.Column<int>(type: "int", nullable: false),
-                    urlId = table.Column<int>(type: "int", nullable: false),
-                    responseStatusCode = table.Column<int>(type: "int", nullable: false),
-                    finish = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_contentAnalyses", x => x.caId);
-                    table.ForeignKey(
-                        name: "FK_ContentAnalyses_BatchParts",
-                        column: x => x.batchPartId,
-                        principalTable: "batchParts",
-                        principalColumn: "bpId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContentAnalyses_UrlModels",
-                        column: x => x.urlId,
-                        principalTable: "urls",
-                        principalColumn: "urlId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("contentAnalyses",
+            table => new
+            {
+                caId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchPartId = table.Column<int>("int", nullable: false),
+                urlId = table.Column<int>("int", nullable: false),
+                responseStatusCode = table.Column<int>("int", nullable: false),
+                finish = table.Column<DateTime>("datetime2", nullable: false)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_contentAnalyses", x => x.caId);
+                table.ForeignKey("FK_ContentAnalyses_BatchParts", x => x.batchPartId, "batchParts", "bpId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_ContentAnalyses_UrlModels", x => x.urlId, "urls", "urlId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "urlGraphNodes",
-                columns: table => new
-                {
-                    ugnId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchPartId = table.Column<int>(type: "int", nullable: false),
-                    fromUrlId = table.Column<int>(type: "int", nullable: false),
-                    gotUrlId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_urlGraphNodes", x => x.ugnId);
-                    table.ForeignKey(
-                        name: "FK_UrlGraphNodes_BatchParts",
-                        column: x => x.batchPartId,
-                        principalTable: "batchParts",
-                        principalColumn: "bpId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UrlGraphNodes_UrlGraphNodes_FromUrlId",
-                        column: x => x.fromUrlId,
-                        principalTable: "urls",
-                        principalColumn: "urlId");
-                    table.ForeignKey(
-                        name: "FK_UrlGraphNodes_UrlGraphNodes_GotUrlId",
-                        column: x => x.gotUrlId,
-                        principalTable: "urls",
-                        principalColumn: "urlId");
-                });
+        migrationBuilder.CreateTable("urlGraphNodes",
+            table => new
+            {
+                ugnId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchPartId = table.Column<int>("int", nullable: false),
+                fromUrlId = table.Column<int>("int", nullable: false),
+                gotUrlId = table.Column<int>("int", nullable: false)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_urlGraphNodes", x => x.ugnId);
+                table.ForeignKey("FK_UrlGraphNodes_BatchParts", x => x.batchPartId, "batchParts", "bpId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_UrlGraphNodes_UrlGraphNodes_FromUrlId", x => x.fromUrlId, "urls", "urlId");
+                table.ForeignKey("FK_UrlGraphNodes_UrlGraphNodes_GotUrlId", x => x.gotUrlId, "urls", "urlId");
+            });
 
-            migrationBuilder.CreateTable(
-                name: "termsByUrls",
-                columns: table => new
-                {
-                    tbuId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    batchPartId = table.Column<int>(type: "int", nullable: false),
-                    urlId = table.Column<int>(type: "int", nullable: false),
-                    termId = table.Column<int>(type: "int", nullable: false),
-                    position = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_termsByUrls", x => x.tbuId);
-                    table.ForeignKey(
-                        name: "FK_TermsByUrls_BatchParts",
-                        column: x => x.batchPartId,
-                        principalTable: "batchParts",
-                        principalColumn: "bpId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TermsByUrls_Terms",
-                        column: x => x.termId,
-                        principalTable: "terms",
-                        principalColumn: "trmId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TermsByUrls_UrlModels",
-                        column: x => x.urlId,
-                        principalTable: "urls",
-                        principalColumn: "urlId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable("termsByUrls",
+            table => new
+            {
+                tbuId = table.Column<int>("int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
+                batchPartId = table.Column<int>("int", nullable: false),
+                urlId = table.Column<int>("int", nullable: false),
+                termId = table.Column<int>("int", nullable: false),
+                position = table.Column<int>("int", nullable: false)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_termsByUrls", x => x.tbuId);
+                table.ForeignKey("FK_TermsByUrls_BatchParts", x => x.batchPartId, "batchParts", "bpId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_TermsByUrls_Terms", x => x.termId, "terms", "trmId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey("FK_TermsByUrls_UrlModels", x => x.urlId, "urls", "urlId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Batches_batchName_Unique",
-                table: "batches",
-                column: "batchName",
-                unique: true);
+        migrationBuilder.CreateIndex("IX_Batches_batchName_Unique", "batches", "batchName", unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_BatchParts_batchId_created_Unique",
-                table: "batchParts",
-                columns: new[] { "batchId", "created" },
-                unique: true);
+        migrationBuilder.CreateIndex("IX_BatchParts_batchId_created_Unique", "batchParts",
+            new[] { "batchId", "created" }, unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ContentAnalyses_batchPartId_urlId_Unique",
-                table: "contentAnalyses",
-                columns: new[] { "batchPartId", "urlId" },
-                unique: true);
+        migrationBuilder.CreateIndex("IX_ContentAnalyses_batchPartId_urlId_Unique", "contentAnalyses",
+            new[] { "batchPartId", "urlId" }, unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_contentAnalyses_urlId",
-                table: "contentAnalyses",
-                column: "urlId");
+        migrationBuilder.CreateIndex("IX_contentAnalyses_urlId", "contentAnalyses", "urlId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Extensions_extName_Unique",
-                table: "extensions",
-                column: "extName",
-                unique: true);
+        migrationBuilder.CreateIndex("IX_Extensions_extName_Unique", "extensions", "extName", unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Hosts_hostName_Unique",
-                table: "hosts",
-                column: "hostName",
-                unique: true);
+        migrationBuilder.CreateIndex("IX_Hosts_hostName_Unique", "hosts", "hostName", unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_HostsByBatches_batchId_schemeId_hostId_Unique",
-                table: "hostsByBatches",
-                columns: new[] { "batchId", "schemeId", "hostId" },
-                unique: true);
+        migrationBuilder.CreateIndex("IX_HostsByBatches_batchId_schemeId_hostId_Unique", "hostsByBatches",
+            new[] { "batchId", "schemeId", "hostId" }, unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_hostsByBatches_hostId",
-                table: "hostsByBatches",
-                column: "hostId");
+        migrationBuilder.CreateIndex("IX_hostsByBatches_hostId", "hostsByBatches", "hostId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_hostsByBatches_schemeId",
-                table: "hostsByBatches",
-                column: "schemeId");
+        migrationBuilder.CreateIndex("IX_hostsByBatches_schemeId", "hostsByBatches", "schemeId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Robots_batchPartId_schemeId_hostId_Unique",
-                table: "robots",
-                columns: new[] { "batchPartId", "schemeId", "hostId" },
-                unique: true);
+        migrationBuilder.CreateIndex("IX_Robots_batchPartId_schemeId_hostId_Unique", "robots",
+            new[] { "batchPartId", "schemeId", "hostId" }, unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_robots_hostId",
-                table: "robots",
-                column: "hostId");
+        migrationBuilder.CreateIndex("IX_robots_hostId", "robots", "hostId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_robots_schemeId",
-                table: "robots",
-                column: "schemeId");
+        migrationBuilder.CreateIndex("IX_robots_schemeId", "robots", "schemeId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Schemes_schName_Unique",
-                table: "schemes",
-                column: "schName",
-                unique: true);
+        migrationBuilder.CreateIndex("IX_Schemes_schName_Unique", "schemes", "schName", unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Terms_termText_Unique",
-                table: "terms",
-                column: "termText");
+        migrationBuilder.CreateIndex("IX_Terms_termText_Unique", "terms", "termText");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_terms_termTypeId",
-                table: "terms",
-                column: "termTypeId");
+        migrationBuilder.CreateIndex("IX_terms_termTypeId", "terms", "termTypeId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_TermsByUrls_batchPartId_urlId_position_Unique",
-                table: "termsByUrls",
-                columns: new[] { "batchPartId", "urlId", "position" },
-                unique: true);
+        migrationBuilder.CreateIndex("IX_TermsByUrls_batchPartId_urlId_position_Unique", "termsByUrls",
+            new[] { "batchPartId", "urlId", "position" }, unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_termsByUrls_termId",
-                table: "termsByUrls",
-                column: "termId");
+        migrationBuilder.CreateIndex("IX_termsByUrls_termId", "termsByUrls", "termId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_termsByUrls_urlId",
-                table: "termsByUrls",
-                column: "urlId");
+        migrationBuilder.CreateIndex("IX_termsByUrls_urlId", "termsByUrls", "urlId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_TermTypes_ttKey_Unique",
-                table: "termTypes",
-                column: "ttKey",
-                unique: true);
+        migrationBuilder.CreateIndex("IX_TermTypes_ttKey_Unique", "termTypes", "ttKey", unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_UrlGraphNodes_batchPartId_fromUrlId_gotUrlId_Unique",
-                table: "urlGraphNodes",
-                columns: new[] { "batchPartId", "fromUrlId", "gotUrlId" },
-                unique: true);
+        migrationBuilder.CreateIndex("IX_UrlGraphNodes_batchPartId_fromUrlId_gotUrlId_Unique", "urlGraphNodes",
+            new[] { "batchPartId", "fromUrlId", "gotUrlId" }, unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_urlGraphNodes_fromUrlId",
-                table: "urlGraphNodes",
-                column: "fromUrlId");
+        migrationBuilder.CreateIndex("IX_urlGraphNodes_fromUrlId", "urlGraphNodes", "fromUrlId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_urlGraphNodes_gotUrlId",
-                table: "urlGraphNodes",
-                column: "gotUrlId");
+        migrationBuilder.CreateIndex("IX_urlGraphNodes_gotUrlId", "urlGraphNodes", "gotUrlId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_urls_extensionId",
-                table: "urls",
-                column: "extensionId");
+        migrationBuilder.CreateIndex("IX_urls_extensionId", "urls", "extensionId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_urls_hostId",
-                table: "urls",
-                column: "hostId");
+        migrationBuilder.CreateIndex("IX_urls_hostId", "urls", "hostId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_urls_schemeId",
-                table: "urls",
-                column: "schemeId");
+        migrationBuilder.CreateIndex("IX_urls_schemeId", "urls", "schemeId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique",
-                table: "urls",
-                columns: new[] { "urlHashCode", "hostId", "extensionId", "schemeId" });
-        }
+        migrationBuilder.CreateIndex("IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique", "urls",
+            new[] { "urlHashCode", "hostId", "extensionId", "schemeId" });
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "contentAnalyses");
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropTable("contentAnalyses");
 
-            migrationBuilder.DropTable(
-                name: "hostsByBatches");
+        migrationBuilder.DropTable("hostsByBatches");
 
-            migrationBuilder.DropTable(
-                name: "robots");
+        migrationBuilder.DropTable("robots");
 
-            migrationBuilder.DropTable(
-                name: "termsByUrls");
+        migrationBuilder.DropTable("termsByUrls");
 
-            migrationBuilder.DropTable(
-                name: "urlGraphNodes");
+        migrationBuilder.DropTable("urlGraphNodes");
 
-            migrationBuilder.DropTable(
-                name: "terms");
+        migrationBuilder.DropTable("terms");
 
-            migrationBuilder.DropTable(
-                name: "batchParts");
+        migrationBuilder.DropTable("batchParts");
 
-            migrationBuilder.DropTable(
-                name: "urls");
+        migrationBuilder.DropTable("urls");
 
-            migrationBuilder.DropTable(
-                name: "termTypes");
+        migrationBuilder.DropTable("termTypes");
 
-            migrationBuilder.DropTable(
-                name: "batches");
+        migrationBuilder.DropTable("batches");
 
-            migrationBuilder.DropTable(
-                name: "extensions");
+        migrationBuilder.DropTable("extensions");
 
-            migrationBuilder.DropTable(
-                name: "hosts");
+        migrationBuilder.DropTable("hosts");
 
-            migrationBuilder.DropTable(
-                name: "schemes");
-        }
+        migrationBuilder.DropTable("schemes");
     }
 }

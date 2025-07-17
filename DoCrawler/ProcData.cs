@@ -9,8 +9,6 @@ namespace DoCrawler;
 public sealed class ProcData : IDisposable
 {
     private const int MaxCacheRecordCount = 10000;
-
-    public readonly ConcurrentQueue<UrlModel> UrlsQueue = new();
     private readonly ConcurrentDictionary<string, ExtensionModel> _extensionsCache = new();
     private readonly ConcurrentDictionary<string, HostModel> _hostsCache = new();
 
@@ -20,6 +18,8 @@ public sealed class ProcData : IDisposable
     private readonly ConcurrentDictionary<string, Term> _termCache = new();
     private readonly ConcurrentDictionary<string, TermType> _termTypesCache = new();
     private readonly ConcurrentDictionary<int, UrlModel> _urlCache = new();
+
+    public readonly ConcurrentQueue<UrlModel> UrlsQueue = new();
 
     private int _lastStateId;
 

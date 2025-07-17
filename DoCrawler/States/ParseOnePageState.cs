@@ -15,11 +15,11 @@ namespace DoCrawler.States;
 
 public sealed class ParseOnePageState : State
 {
-    public readonly List<string> ListOfUris = [];
-    public readonly List<UriTerm> UriTerms = [];
     private readonly string _content;
     private readonly ParseOnePageParameters _par;
     private readonly UrlModel _url;
+    public readonly List<string> ListOfUris = [];
+    public readonly List<UriTerm> UriTerms = [];
     private Uri? _currentUri;
 
     // ReSharper disable once ConvertToPrimaryConstructor
