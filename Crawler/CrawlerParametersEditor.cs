@@ -1,11 +1,13 @@
-﻿using System.Net.Http;
-using CliParameters;
+﻿using CliParameters;
 using CliParameters.FieldEditors;
+using CliParametersDataEdit.Cruders;
 using CliParametersDataEdit.FieldEditors;
 using Crawler.FieldEditors;
 using DoCrawler.Models;
+using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace Crawler;
 
@@ -25,8 +27,16 @@ public sealed class CrawlerParametersEditor : ParametersEditor
         FieldEditors.Add(new TextFieldEditor(nameof(CrawlerParameters.ExtraSymbols), "-–"));
         FieldEditors.Add(new PunctuationsFieldEditor(nameof(CrawlerParameters.Punctuations), parametersManager,
             logger));
-        FieldEditors.Add(new DatabaseServerConnectionsFieldEditor(logger, httpClientFactory, parametersManager,
-            nameof(CrawlerParameters.DatabaseServerConnections)));
+        //FieldEditors.Add(new DatabaseServerConnectionsFieldEditor(logger, httpClientFactory, parametersManager,
+        //    nameof(CrawlerParameters.DatabaseServerConnections)));
+
+        
+        FieldEditors.Add(new DictionaryFieldEditor<DatabaseServerConnectionCruder, DatabaseServerConnectionData>(
+            nameof(CrawlerParameters.DatabaseServerConnections), logger, httpClientFactory, parametersManager));
+
+
+
+
         FieldEditors.Add(new DatabaseParametersFieldEditor(logger, httpClientFactory,
             nameof(CrawlerParameters.DatabaseParameters), parametersManager));
     }
