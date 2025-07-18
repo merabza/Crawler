@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CliParameters;
+using CliParameters.Cruders;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
 using LibParameters;

@@ -1,6 +1,6 @@
 ﻿using System;
 using CliMenu;
-using CliParameters;
+using CliParameters.Cruders;
 
 namespace Crawler.MenuCommands;
 
