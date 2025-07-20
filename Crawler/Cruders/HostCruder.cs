@@ -90,7 +90,7 @@ public sealed class HostCruder : Cruder
             return false;
         }
 
-        Regex re = new(@"[-a-zA-Z0-9]{1,256}\.([-a-zA-Z0-9]{1,256}\.)*[a-zA-Z0-9()]{1,6}");
+        var re = new Regex(@"[-a-zA-Z0-9]{1,256}\.([-a-zA-Z0-9]{1,256}\.)*[a-zA-Z0-9()]{1,6}");
         var m = re.Match(newHost.HostName);
         if (m is { Success: true, Groups.Count: 2 } && m.Groups[0].Value == newHost.HostName)
             return true;

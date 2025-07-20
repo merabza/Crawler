@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using CrawlerDb.Models;
 using RobotsTxt;
 
@@ -167,7 +168,7 @@ public sealed class ProcData : IDisposable
     #region Singletone
 
     private static ProcData? _instance;
-    private static readonly object SyncRoot = new();
+    private static readonly Lock SyncRoot = new();
 
     public static ProcData Instance
     {

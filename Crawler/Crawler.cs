@@ -53,11 +53,11 @@ public sealed class Crawler : CliAppLoop
         //    return false;
         //}
 
-        CliMenuSet mainMenuSet = new("Main Menu");
+        var mainMenuSet = new CliMenuSet("Main Menu");
 
         //ძირითადი პარამეტრების რედაქტირება
-        CrawlerParametersEditor crawlerParametersEditor =
-            new(parameters, _parametersManager, _logger, _httpClientFactory);
+        var crawlerParametersEditor =
+            new CrawlerParametersEditor(parameters, _parametersManager, _logger, _httpClientFactory);
         mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(crawlerParametersEditor));
 
         if (CheckConnection())
@@ -66,22 +66,23 @@ public sealed class Crawler : CliAppLoop
             if (crawlerRepositoryCreatorFactory is not null)
             {
                 //ჰოსტების რედაქტორი
-                HostCruder hostCruder = new(crawlerRepositoryCreatorFactory);
+                var hostCruder = new HostCruder(crawlerRepositoryCreatorFactory);
                 //"Hosts"
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(hostCruder));
 
                 //სქემების რედაქტორი
-                SchemeCruder schemeCruder = new(crawlerRepositoryCreatorFactory);
+                var schemeCruder = new SchemeCruder(crawlerRepositoryCreatorFactory);
                 //"Schemes"
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(schemeCruder));
 
                 //პაკეტების რედაქტორი
-                BatchCruder batchCruder = new(_logger, _httpClientFactory, crawlerRepositoryCreatorFactory, parameters);
+                var batchCruder = new BatchCruder(_logger, _httpClientFactory, crawlerRepositoryCreatorFactory,
+                    parameters);
                 //"Batches"
                 mainMenuSet.AddMenuItem(new CruderListCliMenuCommand(batchCruder));
 
                 //ამოცანები
-                NewTaskCliMenuCommand newAppTaskCommand = new(_parametersManager);
+                var newAppTaskCommand = new NewTaskCliMenuCommand(_parametersManager);
                 mainMenuSet.AddMenuItem(newAppTaskCommand);
 
                 foreach (var kvp in parameters.Tasks.OrderBy(o => o.Key))

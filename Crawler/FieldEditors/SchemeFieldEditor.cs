@@ -17,7 +17,7 @@ public sealed class SchemeFieldEditor : FieldEditor<string>
 
     public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
     {
-        SchemeCruder schemeCruder = new(_crawlerRepositoryCreatorFactory);
+        var schemeCruder = new SchemeCruder(_crawlerRepositoryCreatorFactory);
         var keys = schemeCruder.GetKeys();
         var def = keys.Count > 1 ? null : schemeCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,

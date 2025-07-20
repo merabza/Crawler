@@ -35,7 +35,7 @@ public sealed class ParseOnePageState : State
     {
         _currentUri = UriFactory.GetUri(_url.UrlName);
 
-        HtmlDocument htmlDoc = new();
+        var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(_content);
 
         var nodeHtml = htmlDoc.DocumentNode.ChildNodes.FirstOrDefault(s => s.Name == "html");
@@ -62,7 +62,7 @@ public sealed class ParseOnePageState : State
 
     private static string ExtractText(HtmlNode htmlDocDocumentNode)
     {
-        StringBuilder sb = new();
+        var sb = new StringBuilder();
         foreach (var node in htmlDocDocumentNode.SelectNodes("//text()"))
         {
             if (node.ParentNode.Name is "script" or "style")
@@ -140,7 +140,7 @@ public sealed class ParseOnePageState : State
         if (!ContainsAnyAlphabetSymbols(context))
             return;
 
-        Regex re = new(_par.SegmentFinisherPunctuationsRegex);
+        var re = new Regex(_par.SegmentFinisherPunctuationsRegex);
         var strTestParts = re.Split(context);
         if (strTestParts.Length == 1)
         {
@@ -193,7 +193,7 @@ public sealed class ParseOnePageState : State
         if (context == string.Empty)
             return;
 
-        Regex re = new(_par.PunctuationsRegex); //ყველა პუნქტუაციის ნიშანი
+        var re = new Regex(_par.PunctuationsRegex); //ყველა პუნქტუაციის ნიშანი
         var strTestParts = re.Split(context);
 
         if (strTestParts.Length == 1)
@@ -226,7 +226,7 @@ public sealed class ParseOnePageState : State
         if (context == string.Empty)
             return;
         //ყველა ის პუნქტუაციის ნიშანი, რომელიც არ შეიძლება აღიქმებოდეს სიტყვის ნაწილად
-        Regex re = new(_par.WordDelimiterRegex);
+        var re = new Regex(_par.WordDelimiterRegex);
         var strTestParts = re.Split(context);
         if (strTestParts.Length < 3)
             AddWord(strTestParts[0]);

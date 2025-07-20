@@ -24,7 +24,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
     {
         base.ConfigureServices(services);
 
-        DatabaseServerConnections databaseServerConnections = new(_par.DatabaseServerConnections);
+        var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
 
         var (dataProvider, connectionString) =
             DbConnectionFactory.GetDataProviderAndConnectionString(_par.DatabaseParameters, databaseServerConnections);

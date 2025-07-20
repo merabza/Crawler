@@ -45,7 +45,7 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        CrawlerRunner crawlerRunner = new(_logger, _httpClientFactory, crawlerRepository, _par, par, Name, _batch);
+        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, crawlerRepository, _par, par, Name, _batch);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();

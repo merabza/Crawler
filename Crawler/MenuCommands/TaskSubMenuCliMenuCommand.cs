@@ -31,9 +31,9 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 
     public override CliMenuSet GetSubMenu()
     {
-        CliMenuSet taskSubMenuSet = new($" Task => {Name}");
+        var taskSubMenuSet = new CliMenuSet($" Task => {Name}");
 
-        DeleteTaskCliMenuCommand deleteTaskCommand = new(_parametersManager, Name);
+        var deleteTaskCommand = new DeleteTaskCliMenuCommand(_parametersManager, Name);
         taskSubMenuSet.AddMenuItem(deleteTaskCommand);
 
         taskSubMenuSet.AddMenuItem(new EditTaskNameCliMenuCommand(_parametersManager, Name));
@@ -47,7 +47,7 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
         var task = parameters.GetTask(Name);
-        NewStartPointCliMenuCommand newStartPointCommand = new(_parametersManager, Name);
+        var newStartPointCommand = new NewStartPointCliMenuCommand(_parametersManager, Name);
         taskSubMenuSet.AddMenuItem(newStartPointCommand);
 
         if (task?.StartPoints != null)

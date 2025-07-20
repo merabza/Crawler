@@ -85,7 +85,7 @@ public sealed class BatchPartRunner
 
         CountStatistics();
 
-        GetPagesState getPagesState = new(_logger, _repository, _par, batchPart);
+        var getPagesState = new GetPagesState(_logger, _repository, _par, batchPart);
         getPagesState.Execute();
         StShared.ConsoleWriteInformationLine(_logger, true,
             $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
@@ -189,7 +189,7 @@ public sealed class BatchPartRunner
 
     private void AnalyzeAsHtml(string content, UrlModel url, BatchPart batchPart)
     {
-        Uri uri = new(url.UrlName);
+        var uri = new Uri(url.UrlName);
 
         _consoleFormatter.WriteInSameLine($"Parsing      {uri}");
         var parseOnePageState = new ParseOnePageState(_logger, _parseOnePageParameters, content, url);
@@ -511,7 +511,7 @@ public sealed class BatchPartRunner
             url = _repository.GetUrl(hostModel.HostId, extensionModel.ExtId, schemeModel.SchId, urlHashCode,
                 checkedUri);
 
-        UrlData urlData = new(hostModel, extensionModel, schemeModel, checkedUri, absolutePath, urlHashCode, url);
+        var urlData = new UrlData(hostModel, extensionModel, schemeModel, checkedUri, absolutePath, urlHashCode, url);
 
         return urlData;
     }
@@ -573,7 +573,7 @@ public sealed class BatchPartRunner
     {
         try
         {
-            Uri uri = new(urlForProcess.UrlName);
+            var uri = new Uri(urlForProcess.UrlName);
 
             var startedAt = DateTime.Now;
             _consoleFormatter.WriteFirstLine($"Downloading  {uri}");

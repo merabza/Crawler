@@ -110,8 +110,9 @@ public sealed class BatchCruder : Cruder
         itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _httpClientFactory,
             _crawlerRepositoryCreatorFactory, _par, batch));
 
-        HostByBatchCruder detailsCruder = new(_crawlerRepositoryCreatorFactory, batch);
-        NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
+        var detailsCruder = new HostByBatchCruder(_crawlerRepositoryCreatorFactory, batch);
+        var newItemCommand =
+            new NewItemCliMenuCommand(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
         var hostNames = detailsCruder.GetHostNamesByBatch();

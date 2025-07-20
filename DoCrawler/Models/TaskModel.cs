@@ -5,7 +5,7 @@ namespace DoCrawler.Models;
 
 public sealed class TaskModel : ItemData
 {
-    public List<string> StartPoints { get; set; } = new();
+    public List<string> StartPoints { get; set; } = [];
 
     public bool CheckNewStartPointValid(string oldStartPoint, string newStartPoint)
     {
