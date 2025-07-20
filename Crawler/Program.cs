@@ -61,7 +61,7 @@ try
         return 5;
     }
 
-    var crawler = new Crawler.Crawler(logger, httpClientFactory, new ParametersManager(parametersFileName, par),
+    var crawler = new CrawlerCliAppLoop(logger, httpClientFactory, new ParametersManager(parametersFileName, par),
         serviceProvider);
     return crawler.Run() ? 0 : 1;
 }

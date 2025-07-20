@@ -26,7 +26,7 @@ using SystemToolsShared.Errors;
 
 namespace Crawler;
 
-public sealed class Crawler : CliAppLoop
+public sealed class CrawlerCliAppLoop : CliAppLoop
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
@@ -34,7 +34,7 @@ public sealed class Crawler : CliAppLoop
     private readonly ServiceProvider _serviceProvider;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public Crawler(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
+    public CrawlerCliAppLoop(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
         ServiceProvider serviceProvider)
     {
         _logger = logger;
