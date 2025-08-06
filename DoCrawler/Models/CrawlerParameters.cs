@@ -24,9 +24,9 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
 
     public string? LogFolder { get; set; }
 
-    public string? DatabaseConnectionName { get; set; }
+    //public string? DatabaseConnectionName { get; set; }
 
-    public int CommandTimeOut { get; set; }
+    //public int CommandTimeOut { get; set; }
     public int LoadPagesMaxCount { get; set; }
     public string? Alphabet { get; set; }
     public string? ExtraSymbols { get; set; }
@@ -36,13 +36,12 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
     public DatabaseParameters? DatabaseParameters { get; init; }
     public Dictionary<string, ApiClientSettings> ApiClients { get; } = [];
     public Dictionary<string, DatabaseServerConnectionData> DatabaseServerConnections { get; init; } = [];
+    public Dictionary<string, SmartSchema> SmartSchemas { get; } = [];
 
     public bool CheckBeforeSave()
     {
         return true;
     }
-
-    public Dictionary<string, SmartSchema> SmartSchemas { get; } = [];
 
     public TaskModel? GetTask(string taskName)
     {

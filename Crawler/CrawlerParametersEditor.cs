@@ -1,13 +1,15 @@
-﻿using System.Net.Http;
-using CliParameters;
+﻿using CliParameters;
 using CliParameters.FieldEditors;
 using CliParametersDataEdit.Cruders;
 using CliParametersDataEdit.FieldEditors;
+using CliParametersEdit.Cruders;
 using DoCrawler.Cruders;
 using DoCrawler.Models;
 using LibDatabaseParameters;
+using LibFileParameters.Models;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace Crawler;
 
@@ -18,10 +20,10 @@ public sealed class CrawlerParametersEditor : ParametersEditor
     {
         FieldEditors.Add(new FolderPathFieldEditor(nameof(CrawlerParameters.LogFolder)));
 
-        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger, httpClientFactory,
-            nameof(CrawlerParameters.DatabaseConnectionName), parametersManager, true));
+        //FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger, httpClientFactory,
+        //    nameof(CrawlerParameters.DatabaseConnectionName), parametersManager, true));
 
-        FieldEditors.Add(new IntFieldEditor(nameof(CrawlerParameters.CommandTimeOut), 10000));
+        //FieldEditors.Add(new IntFieldEditor(nameof(CrawlerParameters.CommandTimeOut), 10000));
         FieldEditors.Add(new IntFieldEditor(nameof(CrawlerParameters.LoadPagesMaxCount), 10000));
         FieldEditors.Add(new TextFieldEditor(nameof(CrawlerParameters.Alphabet), "აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"));
         FieldEditors.Add(new TextFieldEditor(nameof(CrawlerParameters.ExtraSymbols), "-–"));
@@ -40,5 +42,10 @@ public sealed class CrawlerParametersEditor : ParametersEditor
 
         FieldEditors.Add(new DatabaseParametersFieldEditor(logger, httpClientFactory,
             nameof(CrawlerParameters.DatabaseParameters), parametersManager));
+
+        FieldEditors.Add(
+            new DictionaryFieldEditor<SmartSchemaCruder, SmartSchema>(nameof(CrawlerParameters.SmartSchemas),
+                parametersManager));
+
     }
 }
