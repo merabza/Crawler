@@ -34,7 +34,7 @@ public /*open*/ class DesignTimeDbContextFactory<T> : IDesignTimeDbContextFactor
 
     public T CreateDbContext(string[] args)
     {
-        //Console.WriteLine("Pass 1...");
+        Console.WriteLine($"Pass 1... CurrentDirectory is {Directory.GetCurrentDirectory()}");
 
         //თუ პარამეტრების json ფაილის სახელი პირდაპირ არ არის გადმოცემული, ვიყენებთ სტანდარტულ სახელს appsettings.json
         var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())

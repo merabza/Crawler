@@ -17,7 +17,7 @@ namespace CrawlerDbMigration.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -26,130 +26,110 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("BatchId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("batchId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BatchId"));
 
                     b.Property<bool>("AutoCreateNextPart")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("autoCreateNextPart");
+                        .HasDefaultValue(false);
 
                     b.Property<string>("BatchName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("batchName");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("IsOpen")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("isOpen");
+                        .HasDefaultValue(false);
 
                     b.HasKey("BatchId");
 
                     b.HasIndex("BatchName")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Batches_batchName_Unique");
+                        .IsUnique();
 
-                    b.ToTable("batches", (string)null);
+                    b.ToTable("Batches");
                 });
 
             modelBuilder.Entity("CrawlerDb.Models.BatchPart", b =>
                 {
                     b.Property<int>("BpId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("bpId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BpId"));
 
                     b.Property<int>("BatchId")
-                        .HasColumnType("int")
-                        .HasColumnName("batchId");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("Finished")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("finished");
+                        .HasColumnType("datetime");
 
                     b.HasKey("BpId");
 
                     b.HasIndex("BatchId", "Created")
-                        .IsUnique()
-                        .HasDatabaseName("IX_BatchParts_batchId_created_Unique");
+                        .IsUnique();
 
-                    b.ToTable("batchParts", (string)null);
+                    b.ToTable("BatchParts");
                 });
 
             modelBuilder.Entity("CrawlerDb.Models.ContentAnalysis", b =>
                 {
                     b.Property<int>("CaId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("caId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CaId"));
 
                     b.Property<int>("BatchPartId")
-                        .HasColumnType("int")
-                        .HasColumnName("batchPartId");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Finish")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("finish");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("ResponseStatusCode")
-                        .HasColumnType("int")
-                        .HasColumnName("responseStatusCode");
+                        .HasColumnType("int");
 
                     b.Property<int>("UrlId")
-                        .HasColumnType("int")
-                        .HasColumnName("urlId");
+                        .HasColumnType("int");
 
                     b.HasKey("CaId");
 
                     b.HasIndex("UrlId");
 
                     b.HasIndex("BatchPartId", "UrlId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_ContentAnalyses_batchPartId_urlId_Unique");
+                        .IsUnique();
 
-                    b.ToTable("contentAnalyses", (string)null);
+                    b.ToTable("ContentsAnalysis");
                 });
 
             modelBuilder.Entity("CrawlerDb.Models.ExtensionModel", b =>
                 {
                     b.Property<int>("ExtId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("extId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtId"));
 
                     b.Property<string>("ExtName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("extName");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("ExtProhibited")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("extProhibited");
+                        .HasDefaultValue(false);
 
                     b.HasKey("ExtId");
 
                     b.HasIndex("ExtName")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Extensions_extName_Unique");
+                        .IsUnique();
 
                     b.ToTable("extensions", (string)null);
                 });
@@ -158,23 +138,18 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("HbbId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("hbbId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HbbId"));
 
                     b.Property<int>("BatchId")
-                        .HasMaxLength(50)
-                        .HasColumnType("int")
-                        .HasColumnName("batchId");
+                        .HasColumnType("int");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("int")
-                        .HasColumnName("hostId");
+                        .HasColumnType("int");
 
                     b.Property<int>("SchemeId")
-                        .HasColumnType("int")
-                        .HasColumnName("schemeId");
+                        .HasColumnType("int");
 
                     b.HasKey("HbbId");
 
@@ -183,8 +158,7 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("SchemeId");
 
                     b.HasIndex("BatchId", "SchemeId", "HostId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_HostsByBatches_batchId_schemeId_hostId_Unique");
+                        .IsUnique();
 
                     b.ToTable("hostsByBatches", (string)null);
                 });
@@ -193,28 +167,24 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("HostId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("hostId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HostId"));
 
                     b.Property<string>("HostName")
                         .IsRequired()
                         .HasMaxLength(253)
-                        .HasColumnType("nvarchar(253)")
-                        .HasColumnName("hostName");
+                        .HasColumnType("nvarchar(253)");
 
                     b.Property<bool>("HostProhibited")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("hostProhibited");
+                        .HasDefaultValue(false);
 
                     b.HasKey("HostId");
 
                     b.HasIndex("HostName")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Hosts_hostName_Unique");
+                        .IsUnique();
 
                     b.ToTable("hosts", (string)null);
                 });
@@ -223,27 +193,21 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("RbtId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("rbtId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RbtId"));
 
                     b.Property<int>("BatchPartId")
-                        .HasMaxLength(50)
-                        .HasColumnType("int")
-                        .HasColumnName("batchPartId");
+                        .HasColumnType("int");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("int")
-                        .HasColumnName("hostId");
+                        .HasColumnType("int");
 
                     b.Property<string>("RobotsTxt")
-                        .HasColumnType("ntext")
-                        .HasColumnName("robotsTxt");
+                        .HasColumnType("ntext");
 
                     b.Property<int>("SchemeId")
-                        .HasColumnType("int")
-                        .HasColumnName("schemeId");
+                        .HasColumnType("int");
 
                     b.HasKey("RbtId");
 
@@ -252,8 +216,7 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("SchemeId");
 
                     b.HasIndex("BatchPartId", "SchemeId", "HostId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Robots_batchPartId_schemeId_hostId_Unique");
+                        .IsUnique();
 
                     b.ToTable("robots", (string)null);
                 });
@@ -262,28 +225,24 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("SchId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("schId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SchId"));
 
                     b.Property<string>("SchName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("schName");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("SchProhibited")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("schProhibited");
+                        .HasDefaultValue(false);
 
                     b.HasKey("SchId");
 
                     b.HasIndex("SchName")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Schemes_schName_Unique");
+                        .IsUnique();
 
                     b.ToTable("schemes", (string)null);
                 });
@@ -292,8 +251,7 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("TrmId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("trmId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrmId"));
 
@@ -301,7 +259,6 @@ namespace CrawlerDbMigration.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("termText")
                         .UseCollation("SQL_Latin1_General_CP1_CS_AS");
 
                     b.Property<int>("TermTypeId")
@@ -310,8 +267,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasKey("TrmId");
 
-                    b.HasIndex("TermText")
-                        .HasDatabaseName("IX_Terms_termText_Unique");
+                    b.HasIndex("TermText");
 
                     b.HasIndex("TermTypeId");
 
@@ -322,26 +278,21 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("TbuId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("tbuId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TbuId"));
 
                     b.Property<int>("BatchPartId")
-                        .HasColumnType("int")
-                        .HasColumnName("batchPartId");
+                        .HasColumnType("int");
 
                     b.Property<int>("Position")
-                        .HasColumnType("int")
-                        .HasColumnName("position");
+                        .HasColumnType("int");
 
                     b.Property<int>("TermId")
-                        .HasColumnType("int")
-                        .HasColumnName("termId");
+                        .HasColumnType("int");
 
                     b.Property<int>("UrlId")
-                        .HasColumnType("int")
-                        .HasColumnName("urlId");
+                        .HasColumnType("int");
 
                     b.HasKey("TbuId");
 
@@ -350,8 +301,7 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("UrlId");
 
                     b.HasIndex("BatchPartId", "UrlId", "Position")
-                        .IsUnique()
-                        .HasDatabaseName("IX_TermsByUrls_batchPartId_urlId_position_Unique");
+                        .IsUnique();
 
                     b.ToTable("termsByUrls", (string)null);
                 });
@@ -360,27 +310,23 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("TtId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ttId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TtId"));
 
                     b.Property<string>("TtKey")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("ttKey");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("TtName")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("ttName");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("TtId");
 
                     b.HasIndex("TtKey")
-                        .IsUnique()
-                        .HasDatabaseName("IX_TermTypes_ttKey_Unique");
+                        .IsUnique();
 
                     b.ToTable("termTypes", (string)null);
                 });
@@ -389,22 +335,18 @@ namespace CrawlerDbMigration.Migrations
                 {
                     b.Property<int>("UgnId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ugnId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UgnId"));
 
                     b.Property<int>("BatchPartId")
-                        .HasColumnType("int")
-                        .HasColumnName("batchPartId");
+                        .HasColumnType("int");
 
                     b.Property<int>("FromUrlId")
-                        .HasColumnType("int")
-                        .HasColumnName("fromUrlId");
+                        .HasColumnType("int");
 
                     b.Property<int>("GotUrlId")
-                        .HasColumnType("int")
-                        .HasColumnName("gotUrlId");
+                        .HasColumnType("int");
 
                     b.HasKey("UgnId");
 
@@ -413,54 +355,45 @@ namespace CrawlerDbMigration.Migrations
                     b.HasIndex("GotUrlId");
 
                     b.HasIndex("BatchPartId", "FromUrlId", "GotUrlId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_UrlGraphNodes_batchPartId_fromUrlId_gotUrlId_Unique");
+                        .IsUnique();
 
-                    b.ToTable("urlGraphNodes", (string)null);
+                    b.ToTable("UrlGraphNodes");
                 });
 
             modelBuilder.Entity("CrawlerDb.Models.UrlModel", b =>
                 {
                     b.Property<int>("UrlId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("urlId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UrlId"));
 
                     b.Property<int>("ExtensionId")
-                        .HasColumnType("int")
-                        .HasColumnName("extensionId");
+                        .HasColumnType("int");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("int")
-                        .HasColumnName("hostId");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsAllowed")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("isAllowed");
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsSiteMap")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("isSiteMap");
+                        .HasDefaultValue(false);
 
                     b.Property<int>("SchemeId")
-                        .HasColumnType("int")
-                        .HasColumnName("schemeId");
+                        .HasColumnType("int");
 
                     b.Property<int>("UrlHashCode")
-                        .HasColumnType("int")
-                        .HasColumnName("urlHashCode");
+                        .HasColumnType("int");
 
                     b.Property<string>("UrlName")
                         .IsRequired()
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)")
-                        .HasColumnName("urlName");
+                        .HasColumnType("nvarchar(2048)");
 
                     b.HasKey("UrlId");
 
@@ -470,8 +403,7 @@ namespace CrawlerDbMigration.Migrations
 
                     b.HasIndex("SchemeId");
 
-                    b.HasIndex("UrlHashCode", "HostId", "ExtensionId", "SchemeId")
-                        .HasDatabaseName("IX_Urls_urlHashCode_hostId_extensionId_schemeId_Unique");
+                    b.HasIndex("UrlHashCode", "HostId", "ExtensionId", "SchemeId");
 
                     b.ToTable("urls", (string)null);
                 });
@@ -482,8 +414,7 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("BatchParts")
                         .HasForeignKey("BatchId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_BatchParts_Batches");
+                        .IsRequired();
 
                     b.Navigation("BatchNavigation");
                 });
@@ -494,15 +425,13 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("ContentsAnalysis")
                         .HasForeignKey("BatchPartId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_ContentAnalyses_BatchParts");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.UrlModel", "UrlNavigation")
                         .WithMany("ContentsAnalysis")
                         .HasForeignKey("UrlId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_ContentAnalyses_UrlModels");
+                        .IsRequired();
 
                     b.Navigation("BatchPartNavigation");
 
@@ -515,22 +444,19 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("HostsByBatches")
                         .HasForeignKey("BatchId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_HostsByBatches_Batches");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.HostModel", "HostNavigation")
                         .WithMany("HostsByBatches")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_HostsByBatches_HostModels");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.SchemeModel", "SchemeNavigation")
                         .WithMany("HostsByBatches")
                         .HasForeignKey("SchemeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_HostsByBatches_SchemeModels");
+                        .IsRequired();
 
                     b.Navigation("BatchNavigation");
 
@@ -545,22 +471,19 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("Robots")
                         .HasForeignKey("BatchPartId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Robots_BatchParts");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.HostModel", "HostNavigation")
                         .WithMany("Robots")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Robots_HostModels");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.SchemeModel", "SchemeNavigation")
                         .WithMany("Robots")
                         .HasForeignKey("SchemeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Robots_SchemeModels");
+                        .IsRequired();
 
                     b.Navigation("BatchPartNavigation");
 
@@ -575,8 +498,7 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("Terms")
                         .HasForeignKey("TermTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Terms_TermTypes");
+                        .IsRequired();
 
                     b.Navigation("TermTypeNavigation");
                 });
@@ -587,22 +509,19 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("TermsByUrls")
                         .HasForeignKey("BatchPartId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_TermsByUrls_BatchParts");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.Term", "TermNavigation")
                         .WithMany("TermsByUrls")
                         .HasForeignKey("TermId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_TermsByUrls_Terms");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.UrlModel", "UrlNavigation")
                         .WithMany("TermsByUrls")
                         .HasForeignKey("UrlId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_TermsByUrls_UrlModels");
+                        .IsRequired();
 
                     b.Navigation("BatchPartNavigation");
 
@@ -617,20 +536,17 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("UrlGraphNodes")
                         .HasForeignKey("BatchPartId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UrlGraphNodes_BatchParts");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.UrlModel", "FromUrlNavigation")
                         .WithMany("UrlGraphNodesFrom")
                         .HasForeignKey("FromUrlId")
-                        .IsRequired()
-                        .HasConstraintName("FK_UrlGraphNodes_UrlGraphNodes_FromUrlId");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.UrlModel", "GotUrlNavigation")
                         .WithMany("UrlGraphNodesGot")
                         .HasForeignKey("GotUrlId")
-                        .IsRequired()
-                        .HasConstraintName("FK_UrlGraphNodes_UrlGraphNodes_GotUrlId");
+                        .IsRequired();
 
                     b.Navigation("BatchPartNavigation");
 
@@ -645,22 +561,19 @@ namespace CrawlerDbMigration.Migrations
                         .WithMany("Urls")
                         .HasForeignKey("ExtensionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Urls_ExtensionModels");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.HostModel", "HostNavigation")
                         .WithMany("Urls")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Urls_HostModels");
+                        .IsRequired();
 
                     b.HasOne("CrawlerDb.Models.SchemeModel", "SchemeNavigation")
                         .WithMany("Urls")
                         .HasForeignKey("SchemeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Urls_SchemeModels");
+                        .IsRequired();
 
                     b.Navigation("ExtensionNavigation");
 
