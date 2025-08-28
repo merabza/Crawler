@@ -12,7 +12,7 @@ using LibFileParameters.Models;
 namespace DoCrawler.Models;
 
 public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections, IParametersWithApiClients,
-    IParametersWithSmartSchemas
+    IParametersWithSmartSchemas, IParametersWithFileStorages
 {
     private string _possibleSymbols = string.Empty;
 
@@ -36,12 +36,14 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
     public DatabaseParameters? DatabaseParameters { get; init; }
     public Dictionary<string, ApiClientSettings> ApiClients { get; } = [];
     public Dictionary<string, DatabaseServerConnectionData> DatabaseServerConnections { get; init; } = [];
-    public Dictionary<string, SmartSchema> SmartSchemas { get; } = [];
 
     public bool CheckBeforeSave()
     {
         return true;
     }
+
+    public Dictionary<string, FileStorageData> FileStorages { get; } = [];
+    public Dictionary<string, SmartSchema> SmartSchemas { get; } = [];
 
     public TaskModel? GetTask(string taskName)
     {

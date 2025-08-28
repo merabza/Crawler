@@ -153,8 +153,8 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                     //აქ გამოიყენება ბაზასთან პირდაპირ დაკავშირება ვებაგენტის გარეშე,
                     //რადგან სწორედ ასეთი ტიპის კავშირების რედაქტორია ეს.
                     if (string.IsNullOrWhiteSpace(databaseServerConnectionData.ServerAddress) ||
-                        string.IsNullOrWhiteSpace(databaseServerConnectionData.ServerUser) ||
-                        string.IsNullOrWhiteSpace(databaseServerConnectionData.ServerPass) ||
+                        //string.IsNullOrWhiteSpace(databaseServerConnectionData.ServerUser) ||
+                        //string.IsNullOrWhiteSpace(databaseServerConnectionData.ServerPass) ||
                         string.IsNullOrWhiteSpace(databaseServerConnectionData.DatabaseName))
                     {
                         Console.WriteLine("databaseServerConnectionData parameters is not valid");

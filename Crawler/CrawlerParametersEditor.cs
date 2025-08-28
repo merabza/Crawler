@@ -1,4 +1,5 @@
-﻿using CliParameters;
+﻿using System.Net.Http;
+using CliParameters;
 using CliParameters.FieldEditors;
 using CliParametersDataEdit.Cruders;
 using CliParametersDataEdit.FieldEditors;
@@ -9,7 +10,6 @@ using LibDatabaseParameters;
 using LibFileParameters.Models;
 using LibParameters;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
 
 namespace Crawler;
 
@@ -47,5 +47,8 @@ public sealed class CrawlerParametersEditor : ParametersEditor
             new DictionaryFieldEditor<SmartSchemaCruder, SmartSchema>(nameof(CrawlerParameters.SmartSchemas),
                 parametersManager));
 
+        FieldEditors.Add(
+            new DictionaryFieldEditor<FileStorageCruder, FileStorageData>(nameof(CrawlerParameters.FileStorages),
+                logger, parametersManager));
     }
 }
