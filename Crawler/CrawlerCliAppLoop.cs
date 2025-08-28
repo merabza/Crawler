@@ -189,11 +189,13 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                     Err.PrintErrorsOnConsole((Err[])testConnectionResult);
 
                     Console.WriteLine("Database test connection failed");
-                    return false;
+                    break;
 
                 case EDatabaseProvider.SqLite:
                     return
                         false; //აქ ფაილის შემოწმება არის გასაკეთებელი. ჭეშმარიტი დაბრუნდეს, თუ ფაილი არსებობს და იხსნება
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             return false;

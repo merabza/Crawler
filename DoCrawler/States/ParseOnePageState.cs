@@ -13,7 +13,7 @@ using RobotsTxt;
 
 namespace DoCrawler.States;
 
-public sealed class ParseOnePageState : State
+public sealed partial class ParseOnePageState : State
 {
     private readonly string _content;
     private readonly ParseOnePageParameters _par;
@@ -73,7 +73,7 @@ public sealed class ParseOnePageState : State
             if (text == string.Empty)
                 continue;
 
-            if (node.NextSibling is not null && node.NextSibling.Name == "b")
+            if (node.NextSibling.Name == "b")
             {
                 sb.Append(text);
                 continue;
@@ -81,10 +81,7 @@ public sealed class ParseOnePageState : State
 
             if (node.ParentNode.Name == "b")
             {
-                if (node.ParentNode.NextSibling != null)
-                    sb.Append(text);
-                else
-                    sb.AppendLine(text);
+                sb.Append(text);
             }
             else
             {
@@ -98,7 +95,7 @@ public sealed class ParseOnePageState : State
     private void ExtractAllLinks(HtmlNode htmlDocDocumentNode)
     {
         var links = htmlDocDocumentNode.SelectNodes("//a[@href]");
-        if (links is null || links.Count == 0)
+        if (links.Count == 0)
             return;
         foreach (var link in links)
         {
@@ -115,7 +112,7 @@ public sealed class ParseOnePageState : State
         if (!text.Any(c => _par.Alphabet.Contains(c)))
             return;
 
-        var paragraphs = Regex.Split(text, "\r\n|\r|\n");
+        var paragraphs = NewLineSplitterRegex().Split(text);
         foreach (var paragraph in paragraphs)
         {
             var parTrim = paragraph.Trim();
@@ -146,7 +143,6 @@ public sealed class ParseOnePageState : State
         {
             AddStatementStart();
             ParsePunctuations(strTestParts[0]);
-            AddStatementFinish();
         }
         else
         {
@@ -167,8 +163,9 @@ public sealed class ParseOnePageState : State
 
             AddStatementStart();
             ParsePunctuations(lastPart);
-            AddStatementFinish();
         }
+
+        AddStatementFinish();
     }
 
     //ეს ფუნქცია ამოწმებს შეიცავს თუ არა ჩვენი ანბანის ასოებს
@@ -316,15 +313,15 @@ public sealed class ParseOnePageState : State
 
                 //თუ მისამართი შეიცავს ქვერის ნაწილს ვინახავთ ქვერის გამოყენებით
                 //და მერე კიდევ ქვერის გარეშეც ერთი სტრიქონის მერე
-                AddUriUri(strUri);
             }
             else
             {
                 //თუ მისამართი არ შეიცავს ქვერის ნაწილს
                 //ფრაგმენტი არა გვჭირდება +AbsUri.Fragment;
                 strUri = newUri.Scheme + "://" + newUri.Authority + newUri.LocalPath;
-                AddUriUri(strUri);
             }
+
+            AddUriUri(strUri);
         }
         catch (Exception ex)
         {
@@ -353,7 +350,7 @@ public sealed class ParseOnePageState : State
 
     private static string NormalizeQuery(string startQuery, char delimiter)
     {
-        char[] delimiters = { delimiter };
+        char[] delimiters = [delimiter];
         if (startQuery.Length <= 1)
             return startQuery;
 
@@ -370,4 +367,7 @@ public sealed class ParseOnePageState : State
 
         return "?" + newQuery;
     }
+
+    [GeneratedRegex("\r\n|\r|\n")]
+    private static partial Regex NewLineSplitterRegex();
 }
