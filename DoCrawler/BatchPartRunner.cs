@@ -32,6 +32,7 @@ public sealed class BatchPartRunner
     private readonly ICrawlerRepository _repository;
     private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
+
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
         CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
@@ -630,7 +631,7 @@ public sealed class BatchPartRunner
             _consoleFormatter.WriteInSameLine(
                 $"Finished     {uri} ({DateTime.Now.MillisecondsDifference(startedAt)}ms)");
 
-            if (ProcData.Instance.NeedsToReduceCache())
+            if (ProcData.Instance.NeedsToReduceCache() || _repository.NeedSaveChanges())
                 SaveChangesAndReduceCache();
         }
         catch (Exception e)

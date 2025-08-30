@@ -73,7 +73,8 @@ public sealed partial class ParseOnePageState : State
             if (text == string.Empty)
                 continue;
 
-            if (node.NextSibling.Name == "b")
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (node.NextSibling is not null && node.NextSibling.Name == "b")
             {
                 sb.Append(text);
                 continue;
@@ -81,7 +82,11 @@ public sealed partial class ParseOnePageState : State
 
             if (node.ParentNode.Name == "b")
             {
-                sb.Append(text);
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (node.ParentNode.NextSibling != null)
+                    sb.Append(text);
+                else
+                    sb.AppendLine(text);
             }
             else
             {
@@ -95,7 +100,8 @@ public sealed partial class ParseOnePageState : State
     private void ExtractAllLinks(HtmlNode htmlDocDocumentNode)
     {
         var links = htmlDocDocumentNode.SelectNodes("//a[@href]");
-        if (links.Count == 0)
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (links is null || links.Count == 0)
             return;
         foreach (var link in links)
         {

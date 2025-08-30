@@ -7,6 +7,7 @@ namespace LibCrawlerRepositories;
 
 public interface ICrawlerRepository
 {
+    bool NeedSaveChanges();
     int SaveChanges();
     int SaveChangesWithTransaction();
     IDbContextTransaction GetTransaction();

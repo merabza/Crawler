@@ -14,7 +14,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
 {
     private readonly CrawlerDbContext _context;
     private readonly ILogger<CrawlerRepository> _logger;
+    private const int MaxChangesCount = 100000;
 
+
+    private int _changesCount;
     // ReSharper disable once ConvertToPrimaryConstructor
     public CrawlerRepository(CrawlerDbContext ctx, ILogger<CrawlerRepository> logger)
     {
@@ -22,10 +25,16 @@ public sealed class CrawlerRepository : ICrawlerRepository
         _logger = logger;
     }
 
+    public bool NeedSaveChanges()
+    {
+        return _changesCount >= MaxChangesCount;
+    }
+
     public int SaveChanges()
     {
         try
         {
+            _changesCount = 0;
             return _context.SaveChanges();
         }
         catch (Exception e)
@@ -45,6 +54,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
             {
                 var ret = _context.SaveChanges();
                 transaction.Commit();
+                _changesCount = 0;
                 return ret;
             }
             catch (Exception e)
@@ -68,20 +78,31 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public HostModel CheckAddHostName(string hostName)
     {
-        return _context.Hosts.SingleOrDefault(a => a.HostName == hostName) ??
-               _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
+        var hostModel = _context.Hosts.SingleOrDefault(a => a.HostName == hostName);
+        if (hostModel != null)
+            return hostModel;
+        _changesCount++;
+        return _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
     }
 
     public ExtensionModel CheckAddExtensionName(string extensionName)
     {
-        return _context.Extensions.SingleOrDefault(a => a.ExtName == extensionName) ??
-               _context.Extensions.Add(new ExtensionModel { ExtName = extensionName }).Entity;
+        var extensionModel = _context.Extensions.SingleOrDefault(a => a.ExtName == extensionName);
+        if (extensionModel != null)
+            return extensionModel;
+        _changesCount++;
+        return _context.Extensions.Add(new ExtensionModel { ExtName = extensionName }).Entity;
     }
 
     public SchemeModel CheckAddSchemeName(string schemeName)
     {
-        return _context.Schemes.SingleOrDefault(a => a.SchName == schemeName) ??
-               _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
+        var schemeModel = _context.Schemes.SingleOrDefault(a => a.SchName == schemeName);
+        if (schemeModel != null)
+        {
+            return schemeModel;
+        }
+        _changesCount++;
+        return _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
     }
 
     public UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string strUrl)
@@ -102,6 +123,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
         bool isSiteMap, bool isAllowed)
     {
+        _changesCount++;
         return _context.Urls.Add(new UrlModel
         {
             UrlName = strUrl,
@@ -116,11 +138,13 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void AddUrlGraph(UrlGraphNode urlGraphNode)
     {
+        _changesCount++;
         _context.UrlGraphNodes.Add(urlGraphNode);
     }
 
     public void AddUrlGraph(int fromUrlPageId, UrlModel gotUrl, int batchPartId)
     {
+        _changesCount++;
         _context.UrlGraphNodes.Add(new UrlGraphNode
         {
             FromUrlId = fromUrlPageId, GotUrlNavigation = gotUrl, BatchPartId = batchPartId
@@ -166,11 +190,19 @@ public sealed class CrawlerRepository : ICrawlerRepository
             if (hostByBatch != null)
                 return;
 
-            var scheme = _context.Schemes.SingleOrDefault(s => s.SchName == schemeName) ??
-                         _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
+            var scheme = _context.Schemes.SingleOrDefault(s => s.SchName == schemeName);
+            if (scheme == null)
+            {
+                _changesCount++;
+                scheme = _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
+            }
 
-            var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName) ??
-                       _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
+            var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName);
+            if (host == null)
+            {
+                _changesCount++;
+                host = _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
+            }
 
             _context.HostsByBatches.Add(new HostByBatch
             {
@@ -210,6 +242,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void CreateContentAnalysisRecord(int batchPartBpId, int urlId, HttpStatusCode statusCode)
     {
+        _changesCount++;
         _context.ContentsAnalysis.Add(new ContentAnalysis
         {
             BatchPartId = batchPartBpId, UrlId = urlId, ResponseStatusCode = (int)statusCode, Finish = DateTime.Now
@@ -223,6 +256,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void DeleteContentAnalysis(ContentAnalysis contentAnalysis)
     {
+        _changesCount++;
         _context.ContentsAnalysis.Remove(contentAnalysis);
     }
 
@@ -230,6 +264,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
+            _changesCount++;
             return _context.Update(urlModel).Entity;
         }
         catch (Exception e)
@@ -320,11 +355,13 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public Term AddTerm(string termText, TermType termTypeInBase)
     {
+        _changesCount++;
         return _context.Terms.Add(new Term { TermText = termText, TermTypeNavigation = termTypeInBase }).Entity;
     }
 
     public void AddTermByUrl(int batchPartId, int urlId, Term term, int position)
     {
+        _changesCount++;
         _context.TermsByUrls.Add(new TermByUrl
         {
             BatchPartId = batchPartId, UrlId = urlId, TermNavigation = term, Position = position
@@ -346,6 +383,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void EditTermByUrl(TermByUrl termByUrl, Term term)
     {
+        _changesCount++;
         termByUrl.TermNavigation = term;
         _context.TermsByUrls.Update(termByUrl);
     }
