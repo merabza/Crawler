@@ -43,7 +43,7 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+        //var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
 
         var par = ParseOnePageParameters.Create(parameters);
         if (par is null)
@@ -52,7 +52,7 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, crawlerRepository, parameters, par,
+        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory, parameters, par,
             _taskName, task, null);
 
         //დავინიშნოთ დრო

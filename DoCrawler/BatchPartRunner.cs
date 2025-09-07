@@ -25,43 +25,46 @@ public sealed class BatchPartRunner
 {
     private readonly BatchPart _batchPart;
     private readonly ConsoleFormatter _consoleFormatter = new();
+    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
-    private readonly ParseOnePageParameters _parseOnePageParameters;
-    private readonly ICrawlerRepository _repository;
-    private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
+    private readonly ParseOnePageParameters _parseOnePageParameters;
+    //private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository repository,
-        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
+    public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory,
+        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par,
+        ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _repository = repository;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _par = par;
         _parseOnePageParameters = parseOnePageParameters;
         _batchPart = batchPart;
-        _urlGraphDeDuplicator = new UrlGraphDeDuplicator(repository);
+        //_urlGraphDeDuplicator = new UrlGraphDeDuplicator(repository);
     }
 
     public void InitBachPart(List<string> startPoints, Batch batch)
     {
+        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+
         //_urlGraphNodes.Clear();
-        var hostsByBatches = _repository.GetHostStartUrlNamesByBatch(batch);
+        var hostsByBatches = crawlerRepository.GetHostStartUrlNamesByBatch(batch);
         foreach (var hostName in hostsByBatches)
             //შევამოწმოთ და თუ არ არსებობს შევქმნათ შემდეგი 2 ჩანაწერი მოსაქაჩი გვერდების სიაში:
             //1. {_hostName}
             //2. {_hostName}robots.txt
-            TrySaveUrl($"{hostName}/", 0, _batchPart.BpId);
+            TrySaveUrl(crawlerRepository, $"{hostName}/", 0, _batchPart.BpId);
         //TrySaveUrl($"{host}/robots.txt", 0, _batchPart.BpId);
         foreach (var uri in startPoints.Select(UriFactory.GetUri).Where(x => x is not null))
-            TrySaveUrl(uri!.AbsoluteUri, 0, _batchPart.BpId);
+            TrySaveUrl(crawlerRepository, uri!.AbsoluteUri, 0, _batchPart.BpId);
 
         //_urlGraphDeDuplicator.CopyToRepository();
 
-        SaveChangesAndReduceCache();
+        SaveChangesAndReduceCache(crawlerRepository);
 
         //FIXME რაც არსებობს ამ პარტიის ფარგლებში ყველა Url დაკოპირდეს ახლად შექმნის ნაწილში.
         //ეს საშუალებას მოგვცემს დავადგინოთ საიტზე რომელიმე გვერდი მოკვდა თუ არა.
@@ -72,34 +75,37 @@ public sealed class BatchPartRunner
         //ჩაიტვირთოს ულუფა წინასწარ განსაზღვრული მაქსიმალური რაოდენობის მოუქაჩავი მისამართების
         //ეს მისამართები ჩადგეს რიგში და სათითაოდ თითოეულისთვის
         //აქედან უნდა დავიწყოთ პორციების ჩატვირთვის ციკლი
-        while (LoadUrls(_batchPart))
+        while (true)
         {
+            var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+            if (!LoadUrls(crawlerRepository, _batchPart))
+                break;
             while (ProcData.Instance.UrlsQueue.TryDequeue(out var urlModel))
-                ProcessPage(urlModel, _batchPart);
-            SaveChangesAndReduceCache();
+                ProcessPage(crawlerRepository, urlModel, _batchPart);
+            SaveChangesAndReduceCache(crawlerRepository);
         }
     }
 
-    private bool LoadUrls(BatchPart batchPart)
+    private bool LoadUrls(ICrawlerRepository crawlerRepository, BatchPart batchPart)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Loading next part Urls...");
 
-        CountStatistics();
+        CountStatistics(crawlerRepository);
 
-        var getPagesState = new GetPagesState(_logger, _repository, _par, batchPart);
+        var getPagesState = new GetPagesState(_logger, crawlerRepository, _par, batchPart);
         getPagesState.Execute();
         StShared.ConsoleWriteInformationLine(_logger, true,
             $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
         return getPagesState.UrlsLoaded;
     }
 
-    private void CountStatistics()
+    private void CountStatistics(ICrawlerRepository crawlerRepository)
     {
-        var urlsCount = _repository.GetUrlsCount(_batchPart.BpId);
+        var urlsCount = crawlerRepository.GetUrlsCount(_batchPart.BpId);
 
-        var loadedUrlsCount = _repository.GetLoadedUrlsCount(_batchPart.BpId);
+        var loadedUrlsCount = crawlerRepository.GetLoadedUrlsCount(_batchPart.BpId);
 
-        var termsCount = _repository.GetTermsCount();
+        var termsCount = crawlerRepository.GetTermsCount();
 
         StShared.ConsoleWriteInformationLine(_logger, true,
             $"[{DateTime.Now}] Urls {loadedUrlsCount}-{urlsCount} terms {termsCount}");
@@ -159,11 +165,12 @@ public sealed class BatchPartRunner
         return (HttpStatusCode.BadRequest, null);
     }
 
-    private void AnalyzeAsRobotsText(string content, int fromUrlPageId, int batchPartId, int schemeId, int hostId)
+    private void AnalyzeAsRobotsText(ICrawlerRepository crawlerRepository, string content, int fromUrlPageId,
+        int batchPartId, int schemeId, int hostId)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as robots.txt");
 
-        _repository.SaveRobotsTxtToBase(batchPartId, schemeId, hostId, content);
+        crawlerRepository.SaveRobotsTxtToBase(batchPartId, schemeId, hostId, content);
 
         var robots = RobotsFactory.AnaliseContentAndCreateRobots(content);
 
@@ -173,22 +180,24 @@ public sealed class BatchPartRunner
         ProcData.Instance.SetRobotsCache(hostId, robots);
 
         foreach (var robotsSitemap in robots.Sitemaps)
-            TrySaveUrl(robotsSitemap.Url.ToString(), fromUrlPageId, batchPartId, true);
+            TrySaveUrl(crawlerRepository, robotsSitemap.Url.ToString(), fromUrlPageId, batchPartId, true);
 
-        _urlGraphDeDuplicator.CopyToRepository();
+        var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
 
-        SaveChangesAndReduceCache();
+        urlGraphDeDuplicator.CopyToRepository();
+
+        SaveChangesAndReduceCache(crawlerRepository);
     }
 
-    private void AnalyzeAsSiteMap(string content, int urlId, int bpId)
+    private void AnalyzeAsSiteMap(ICrawlerRepository crawlerRepository, string content, int urlId, int bpId)
     {
         if (TryParseXml(content, out var element) && element is not null)
-            AnalyzeAsSiteMapXml(element, urlId, bpId);
+            AnalyzeAsSiteMapXml(crawlerRepository, element, urlId, bpId);
         else
-            AnalyzeAsSiteMapText(content, urlId, bpId);
+            AnalyzeAsSiteMapText(crawlerRepository, content, urlId, bpId);
     }
 
-    private void AnalyzeAsHtml(string content, UrlModel url, BatchPart batchPart)
+    private void AnalyzeAsHtml(ICrawlerRepository crawlerRepository, string content, UrlModel url, BatchPart batchPart)
     {
         var uri = new Uri(url.UrlName);
 
@@ -198,17 +207,19 @@ public sealed class BatchPartRunner
 
         _consoleFormatter.WriteInSameLine($"Save URLs    {uri}");
         foreach (var childUri in parseOnePageState.ListOfUris)
-            TrySaveUrl(childUri, url.UrlId, batchPart.BpId);
+            TrySaveUrl(crawlerRepository, childUri, url.UrlId, batchPart.BpId);
         var position = 0;
 
         _consoleFormatter.WriteInSameLine($"Save Terms   {uri}");
         foreach (var uriTerm in parseOnePageState.UriTerms)
-            TrySaveTerm(uriTerm.TermType, uriTerm.Context, url.UrlId, batchPart.BpId, position++);
+            TrySaveTerm(crawlerRepository, uriTerm.TermType, uriTerm.Context, url.UrlId, batchPart.BpId, position++);
 
         _consoleFormatter.WriteInSameLine($"Clear Tail   {uri}");
-        ClearTermsTail(batchPart.BpId, url.UrlId, position);
+        ClearTermsTail(crawlerRepository, batchPart.BpId, url.UrlId, position);
 
-        _urlGraphDeDuplicator.CopyToRepository();
+        var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+
+        urlGraphDeDuplicator.CopyToRepository();
     }
 
     private static bool TryParseXml(string xml, out XElement? element)
@@ -231,7 +242,8 @@ public sealed class BatchPartRunner
         }
     }
 
-    private void AnalyzeAsSiteMapXml(XElement element, int fromUrlPageId, int batchPartId)
+    private void AnalyzeAsSiteMapXml(ICrawlerRepository crawlerRepository, XElement element, int fromUrlPageId,
+        int batchPartId)
     {
         //არსებობს Sitemap და Sitemap Index
         //ფორმატების აღწერა ვნახე მისამართზე
@@ -273,11 +285,11 @@ public sealed class BatchPartRunner
         {
             //თუ პირველი ტეგი არის sitemapindex, მაშინ საქმე გვაქვს Sitemap Index-თან
             case "sitemapindex":
-                AnalyzeSiteMapXml(element, fromUrlPageId, batchPartId, true);
+                AnalyzeSiteMapXml(crawlerRepository, element, fromUrlPageId, batchPartId, true);
                 break;
             //თუ პირველი ტეგი არის urlset, მაშინ საქმე გვაქვს Sitemap-თან
             case "urlset":
-                AnalyzeSiteMapXml(element, fromUrlPageId, batchPartId, false);
+                AnalyzeSiteMapXml(crawlerRepository, element, fromUrlPageId, batchPartId, false);
                 break;
             default:
                 StShared.WriteErrorLine("Unknown XML Format", true, _logger, false);
@@ -285,7 +297,8 @@ public sealed class BatchPartRunner
         }
     }
 
-    private void AnalyzeSiteMapXml(XContainer sitemapElement, int fromUrlPageId, int batchPartId, bool isIndex)
+    private void AnalyzeSiteMapXml(ICrawlerRepository crawlerRepository, XContainer sitemapElement, int fromUrlPageId,
+        int batchPartId, bool isIndex)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, $"Analyze as Sitemap {(isIndex ? "Index " : " ")}XML");
         var sitemapNodeLocName = isIndex ? "sitemap" : "url";
@@ -298,30 +311,36 @@ public sealed class BatchPartRunner
             {
                 var locNode = smNode as XElement;
                 if (locNode?.Name.LocalName == "loc")
-                    TrySaveUrl(locNode.Value, fromUrlPageId, batchPartId, isIndex);
+                    TrySaveUrl(crawlerRepository, locNode.Value, fromUrlPageId, batchPartId, isIndex);
             }
         }
 
-        _urlGraphDeDuplicator.CopyToRepository();
+        var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+
+        urlGraphDeDuplicator.CopyToRepository();
     }
 
-    private void AnalyzeAsSiteMapText(string content, int fromUrlPageId, int batchPartId)
+    private void AnalyzeAsSiteMapText(ICrawlerRepository crawlerRepository, string content, int fromUrlPageId,
+        int batchPartId)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Analyze as Sitemap Text");
 
         var lines = content.Split('\n');
 
         foreach (var line in lines)
-            TrySaveUrl(line, fromUrlPageId, batchPartId);
+            TrySaveUrl(crawlerRepository, line, fromUrlPageId, batchPartId);
 
-        _urlGraphDeDuplicator.CopyToRepository();
+        var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+
+        urlGraphDeDuplicator.CopyToRepository();
     }
 
-    private void TrySaveTerm(ETermType termType, string? termContext, int termUrlId, int termBatchPartId, int position)
+    private void TrySaveTerm(ICrawlerRepository crawlerRepository, ETermType termType, string? termContext,
+        int termUrlId, int termBatchPartId, int position)
     {
         try
         {
-            var termTypeInBase = TrySaveTermType(termType);
+            var termTypeInBase = TrySaveTermType(crawlerRepository, termType);
 
             var termText = termType switch
             {
@@ -343,22 +362,22 @@ public sealed class BatchPartRunner
 
             var term = ProcData.Instance.GetTermByName(termText);
             if (term == null && termTypeInBase.TtId != 0)
-                term = _repository.GetTerm(termText);
+                term = crawlerRepository.GetTerm(termText);
 
             if (term == null)
             {
-                term = _repository.AddTerm(termText, termTypeInBase);
-                _repository.AddTermByUrl(termBatchPartId, termUrlId, term, position);
+                term = crawlerRepository.AddTerm(termText, termTypeInBase);
+                crawlerRepository.AddTermByUrl(termBatchPartId, termUrlId, term, position);
                 ProcData.Instance.AddTerm(term);
             }
             else
             {
-                var termByUrl = _repository.GeTermByUrlEntry(termBatchPartId, termUrlId, position);
+                var termByUrl = crawlerRepository.GeTermByUrlEntry(termBatchPartId, termUrlId, position);
 
                 if (termByUrl == null)
-                    _repository.AddTermByUrl(termBatchPartId, termUrlId, term, position);
+                    crawlerRepository.AddTermByUrl(termBatchPartId, termUrlId, term, position);
                 else
-                    _repository.EditTermByUrl(termByUrl, term);
+                    crawlerRepository.EditTermByUrl(termByUrl, term);
             }
         }
         catch (Exception e)
@@ -368,12 +387,12 @@ public sealed class BatchPartRunner
         }
     }
 
-    private void ClearTermsTail(int batchPartId, int urlId, int position)
+    private void ClearTermsTail(ICrawlerRepository crawlerRepository, int batchPartId, int urlId, int position)
     {
-        _repository.ClearTermsTail(batchPartId, urlId, position);
+        crawlerRepository.ClearTermsTail(batchPartId, urlId, position);
     }
 
-    private TermType TrySaveTermType(ETermType termType)
+    private TermType TrySaveTermType(ICrawlerRepository crawlerRepository, ETermType termType)
     {
         var termTypeName = termType.ToString();
         var termTypeInBase = ProcData.Instance.GetTermTypeByKey(termTypeName);
@@ -381,31 +400,34 @@ public sealed class BatchPartRunner
         if (termTypeInBase != null)
             return termTypeInBase;
 
-        termTypeInBase = _repository.CheckAddTermType(termTypeName);
+        termTypeInBase = crawlerRepository.CheckAddTermType(termTypeName);
 
         ProcData.Instance.AddTermType(termTypeInBase);
 
         return termTypeInBase;
     }
 
-    public UrlModel? TrySaveUrl(string strUrl, int fromUrlPageId, int batchPartId, bool isSiteMap = false,
-        bool isRobotsTxt = false)
+    public UrlModel? TrySaveUrl(ICrawlerRepository crawlerRepository, string strUrl, int fromUrlPageId, int batchPartId,
+        bool isSiteMap = false, bool isRobotsTxt = false)
     {
         try
         {
-            var urlData = GetUrlData(strUrl);
+            var urlData = GetUrlData(crawlerRepository, strUrl);
             if (urlData == null)
                 return null;
 
             if (urlData.Url is null)
             {
                 //დადგინდეს Url შეესაბამება თუ არა robots.txt-ში მოცემულ წესებს
-                var isAllowed = isRobotsTxt || IsUrlValidByRobotsRules(urlData);
+                var isAllowed = isRobotsTxt || IsUrlValidByRobotsRules(crawlerRepository, urlData);
 
                 //ახალი url-ის დამატება
-                urlData.Url = _repository.AddUrl(urlData.CheckedUri, urlData.UrlHashCode, urlData.Host,
+                urlData.Url = crawlerRepository.AddUrl(urlData.CheckedUri, urlData.UrlHashCode, urlData.Host,
                     urlData.Extension, urlData.Scheme, isSiteMap, isAllowed);
-                _urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
+
+                var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+
+                urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
 
                 if (isAllowed && urlData.Url != null)
                     ProcData.Instance.AddUrl(urlData.Url);
@@ -415,9 +437,12 @@ public sealed class BatchPartRunner
                 //url-ი ბაზაში უკვე ყოფილა. გრაფში არის თუ არა, უნდა შემოწმდეს დამატებით
                 if (urlData.Url.UrlId == 0 || fromUrlPageId == 0 || batchPartId == 0)
                     return urlData.Url;
-                var urlGraphNode = _repository.GetUrlGraphEntry(fromUrlPageId, urlData.Url.UrlId, batchPartId);
+                var urlGraphNode = crawlerRepository.GetUrlGraphEntry(fromUrlPageId, urlData.Url.UrlId, batchPartId);
                 if (urlGraphNode is null)
-                    _urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
+                {
+                    var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+                    urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
+                }
             }
 
             return urlData.Url;
@@ -429,7 +454,7 @@ public sealed class BatchPartRunner
         }
     }
 
-    private bool IsUrlValidByRobotsRules(UrlData urlData)
+    private bool IsUrlValidByRobotsRules(ICrawlerRepository crawlerRepository, UrlData urlData)
     {
         var hostId = urlData.Host.HostId;
         var schemeId = urlData.Scheme.SchId;
@@ -449,33 +474,35 @@ public sealed class BatchPartRunner
             return robots is null || robots.IsPathAllowed("*", urlData.AbsolutePath);
 
         //შევეცადოთ ჩავტვირთოთ ბაზიდან, თუ რა თქმა უნდა გადანახული არის
-        robots = RobotsFromBase(schemeId, hostId);
+        robots = RobotsFromBase(crawlerRepository, schemeId, hostId);
 
         if (robots is null)
-            SaveUrlAndProcessOnePage($"{urlData.Scheme.SchName}://{urlData.Host.HostName}/robots.txt", false, true);
+            SaveUrlAndProcessOnePage(crawlerRepository,
+                $"{urlData.Scheme.SchName}://{urlData.Host.HostName}/robots.txt", false, true);
 
-        robots = RobotsFromBase(schemeId, hostId);
+        robots = RobotsFromBase(crawlerRepository, schemeId, hostId);
 
         return robots is null || robots.IsPathAllowed("*", urlData.AbsolutePath);
     }
 
-    private void SaveUrlAndProcessOnePage(string strUrl, bool isSiteMap = false, bool isRobotsTxt = false)
+    private void SaveUrlAndProcessOnePage(ICrawlerRepository crawlerRepository, string strUrl, bool isSiteMap = false,
+        bool isRobotsTxt = false)
     {
-        var urlModel = TrySaveUrl(strUrl, 0, _batchPart.BpId, isSiteMap, isRobotsTxt);
+        var urlModel = TrySaveUrl(crawlerRepository, strUrl, 0, _batchPart.BpId, isSiteMap, isRobotsTxt);
         if (urlModel is null)
             return;
-        SaveChangesAndReduceCache();
-        ProcessPage(urlModel, _batchPart);
-        SaveChangesAndReduceCache();
+        SaveChangesAndReduceCache(crawlerRepository);
+        ProcessPage(crawlerRepository, urlModel, _batchPart);
+        SaveChangesAndReduceCache(crawlerRepository);
     }
 
-    private Robots? RobotsFromBase(int schemeId, int hostId)
+    private Robots? RobotsFromBase(ICrawlerRepository crawlerRepository, int schemeId, int hostId)
     {
-        var robotsTxt = _repository.LoadRobotsFromBase(_batchPart.BpId, schemeId, hostId);
+        var robotsTxt = crawlerRepository.LoadRobotsFromBase(_batchPart.BpId, schemeId, hostId);
         return robotsTxt is not null ? RobotsFactory.AnaliseContentAndCreateRobots(robotsTxt) : null;
     }
 
-    private UrlData? GetUrlData(string strUrl)
+    private UrlData? GetUrlData(ICrawlerRepository crawlerRepository, string strUrl)
     {
         var myUri = UriFactory.GetUri(strUrl);
         if (myUri == null)
@@ -495,9 +522,9 @@ public sealed class BatchPartRunner
         if (string.IsNullOrWhiteSpace(scheme))
             scheme = "InvalidSchemeName";
 
-        var hostModel = TrySaveHostName(host);
-        var extensionModel = TrySaveExtension(extension);
-        var schemeModel = TrySaveScheme(scheme);
+        var hostModel = TrySaveHostName(crawlerRepository, host);
+        var extensionModel = TrySaveExtension(crawlerRepository, extension);
+        var schemeModel = TrySaveScheme(crawlerRepository, scheme);
 
         var checkedUri = HttpUtility.UrlDecode(myUri.AbsoluteUri).Truncate(UrlModelConfiguration.TermTextLength);
         if (string.IsNullOrWhiteSpace(checkedUri))
@@ -509,7 +536,7 @@ public sealed class BatchPartRunner
 
         if ((url is null || url.UrlName != checkedUri) && hostModel.HostId != 0 && extensionModel.ExtId != 0 &&
             schemeModel.SchId != 0)
-            url = _repository.GetUrl(hostModel.HostId, extensionModel.ExtId, schemeModel.SchId, urlHashCode,
+            url = crawlerRepository.GetUrl(hostModel.HostId, extensionModel.ExtId, schemeModel.SchId, urlHashCode,
                 checkedUri);
 
         var urlData = new UrlData(hostModel, extensionModel, schemeModel, checkedUri, absolutePath, urlHashCode, url);
@@ -517,60 +544,60 @@ public sealed class BatchPartRunner
         return urlData;
     }
 
-    private HostModel TrySaveHostName(string hostName)
+    private HostModel TrySaveHostName(ICrawlerRepository crawlerRepository, string hostName)
     {
         var host = ProcData.Instance.GetHostByName(hostName);
 
         if (host != null)
             return host;
 
-        host = _repository.CheckAddHostName(hostName);
+        host = crawlerRepository.CheckAddHostName(hostName);
 
         ProcData.Instance.AddHost(host);
 
         return host;
     }
 
-    private ExtensionModel TrySaveExtension(string extensionName)
+    private ExtensionModel TrySaveExtension(ICrawlerRepository crawlerRepository, string extensionName)
     {
         var extension = ProcData.Instance.GetExtensionByName(extensionName);
 
         if (extension != null)
             return extension;
 
-        extension = _repository.CheckAddExtensionName(extensionName);
+        extension = crawlerRepository.CheckAddExtensionName(extensionName);
 
         ProcData.Instance.AddExtension(extension);
 
         return extension;
     }
 
-    private SchemeModel TrySaveScheme(string schemeName)
+    private SchemeModel TrySaveScheme(ICrawlerRepository crawlerRepository, string schemeName)
     {
         var scheme = ProcData.Instance.GetSchemeByName(schemeName);
 
         if (scheme != null)
             return scheme;
 
-        scheme = _repository.CheckAddSchemeName(schemeName);
+        scheme = crawlerRepository.CheckAddSchemeName(schemeName);
 
         ProcData.Instance.AddScheme(scheme);
 
         return scheme;
     }
 
-    private void SaveChangesAndReduceCache()
+    private void SaveChangesAndReduceCache(ICrawlerRepository crawlerRepository)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] Save Changes");
 
-        _repository.SaveChangesWithTransaction();
+        crawlerRepository.SaveChangesWithTransaction();
 
         ProcData.Instance.ReduceCache();
 
-        CountStatistics();
+        CountStatistics(crawlerRepository);
     }
 
-    private void ProcessPage(UrlModel urlForProcess, BatchPart batchPart)
+    private void ProcessPage(ICrawlerRepository crawlerRepository, UrlModel urlForProcess, BatchPart batchPart)
     {
         try
         {
@@ -606,14 +633,14 @@ public sealed class BatchPartRunner
             //robots.txt, sitemap, html
             if (uri.LocalPath == "/robots.txt")
                 //გავაანალიზოთ როგორც robots.txt
-                AnalyzeAsRobotsText(content, urlForProcess.UrlId, batchPart.BpId, urlForProcess.SchemeId,
-                    urlForProcess.HostId);
+                AnalyzeAsRobotsText(crawlerRepository, content, urlForProcess.UrlId, batchPart.BpId,
+                    urlForProcess.SchemeId, urlForProcess.HostId);
             else if (urlForProcess.IsSiteMap)
                 //გავაანალიზოთ როგორც SiteMap
-                AnalyzeAsSiteMap(content, urlForProcess.UrlId, batchPart.BpId);
+                AnalyzeAsSiteMap(crawlerRepository, content, urlForProcess.UrlId, batchPart.BpId);
             else
                 //გავაანალიზოთ როგორც Html
-                AnalyzeAsHtml(content, urlForProcess, batchPart);
+                AnalyzeAsHtml(crawlerRepository, content, urlForProcess, batchPart);
 
             //გაანალიზების შედეგად ნაპოვნი მისამართები დარეგისტრირდეს ბაზაში TrySaveUrl მეთოდის გამოყენებით
 
@@ -623,16 +650,17 @@ public sealed class BatchPartRunner
 
             _consoleFormatter.WriteInSameLine($"Copy Graph   {uri}");
 
-            _urlGraphDeDuplicator.CopyToRepository();
+            var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+            urlGraphDeDuplicator.CopyToRepository();
 
             //დავადასტუროთ, რომ ამ გვერდის გაანალიზება მოხდა.
-            _repository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode);
+            crawlerRepository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode);
 
             _consoleFormatter.WriteInSameLine(
                 $"Finished     {uri} ({DateTime.Now.MillisecondsDifference(startedAt)}ms)");
 
-            if (ProcData.Instance.NeedsToReduceCache() || _repository.NeedSaveChanges())
-                SaveChangesAndReduceCache();
+            if (ProcData.Instance.NeedsToReduceCache() || crawlerRepository.NeedSaveChanges())
+                SaveChangesAndReduceCache(crawlerRepository);
         }
         catch (Exception e)
         {
@@ -641,9 +669,9 @@ public sealed class BatchPartRunner
         }
     }
 
-    public bool DoOnePage(string strUrl)
+    public bool DoOnePage(ICrawlerRepository crawlerRepository, string strUrl)
     {
-        var urlData = GetUrlData(strUrl);
+        var urlData = GetUrlData(crawlerRepository, strUrl);
         if (urlData == null)
         {
             StShared.WriteErrorLine($"Cannot prepare data for uri {strUrl}", true);
@@ -651,7 +679,7 @@ public sealed class BatchPartRunner
         }
 
         var contentAnalysis = urlData.Url is not null
-            ? _repository.GetContentAnalysis(_batchPart.BpId, urlData.Url.UrlId)
+            ? crawlerRepository.GetContentAnalysis(_batchPart.BpId, urlData.Url.UrlId)
             : null;
         if (contentAnalysis != null)
         {
@@ -659,10 +687,10 @@ public sealed class BatchPartRunner
                     $"The page {strUrl} already analyzed. Do you wont to delete Content data for reanalyze", true,
                     false))
                 return false;
-            _repository.DeleteContentAnalysis(contentAnalysis);
+            crawlerRepository.DeleteContentAnalysis(contentAnalysis);
         }
 
-        SaveUrlAndProcessOnePage(urlData.CheckedUri);
+        SaveUrlAndProcessOnePage(crawlerRepository, urlData.CheckedUri);
 
         return true;
     }

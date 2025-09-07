@@ -36,8 +36,6 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-
         var par = ParseOnePageParameters.Create(_par);
         if (par is null)
         {
@@ -45,7 +43,7 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, crawlerRepository, _par, par, Name, _batch);
+        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory, _par, par, Name, _batch);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();

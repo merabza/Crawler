@@ -43,8 +43,6 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-
         var strUrl = Inputer.InputText("Page for Test", null);
         if (string.IsNullOrWhiteSpace(strUrl))
         {
@@ -59,8 +57,8 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, crawlerRepository, parameters, par,
-            _taskName, task, null);
+        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory, parameters,
+            par, _taskName, task, null);
 
         //დავინიშნოთ დრო
         var watch = Stopwatch.StartNew();
