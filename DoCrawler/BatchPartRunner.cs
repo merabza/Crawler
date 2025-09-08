@@ -594,6 +594,8 @@ public sealed class BatchPartRunner
 
         ProcData.Instance.ReduceCache();
 
+        StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] CountStatistics");
+
         CountStatistics(crawlerRepository);
     }
 
