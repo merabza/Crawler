@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net.Http;
+﻿using System.Net.Http;
+using System.Threading;
 using CliMenu;
-using DoCrawler;
 using DoCrawler.Domain;
 using DoCrawler.Models;
+using DoCrawler.ToolActions;
 using LibCrawlerRepositories;
 using LibDataInput;
 using LibParameters;
@@ -57,17 +56,11 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunner = new CrawlerRunner(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory, parameters,
-            par, _taskName, task, null);
+        var crawlerRunner = new OnePageCrawlerRunnerToolAction(_logger, _httpClientFactory,
+            _crawlerRepositoryCreatorFactory, parameters, par, _taskName, task, strUrl);
 
-        //დავინიშნოთ დრო
-        var watch = Stopwatch.StartNew();
-        Console.WriteLine("Crawler is running...");
-        Console.WriteLine("---");
-        var result = crawlerRunner.RunOnePage(strUrl);
-        watch.Stop();
-        Console.WriteLine("---");
-        Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
+        var result = crawlerRunner.Run(CancellationToken.None).Result;
+
         return result;
     }
 }

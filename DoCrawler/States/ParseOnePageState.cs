@@ -13,9 +13,10 @@ using RobotsTxt;
 
 namespace DoCrawler.States;
 
-public sealed partial class ParseOnePageState : State
+public sealed partial class ParseOnePageState // : State
 {
     private readonly string _content;
+    private readonly ILogger _logger;
     private readonly ParseOnePageParameters _par;
     private readonly UrlModel _url;
     public readonly List<string> ListOfUris = [];
@@ -23,15 +24,17 @@ public sealed partial class ParseOnePageState : State
     private Uri? _currentUri;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public ParseOnePageState(ILogger logger, ParseOnePageParameters par, string content, UrlModel url) : base(logger,
-        "Parse One Page")
+    public ParseOnePageState(ILogger logger, ParseOnePageParameters par, string content, UrlModel url) 
+        //: base(logger,
+        //"Parse One Page")
     {
+        _logger = logger;
         _par = par;
         _content = content;
         _url = url;
     }
 
-    public override void Execute()
+    public void Execute()
     {
         _currentUri = UriFactory.GetUri(_url.UrlName);
 
@@ -331,7 +334,7 @@ public sealed partial class ParseOnePageState : State
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex.Message);
+            _logger.LogError(ex.Message);
         }
     }
 

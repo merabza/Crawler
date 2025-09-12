@@ -31,6 +31,8 @@ public sealed class BatchPartRunner
     private readonly CrawlerParameters _par;
 
     private readonly ParseOnePageParameters _parseOnePageParameters;
+
+    private ProcData _procData = new();
     //private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
     // ReSharper disable once ConvertToPrimaryConstructor
@@ -78,25 +80,40 @@ public sealed class BatchPartRunner
         while (true)
         {
             var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-            if (!LoadUrls(crawlerRepository, _batchPart))
+            _procData = new ProcData();
+
+            var loadedUrls = LoadUrls(crawlerRepository, _batchPart);
+
+            if (loadedUrls.Count == 0)
                 break;
-            while (ProcData.Instance.UrlsQueue.TryDequeue(out var urlModel))
+
+            foreach (var urlModel in loadedUrls)
+            {
                 ProcessPage(crawlerRepository, urlModel, _batchPart);
+                
+                if (!_procData.NeedsToReduceCache() && !crawlerRepository.NeedSaveChanges())
+                    continue;
+
+                SaveChangesAndReduceCache(crawlerRepository);
+                crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+                _procData = new ProcData();
+
+            }
             SaveChangesAndReduceCache(crawlerRepository);
         }
     }
 
-    private bool LoadUrls(ICrawlerRepository crawlerRepository, BatchPart batchPart)
+    private List<UrlModel> LoadUrls(ICrawlerRepository crawlerRepository, BatchPart batchPart)
     {
         StShared.ConsoleWriteInformationLine(_logger, true, "Loading next part Urls...");
 
         CountStatistics(crawlerRepository);
 
         var getPagesState = new GetPagesState(_logger, crawlerRepository, _par, batchPart);
-        getPagesState.Execute();
+        var urlsLoaded = getPagesState.GetPages();
         StShared.ConsoleWriteInformationLine(_logger, true,
-            $"Loading Urls Finished. Urls count in queue is {ProcData.Instance.UrlsQueue.Count}");
-        return getPagesState.UrlsLoaded;
+            $"Loading Urls Finished. Urls count in queue is {urlsLoaded.Count}");
+        return urlsLoaded;
     }
 
     private void CountStatistics(ICrawlerRepository crawlerRepository)
@@ -177,7 +194,7 @@ public sealed class BatchPartRunner
         if (robots is null)
             return;
 
-        ProcData.Instance.SetRobotsCache(hostId, robots);
+        _procData.SetRobotsCache(hostId, robots);
 
         foreach (var robotsSitemap in robots.Sitemaps)
             TrySaveUrl(crawlerRepository, robotsSitemap.Url.ToString(), fromUrlPageId, batchPartId, true);
@@ -360,7 +377,7 @@ public sealed class BatchPartRunner
                 return;
             }
 
-            var term = ProcData.Instance.GetTermByName(termText);
+            var term = _procData.GetTermByName(termText);
             if (term == null && termTypeInBase.TtId != 0)
                 term = crawlerRepository.GetTerm(termText);
 
@@ -368,7 +385,7 @@ public sealed class BatchPartRunner
             {
                 term = crawlerRepository.AddTerm(termText, termTypeInBase);
                 crawlerRepository.AddTermByUrl(termBatchPartId, termUrlId, term, position);
-                ProcData.Instance.AddTerm(term);
+                _procData.AddTerm(term);
             }
             else
             {
@@ -395,14 +412,14 @@ public sealed class BatchPartRunner
     private TermType TrySaveTermType(ICrawlerRepository crawlerRepository, ETermType termType)
     {
         var termTypeName = termType.ToString();
-        var termTypeInBase = ProcData.Instance.GetTermTypeByKey(termTypeName);
+        var termTypeInBase = _procData.GetTermTypeByKey(termTypeName);
 
         if (termTypeInBase != null)
             return termTypeInBase;
 
         termTypeInBase = crawlerRepository.CheckAddTermType(termTypeName);
 
-        ProcData.Instance.AddTermType(termTypeInBase);
+        _procData.AddTermType(termTypeInBase);
 
         return termTypeInBase;
     }
@@ -430,7 +447,7 @@ public sealed class BatchPartRunner
                 urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
 
                 if (isAllowed && urlData.Url != null)
-                    ProcData.Instance.AddUrl(urlData.Url);
+                    _procData.AddUrl(urlData.Url);
             }
             else
             {
@@ -438,11 +455,10 @@ public sealed class BatchPartRunner
                 if (urlData.Url.UrlId == 0 || fromUrlPageId == 0 || batchPartId == 0)
                     return urlData.Url;
                 var urlGraphNode = crawlerRepository.GetUrlGraphEntry(fromUrlPageId, urlData.Url.UrlId, batchPartId);
-                if (urlGraphNode is null)
-                {
-                    var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
-                    urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
-                }
+                if (urlGraphNode is not null) 
+                    return urlData.Url;
+                var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
+                urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);
             }
 
             return urlData.Url;
@@ -462,13 +478,13 @@ public sealed class BatchPartRunner
         if (!_batchPart.BatchNavigation.HostsByBatches.Any(x => x.SchemeId == schemeId && x.HostId == hostId))
             return true;
 
-        var robots = ProcData.Instance.GetRobots(hostId);
+        var robots = _procData.GetRobots(hostId);
 
         if (robots is not null)
             return robots.IsPathAllowed("*", urlData.AbsolutePath);
 
         //დადგინდეს hostId-ისთვის ელემენტი არსებობს თუ არა რობოტების დიქშინარეში
-        var isHostCachedInRobotsDictionary = ProcData.Instance.IsHostCachedInRobotsDictionary(hostId);
+        var isHostCachedInRobotsDictionary = _procData.IsHostCachedInRobotsDictionary(hostId);
         //თუ დაქეშილი არ არის
         if (isHostCachedInRobotsDictionary)
             return robots is null || robots.IsPathAllowed("*", urlData.AbsolutePath);
@@ -532,7 +548,7 @@ public sealed class BatchPartRunner
 
         var urlHashCode = checkedUri.GetDeterministicHashCode();
 
-        var url = ProcData.Instance.GetUrlByHashCode(urlHashCode);
+        var url = _procData.GetUrlByHashCode(urlHashCode);
 
         if ((url is null || url.UrlName != checkedUri) && hostModel.HostId != 0 && extensionModel.ExtId != 0 &&
             schemeModel.SchId != 0)
@@ -546,42 +562,42 @@ public sealed class BatchPartRunner
 
     private HostModel TrySaveHostName(ICrawlerRepository crawlerRepository, string hostName)
     {
-        var host = ProcData.Instance.GetHostByName(hostName);
+        var host = _procData.GetHostByName(hostName);
 
         if (host != null)
             return host;
 
         host = crawlerRepository.CheckAddHostName(hostName);
 
-        ProcData.Instance.AddHost(host);
+        _procData.AddHost(host);
 
         return host;
     }
 
     private ExtensionModel TrySaveExtension(ICrawlerRepository crawlerRepository, string extensionName)
     {
-        var extension = ProcData.Instance.GetExtensionByName(extensionName);
+        var extension = _procData.GetExtensionByName(extensionName);
 
         if (extension != null)
             return extension;
 
         extension = crawlerRepository.CheckAddExtensionName(extensionName);
 
-        ProcData.Instance.AddExtension(extension);
+        _procData.AddExtension(extension);
 
         return extension;
     }
 
     private SchemeModel TrySaveScheme(ICrawlerRepository crawlerRepository, string schemeName)
     {
-        var scheme = ProcData.Instance.GetSchemeByName(schemeName);
+        var scheme = _procData.GetSchemeByName(schemeName);
 
         if (scheme != null)
             return scheme;
 
         scheme = crawlerRepository.CheckAddSchemeName(schemeName);
 
-        ProcData.Instance.AddScheme(scheme);
+        _procData.AddScheme(scheme);
 
         return scheme;
     }
@@ -591,8 +607,6 @@ public sealed class BatchPartRunner
         StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] Save Changes");
 
         crawlerRepository.SaveChangesWithTransaction();
-
-        ProcData.Instance.ReduceCache();
 
         StShared.ConsoleWriteInformationLine(_logger, true, $"[{DateTime.Now}] CountStatistics");
 
@@ -660,9 +674,6 @@ public sealed class BatchPartRunner
 
             _consoleFormatter.WriteInSameLine(
                 $"Finished     {uri} ({DateTime.Now.MillisecondsDifference(startedAt)}ms)");
-
-            if (ProcData.Instance.NeedsToReduceCache() || crawlerRepository.NeedSaveChanges())
-                SaveChangesAndReduceCache(crawlerRepository);
         }
         catch (Exception e)
         {
@@ -671,8 +682,11 @@ public sealed class BatchPartRunner
         }
     }
 
-    public bool DoOnePage(ICrawlerRepository crawlerRepository, string strUrl)
+    public bool DoOnePage(string strUrl)
     {
+        var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+        _procData = new ProcData();
+
         var urlData = GetUrlData(crawlerRepository, strUrl);
         if (urlData == null)
         {

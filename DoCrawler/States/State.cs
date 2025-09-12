@@ -1,30 +1,30 @@
-﻿using Microsoft.Extensions.Logging;
+﻿//using Microsoft.Extensions.Logging;
 
-namespace DoCrawler.States;
+//namespace DoCrawler.States;
 
-public /*open*/ class State
-{
-    protected readonly ILogger Logger;
+//public /*open*/ class State
+//{
+//    protected readonly ILogger Logger;
 
-    protected State(ILogger logger, string stateName)
-    {
-        Logger = logger;
-        StateName = stateName;
-        StateId = ProcData.Instance.GetNewStateId();
-    }
+//    protected State(ILogger logger, string stateName)
+//    {
+//        Logger = logger;
+//        StateName = stateName;
+//        StateId = ProcData.Instance.GetNewStateId();
+//    }
 
-    public int StateId { get; }
-    public string StateName { get; }
+//    public int StateId { get; }
+//    public string StateName { get; }
 
-    //BackProcessor bp
-    public virtual void Execute()
-    {
-        //, bp
-        Logger.LogWarning($"Execute was not override in {nameof(State)}");
-    }
+//    //BackProcessor bp
+//    public virtual void Execute()
+//    {
+//        //, bp
+//        Logger.LogWarning($"Execute was not override in {nameof(State)}");
+//    }
 
-    //BackProcessor bp
-    //public virtual void GoNext()
-    //{
-    //}
-}
+//    //BackProcessor bp
+//    //public virtual void GoNext()
+//    //{
+//    //}
+//}

@@ -1,32 +1,26 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using CrawlerDb.Models;
 using RobotsTxt;
 
 namespace DoCrawler;
 
-public sealed class ProcData : IDisposable
+public sealed class ProcData // : IDisposable
 {
     private const int MaxCacheRecordCount = 10000;
-    private readonly ConcurrentDictionary<string, ExtensionModel> _extensionsCache = new();
-    private readonly ConcurrentDictionary<string, HostModel> _hostsCache = new();
+    private readonly Dictionary<string, ExtensionModel> _extensionsCache = new();
+    private readonly Dictionary<string, HostModel> _hostsCache = new();
 
     //private readonly ConcurrentDictionary<int, List<UrlAllowModel>> _urlAllowsCache = new();
-    private readonly ConcurrentDictionary<int, Robots?> _robots = new();
-    private readonly ConcurrentDictionary<string, SchemeModel> _schemesCache = new();
-    private readonly ConcurrentDictionary<string, Term> _termCache = new();
-    private readonly ConcurrentDictionary<string, TermType> _termTypesCache = new();
-    private readonly ConcurrentDictionary<int, UrlModel> _urlCache = new();
+    private readonly Dictionary<int, Robots?> _robots = new();
+    private readonly Dictionary<string, SchemeModel> _schemesCache = new();
+    private readonly Dictionary<string, Term> _termCache = new();
+    private readonly Dictionary<string, TermType> _termTypesCache = new();
+    private readonly Dictionary<int, UrlModel> _urlCache = new();
 
-    public readonly ConcurrentQueue<UrlModel> UrlsQueue = new();
+    //private readonly Queue<UrlModel> _urlsQueue = new();
 
     private int _lastStateId;
-
-    private ProcData()
-    {
-    }
 
     public UrlModel? GetUrlByHashCode(int hashCode)
     {
@@ -93,7 +87,8 @@ public sealed class ProcData : IDisposable
 
     public void AddUrl(UrlModel url)
     {
-        _urlCache.AddOrUpdate(url.UrlHashCode, url, (_, _) => url);
+        if (!_urlCache.TryAdd(url.UrlHashCode, url))
+            _urlCache[url.UrlHashCode] = url;
     }
 
     internal int GetNewStateId()
@@ -155,9 +150,10 @@ public sealed class ProcData : IDisposable
         _termCache.TryAdd(term.TermText, term);
     }
 
-    public void SetRobotsCache(int hostId, Robots? robots)
+    public void SetRobotsCache(int hostId, Robots robots)
     {
-        _robots.AddOrUpdate(hostId, robots, (_, _) => robots);
+        if (!_robots.TryAdd(hostId, robots))
+            _robots[hostId] = robots;
     }
 
     public bool IsHostCachedInRobotsDictionary(int hostId)
@@ -165,66 +161,66 @@ public sealed class ProcData : IDisposable
         return _robots.ContainsKey(hostId);
     }
 
-    #region Singletone
+    //#region Singletone
 
-    private static ProcData? _instance;
-    private static readonly Lock SyncRoot = new();
+    //private static ProcData? _instance;
+    //private static readonly Lock SyncRoot = new();
 
-    public static ProcData Instance
-    {
-        get
-        {
-            if (_instance != null)
-                return _instance;
-            lock (SyncRoot) //thread safe singleton
-            {
-                // ReSharper disable once DisposableConstructor
-                _instance ??= new ProcData();
-            }
+    //public static ProcData Instance
+    //{
+    //    get
+    //    {
+    //        if (_instance != null)
+    //            return _instance;
+    //        lock (SyncRoot) //thread safe singleton
+    //        {
+    //            // ReSharper disable once DisposableConstructor
+    //            _instance ??= new ProcData();
+    //        }
 
-            return _instance;
-        }
-    }
+    //        return _instance;
+    //    }
+    //}
 
-    public static void NewSession()
-    {
-        if (_instance == null) return;
-        _instance.Dispose();
-        _instance = null;
-    }
+    //public static void NewSession()
+    //{
+    //    if (_instance == null) return;
+    //    _instance.Dispose();
+    //    _instance = null;
+    //}
 
-    #endregion
+    //#endregion
 
-    #region IDisposable
+    //#region IDisposable
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    //public void Dispose()
+    //{
+    //    Dispose(true);
+    //    GC.SuppressFinalize(this);
+    //}
 
-    //Every unsealed root IDisposable type must provide its own protected virtual void Dispose(bool) method. 
-    //Dispose() should call Dipose(true) and Finalize should call Dispose(false). 
-    //If you are creating an unsealed root IDisposable type, you must define Dispose(bool) and call it
-    ~ProcData()
-    {
-        // Finalizer calls Dispose(false)
-        Dispose(false);
-    }
+    ////Every unsealed root IDisposable type must provide its own protected virtual void Dispose(bool) method. 
+    ////Dispose() should call Dipose(true) and Finalize should call Dispose(false). 
+    ////If you are creating an unsealed root IDisposable type, you must define Dispose(bool) and call it
+    //~ProcData()
+    //{
+    //    // Finalizer calls Dispose(false)
+    //    Dispose(false);
+    //}
 
-    private void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            // free managed resources
-        }
-        // free native resources if there are any.
-        //if (nativeResource != IntPtr.Zero)
-        //{
-        //  Marshal.FreeHGlobal(nativeResource);
-        //  nativeResource = IntPtr.Zero;
-        //}
-    }
+    //private void Dispose(bool disposing)
+    //{
+    //    if (disposing)
+    //    {
+    //        // free managed resources
+    //    }
+    //    // free native resources if there are any.
+    //    //if (nativeResource != IntPtr.Zero)
+    //    //{
+    //    //  Marshal.FreeHGlobal(nativeResource);
+    //    //  nativeResource = IntPtr.Zero;
+    //    //}
+    //}
 
-    #endregion
+    //#endregion
 }

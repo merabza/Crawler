@@ -1,32 +1,36 @@
-﻿using CrawlerDb.Models;
+﻿using System.Collections.Generic;
+using CrawlerDb.Models;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
 using Microsoft.Extensions.Logging;
 
 namespace DoCrawler.States;
 
-public sealed class GetPagesState : State
+public sealed class GetPagesState // : State
 {
     private readonly BatchPart _batchPart;
+    private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
     private readonly ICrawlerRepository _repository;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public GetPagesState(ILogger logger, ICrawlerRepository repository, CrawlerParameters par, BatchPart batchPart) :
-        base(logger, "Get Pages")
+    public GetPagesState(ILogger logger, ICrawlerRepository repository, CrawlerParameters par, BatchPart batchPart)
+        //:
+        //base(logger, "Get Pages")
     {
+        _logger = logger;
         _repository = repository;
         _par = par;
         _batchPart = batchPart;
     }
 
-    public bool UrlsLoaded { get; private set; }
+    //public bool UrlsLoaded { get; private set; }
 
     //BackProcessor bp
-    public override void Execute()
-    {
-        UrlsLoaded = GetPages();
-    }
+    //public override void Execute()
+    //{
+    //    UrlsLoaded = GetPages();
+    //}
 
     //BackProcessor bp
     //public override void GoNext()
@@ -35,29 +39,29 @@ public sealed class GetPagesState : State
     //}
 
     //BackProcessor bp
-    private bool GetPages()
+    public List<UrlModel> GetPages()
     {
-        Logger.LogInformation("Loading Urls");
+        _logger.LogInformation("Loading Urls");
         var urls = _repository.GetOnePortionUrls(_batchPart.BpId, _par.LoadPagesMaxCount);
         var urlsCount = urls.Count;
-        Logger.LogInformation("Loaded {urlsCount} Urls", urlsCount);
+        _logger.LogInformation("Loaded {urlsCount} Urls", urlsCount);
         if (urls.Count > 0)
         {
-            Logger.LogInformation("Add urls to Queue");
-            foreach (var urlModel in urls)
-                ProcData.Instance.UrlsQueue.Enqueue(urlModel);
-            return true;
+            _logger.LogInformation("Add urls to Queue");
+            //foreach (var urlModel in urls)
+            //    ProcData.Instance.UrlsQueue.Enqueue(urlModel);
+            return urls;
         }
 
-        Logger.LogInformation("Finish Batch Part");
+        _logger.LogInformation("Finish Batch Part");
         _repository.FinishBatchPart(_batchPart);
         _repository.SaveChanges();
         if (!_batchPart.BatchNavigation.AutoCreateNextPart)
-            return false;
+            return [];
 
         _repository.TryCreateNewPart(_batchPart.BatchId);
         _repository.SaveChanges();
 
-        return false;
+        return [];
     }
 }
