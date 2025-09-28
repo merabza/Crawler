@@ -113,7 +113,7 @@ public class CrawlerToolAction : ToolAction
         return batch;
     }
 
-    protected static bool IsCreateNewPartAllowed(Batch batch)
+    private static bool IsCreateNewPartAllowed(Batch batch)
     {
         return batch.AutoCreateNextPart ||
                Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?", true, false);

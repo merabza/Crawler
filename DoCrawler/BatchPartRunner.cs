@@ -90,15 +90,15 @@ public sealed class BatchPartRunner
             foreach (var urlModel in loadedUrls)
             {
                 ProcessPage(crawlerRepository, urlModel, _batchPart);
-                
+
                 if (!_procData.NeedsToReduceCache() && !crawlerRepository.NeedSaveChanges())
                     continue;
 
                 SaveChangesAndReduceCache(crawlerRepository);
                 crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
                 _procData = new ProcData();
-
             }
+
             SaveChangesAndReduceCache(crawlerRepository);
         }
     }
@@ -455,7 +455,7 @@ public sealed class BatchPartRunner
                 if (urlData.Url.UrlId == 0 || fromUrlPageId == 0 || batchPartId == 0)
                     return urlData.Url;
                 var urlGraphNode = crawlerRepository.GetUrlGraphEntry(fromUrlPageId, urlData.Url.UrlId, batchPartId);
-                if (urlGraphNode is not null) 
+                if (urlGraphNode is not null)
                     return urlData.Url;
                 var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
                 urlGraphDeDuplicator.AddUrlGraph(fromUrlPageId, urlData.Url, batchPartId);

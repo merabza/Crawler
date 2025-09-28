@@ -225,7 +225,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public BatchPart TryCreateNewPart(int batchId)
     {
         var newBatchPart = new BatchPart { BatchId = batchId, Created = DateTime.Now };
-        return _context.BatchParts.Add(newBatchPart).Entity;
+        var ent = _context.BatchParts.Add(newBatchPart).Entity;
+        _context.Entry(ent).Reference(e => e.BatchNavigation).Load();
+        _context.Entry(ent.BatchNavigation).Collection(b => b.HostsByBatches).Load();
+        return ent;
     }
 
     public void FinishBatchPart(BatchPart batchPart)

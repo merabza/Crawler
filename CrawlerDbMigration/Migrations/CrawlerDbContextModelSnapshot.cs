@@ -17,7 +17,7 @@ namespace CrawlerDbMigration.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -258,8 +258,7 @@ namespace CrawlerDbMigration.Migrations
                     b.Property<string>("TermText")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .UseCollation("SQL_Latin1_General_CP1_CS_AS");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("TermTypeId")
                         .HasColumnType("int")

@@ -179,7 +179,7 @@ namespace CrawlerDbMigration.Migrations
                 {
                     TrmId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TermText = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, collation: "SQL_Latin1_General_CP1_CS_AS"),
+                    TermText = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     termTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
