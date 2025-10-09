@@ -12,12 +12,12 @@ namespace LibCrawlerRepositories;
 
 public sealed class CrawlerRepository : ICrawlerRepository
 {
+    private const int MaxChangesCount = 100000;
     private readonly CrawlerDbContext _context;
     private readonly ILogger<CrawlerRepository> _logger;
-    private const int MaxChangesCount = 100000;
-
 
     private int _changesCount;
+
     // ReSharper disable once ConvertToPrimaryConstructor
     public CrawlerRepository(CrawlerDbContext ctx, ILogger<CrawlerRepository> logger)
     {
@@ -97,10 +97,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public SchemeModel CheckAddSchemeName(string schemeName)
     {
         var schemeModel = _context.Schemes.SingleOrDefault(a => a.SchName == schemeName);
-        if (schemeModel != null)
-        {
-            return schemeModel;
-        }
+        if (schemeModel != null) return schemeModel;
         _changesCount++;
         return _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
     }
@@ -241,15 +238,6 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         return _context.UrlGraphNodes.Include(i => i.GotUrlNavigation).SingleOrDefault(s =>
             s.FromUrlId == fromUrlPageId && s.GotUrlId == urlUrlId && s.BatchPartId == batchPartId);
-    }
-
-    public void CreateContentAnalysisRecord(int batchPartBpId, int urlId, HttpStatusCode statusCode)
-    {
-        _changesCount++;
-        _context.ContentsAnalysis.Add(new ContentAnalysis
-        {
-            BatchPartId = batchPartBpId, UrlId = urlId, ResponseStatusCode = (int)statusCode, Finish = DateTime.Now
-        });
     }
 
     public ContentAnalysis? GetContentAnalysis(int batchPartBpId, int urlId)
@@ -407,6 +395,20 @@ public sealed class CrawlerRepository : ICrawlerRepository
                 where bp.BpId == batchPartId && u.IsAllowed
                 select u).Take(maxCount).Include(x => x.ExtensionNavigation)
         ];
+    }
+
+    public void CreateContentAnalysisRecord(int batchPartBpId, int urlId, HttpStatusCode statusCode,
+        DateTime? lastModifiedDateOnServer)
+    {
+        _changesCount++;
+        _context.ContentsAnalysis.Add(new ContentAnalysis
+        {
+            BatchPartId = batchPartBpId,
+            UrlId = urlId,
+            ResponseStatusCode = (int)statusCode,
+            Finish = DateTime.Now,
+            LastModifiedDateOnServer = lastModifiedDateOnServer
+        });
     }
 
     #region Host cruder

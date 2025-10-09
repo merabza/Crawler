@@ -12,6 +12,7 @@ public sealed class ContentAnalysis
     public int UrlId { get; set; }
     public int ResponseStatusCode { get; set; }
     public DateTime Finish { get; set; }
+    public DateTime? LastModifiedDateOnServer { get; set; }
 
     public BatchPart BatchPartNavigation
     {

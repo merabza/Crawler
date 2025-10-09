@@ -19,7 +19,6 @@ public sealed class UrlModel
     public int SchemeId { get; set; }
     public int UrlHashCode { get; set; }
     public bool IsSiteMap { get; set; }
-
     public bool IsAllowed { get; set; }
     //public DateTime? LastDownloaded { get; set; }
     //public int DownloadTryCount { get; set; }

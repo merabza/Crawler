@@ -87,16 +87,20 @@ public sealed class BatchPartRunner
             if (loadedUrls.Count == 0)
                 break;
 
+            var analizedCount = 0;
             foreach (var urlModel in loadedUrls)
             {
                 ProcessPage(crawlerRepository, urlModel, _batchPart);
-
+                analizedCount++;
                 if (!_procData.NeedsToReduceCache() && !crawlerRepository.NeedSaveChanges())
                     continue;
 
                 SaveChangesAndReduceCache(crawlerRepository);
                 crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
                 _procData = new ProcData();
+
+                StShared.ConsoleWriteInformationLine(_logger, true,
+                    $"Analized {analizedCount} from {loadedUrls.Count} loaded Urls");
             }
 
             SaveChangesAndReduceCache(crawlerRepository);
@@ -128,7 +132,7 @@ public sealed class BatchPartRunner
             $"[{DateTime.Now}] Urls {loadedUrlsCount}-{urlsCount} terms {termsCount}");
     }
 
-    private (HttpStatusCode, string?) GetOnePageContent(Uri uri)
+    private (HttpStatusCode, DateTime?, string?) GetOnePageContent(Uri uri)
     {
         try
         {
@@ -137,9 +141,11 @@ public sealed class BatchPartRunner
             // ReSharper disable once using
             using var response = client.GetAsync(uri).Result;
 
+            //response.Headers.
+
             return response.IsSuccessStatusCode
-                ? (response.StatusCode, response.Content.ReadAsStringAsync().Result)
-                : (response.StatusCode, null);
+                ? (response.StatusCode, GetPageLastModified(response), response.Content.ReadAsStringAsync().Result)
+                : (response.StatusCode, null, null);
         }
         catch
         {
@@ -147,10 +153,34 @@ public sealed class BatchPartRunner
             //StShared.WriteException(e, true);
         }
 
-        return (HttpStatusCode.BadRequest, null);
+        return (HttpStatusCode.BadRequest, null, null);
     }
 
-    private (HttpStatusCode, string?) GetSiteMapGzFileContent(Uri uri)
+    private DateTime? GetPageLastModified(Uri uri)
+    {
+        // ReSharper disable once using
+        var client = _httpClientFactory.CreateClient();
+        // ReSharper disable once using
+        // ReSharper disable once DisposableConstructor
+        using var request = new HttpRequestMessage(HttpMethod.Head, uri);
+        // ReSharper disable once using
+        using var response = client.Send(request);
+
+        return GetPageLastModified(response);
+    }
+
+    private static DateTime? GetPageLastModified(HttpResponseMessage response)
+    {
+        if (!response.Headers.TryGetValues("Last-Modified", out var values))
+            return null;
+        var lastModifiedStr = values.FirstOrDefault();
+        if (DateTime.TryParse(lastModifiedStr, out var lastModified))
+            return lastModified;
+
+        return null;
+    }
+
+    private (HttpStatusCode, DateTime?, string?) GetSiteMapGzFileContent(Uri uri)
     {
         try
         {
@@ -159,7 +189,7 @@ public sealed class BatchPartRunner
             // ReSharper disable once using
             using var response = client.GetAsync(uri).Result;
             if (!response.IsSuccessStatusCode)
-                return (response.StatusCode, null);
+                return (response.StatusCode, null, null);
 
             // ReSharper disable once using
             using var stream = response.Content.ReadAsStream();
@@ -171,7 +201,7 @@ public sealed class BatchPartRunner
             using var reader = new StreamReader(gzStream);
             var text = reader.ReadToEnd();
 
-            return (response.StatusCode, text);
+            return (response.StatusCode, GetPageLastModified(response), text);
         }
         catch
         {
@@ -179,7 +209,7 @@ public sealed class BatchPartRunner
             //StShared.WriteException(e, true);
         }
 
-        return (HttpStatusCode.BadRequest, null);
+        return (HttpStatusCode.BadRequest, null, null);
     }
 
     private void AnalyzeAsRobotsText(ICrawlerRepository crawlerRepository, string content, int fromUrlPageId,
@@ -218,20 +248,20 @@ public sealed class BatchPartRunner
     {
         var uri = new Uri(url.UrlName);
 
-        _consoleFormatter.WriteInSameLine($"Parsing      {uri}");
+        _consoleFormatter.WriteInSameLine("Parsing", uri.ToString());
         var parseOnePageState = new ParseOnePageState(_logger, _parseOnePageParameters, content, url);
         parseOnePageState.Execute();
 
-        _consoleFormatter.WriteInSameLine($"Save URLs    {uri}");
+        _consoleFormatter.WriteInSameLine("Save URLs", uri.ToString());
         foreach (var childUri in parseOnePageState.ListOfUris)
             TrySaveUrl(crawlerRepository, childUri, url.UrlId, batchPart.BpId);
         var position = 0;
 
-        _consoleFormatter.WriteInSameLine($"Save Terms   {uri}");
+        _consoleFormatter.WriteInSameLine("Save Terms", uri.ToString());
         foreach (var uriTerm in parseOnePageState.UriTerms)
             TrySaveTerm(crawlerRepository, uriTerm.TermType, uriTerm.Context, url.UrlId, batchPart.BpId, position++);
 
-        _consoleFormatter.WriteInSameLine($"Clear Tail   {uri}");
+        _consoleFormatter.WriteInSameLine("Clear Tail", uri.ToString());
         ClearTermsTail(crawlerRepository, batchPart.BpId, url.UrlId, position);
 
         var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
@@ -620,21 +650,27 @@ public sealed class BatchPartRunner
             var uri = new Uri(urlForProcess.UrlName);
 
             var startedAt = DateTime.Now;
-            _consoleFormatter.WriteFirstLine($"Downloading  {uri}");
+            _consoleFormatter.WriteInSameLine("Downloading", uri.ToString());
+
 
             HttpStatusCode statusCode;
+            DateTime? lastModifiedDate;
             string? content;
 
             if (urlForProcess.IsSiteMap && string.Equals(urlForProcess.ExtensionNavigation.ExtName, ".gz",
                     StringComparison.CurrentCultureIgnoreCase))
                 //მოიქაჩოს მისამართის მიხედვით Gz კონტენტი გახსნით
-                (statusCode, content) = GetSiteMapGzFileContent(uri);
+                (statusCode, lastModifiedDate, content) = GetSiteMapGzFileContent(uri);
             else
                 //მოიქაჩოს მისამართის მიხედვით კონტენტი
-                (statusCode, content) = GetOnePageContent(uri);
+                (statusCode, lastModifiedDate, content) = GetOnePageContent(uri);
 
             if (content == null)
             {
+                //დავადასტუროთ, რომ ამ გვერდის გაანალიზება ვერ მოხდა.
+                crawlerRepository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode,
+                    lastModifiedDate);
+
                 StShared.WriteWarningLine($"Page is not Loaded: {uri}", true);
                 return;
             }
@@ -644,7 +680,7 @@ public sealed class BatchPartRunner
             //_repository.UpdateUrlData(urlForProcess);
 
             //გაანალიზდეს კონტენტი კონტენტის ტიპის მიხედვით
-            _consoleFormatter.WriteInSameLine($"Analyze content of {uri}");
+            _consoleFormatter.WriteInSameLine("Analyze content of", uri.ToString());
 
             //robots.txt, sitemap, html
             if (uri.LocalPath == "/robots.txt")
@@ -664,16 +700,17 @@ public sealed class BatchPartRunner
 
             //ასევე უნდა დარეგისტრირდეს სიტყვისა და მისამართის თანაკვეთა (ანუ სადაც ვიპოვეთ ეს სიტყვა)1
 
-            _consoleFormatter.WriteInSameLine($"Copy Graph   {uri}");
+            _consoleFormatter.WriteInSameLine("Copy Graph", uri.ToString());
 
             var urlGraphDeDuplicator = new UrlGraphDeDuplicator(crawlerRepository);
             urlGraphDeDuplicator.CopyToRepository();
 
             //დავადასტუროთ, რომ ამ გვერდის გაანალიზება მოხდა.
-            crawlerRepository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode);
+            crawlerRepository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode,
+                lastModifiedDate);
 
-            _consoleFormatter.WriteInSameLine(
-                $"Finished     {uri} ({DateTime.Now.MillisecondsDifference(startedAt)}ms)");
+            _consoleFormatter.WriteInSameLine("Finished",
+                $"{uri} ({DateTime.Now.MillisecondsDifference(startedAt)}ms)");
         }
         catch (Exception e)
         {

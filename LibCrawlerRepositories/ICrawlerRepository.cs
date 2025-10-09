@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using CrawlerDb.Models;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -48,7 +49,10 @@ public interface ICrawlerRepository
     void FinishBatchPart(BatchPart batchPart);
     List<UrlModel> GetOnePortionUrls(int batchPartBpId, int maxCount);
     UrlGraphNode? GetUrlGraphEntry(int fromUrlPageId, int urlUrlId, int batchPartId);
-    void CreateContentAnalysisRecord(int batchPartBpId, int resultUrlId, HttpStatusCode statusCode);
+
+    void CreateContentAnalysisRecord(int batchPartBpId, int resultUrlId, HttpStatusCode statusCode,
+        DateTime? lastModifiedDateOnServer);
+
     TermType CheckAddTermType(string termTypeName);
     Term? GetTerm(string termText);
     Term AddTerm(string termText, TermType termTypeInBase);
