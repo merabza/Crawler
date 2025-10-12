@@ -87,6 +87,8 @@ public sealed class BatchPartRunner
             if (loadedUrls.Count == 0)
                 break;
 
+            Console.WriteLine();
+
             var analizedCount = 0;
             foreach (var urlModel in loadedUrls)
             {
@@ -101,6 +103,7 @@ public sealed class BatchPartRunner
 
                 StShared.ConsoleWriteInformationLine(_logger, true,
                     $"Analized {analizedCount} from {loadedUrls.Count} loaded Urls");
+                Console.WriteLine();
             }
 
             SaveChangesAndReduceCache(crawlerRepository);
@@ -522,11 +525,11 @@ public sealed class BatchPartRunner
         //შევეცადოთ ჩავტვირთოთ ბაზიდან, თუ რა თქმა უნდა გადანახული არის
         robots = RobotsFromBase(crawlerRepository, schemeId, hostId);
 
-        if (robots is null)
-            SaveUrlAndProcessOnePage(crawlerRepository,
-                $"{urlData.Scheme.SchName}://{urlData.Host.HostName}/robots.txt", false, true);
+        //if (robots is null)
+        //    SaveUrlAndProcessOnePage(crawlerRepository,
+        //        $"{urlData.Scheme.SchName}://{urlData.Host.HostName}/robots.txt", false, true);
 
-        robots = RobotsFromBase(crawlerRepository, schemeId, hostId);
+        //robots = RobotsFromBase(crawlerRepository, schemeId, hostId);
 
         return robots is null || robots.IsPathAllowed("*", urlData.AbsolutePath);
     }
@@ -671,7 +674,10 @@ public sealed class BatchPartRunner
                 crawlerRepository.CreateContentAnalysisRecord(batchPart.BpId, urlForProcess.UrlId, statusCode,
                     lastModifiedDate);
 
-                StShared.WriteWarningLine($"Page is not Loaded: {uri}", true);
+                //StShared.WriteWarningLine($"Page is not Loaded: {uri}", true);
+                _consoleFormatter.WriteInSameLine("Page is not Loaded", uri.ToString());
+                Console.WriteLine();
+
                 return;
             }
 
