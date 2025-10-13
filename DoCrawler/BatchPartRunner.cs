@@ -87,7 +87,7 @@ public sealed class BatchPartRunner
             if (loadedUrls.Count == 0)
                 break;
 
-            Console.WriteLine();
+            _consoleFormatter.UseCurrentLine();
 
             var analizedCount = 0;
             foreach (var urlModel in loadedUrls)
@@ -103,7 +103,9 @@ public sealed class BatchPartRunner
 
                 StShared.ConsoleWriteInformationLine(_logger, true,
                     $"Analized {analizedCount} from {loadedUrls.Count} loaded Urls");
-                Console.WriteLine();
+                
+                _consoleFormatter.UseCurrentLine();
+
             }
 
             SaveChangesAndReduceCache(crawlerRepository);
@@ -676,7 +678,7 @@ public sealed class BatchPartRunner
 
                 //StShared.WriteWarningLine($"Page is not Loaded: {uri}", true);
                 _consoleFormatter.WriteInSameLine("Page is not Loaded", uri.ToString());
-                Console.WriteLine();
+                _consoleFormatter.UseCurrentLine();
 
                 return;
             }
