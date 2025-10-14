@@ -92,6 +92,9 @@ namespace CrawlerDbMigration.Migrations
                     b.Property<DateTime>("Finish")
                         .HasColumnType("datetime");
 
+                    b.Property<DateTime?>("LastModifiedDateOnServer")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("ResponseStatusCode")
                         .HasColumnType("int");
 

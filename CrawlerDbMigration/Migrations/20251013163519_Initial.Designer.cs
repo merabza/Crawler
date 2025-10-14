@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrawlerDbMigration.Migrations
 {
     [DbContext(typeof(CrawlerDbContext))]
-    [Migration("20250927182852_Initial")]
+    [Migration("20251013163519_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -93,6 +93,9 @@ namespace CrawlerDbMigration.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Finish")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("LastModifiedDateOnServer")
                         .HasColumnType("datetime");
 
                     b.Property<int>("ResponseStatusCode")

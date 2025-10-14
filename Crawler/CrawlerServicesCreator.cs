@@ -26,14 +26,19 @@ public sealed class CrawlerServicesCreator : ServicesCreator
 
         var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
 
-        var (dataProvider, connectionString) =
+        var (dataProvider, connectionString, commandTimeout) =
             DbConnectionFactory.GetDataProviderAndConnectionString(_par.DatabaseParameters, databaseServerConnections);
 
         if (!string.IsNullOrEmpty(connectionString))
             switch (dataProvider)
             {
                 case EDatabaseProvider.SqlServer:
-                    services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString));
+                    services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString,
+                        sqlOptions =>
+                        {
+                            if (commandTimeout > -1)
+                                sqlOptions.CommandTimeout(commandTimeout);
+                        }));
                     break;
                 case EDatabaseProvider.None:
                 case EDatabaseProvider.SqLite:

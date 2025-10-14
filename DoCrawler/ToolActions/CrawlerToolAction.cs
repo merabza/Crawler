@@ -65,8 +65,8 @@ public class CrawlerToolAction : ToolAction
             return null;
         }
 
-        if (createNewPart)
-            batchPartRunner.InitBachPart(Task?.StartPoints ?? [], batch);
+        //if (createNewPart)
+        //    batchPartRunner.InitBachPart(Task?.StartPoints ?? [], batch);
         return batchPartRunner;
     }
 

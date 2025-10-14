@@ -56,11 +56,14 @@ public sealed class BatchPartRunner
         //_urlGraphNodes.Clear();
         var hostsByBatches = crawlerRepository.GetHostStartUrlNamesByBatch(batch);
         foreach (var hostName in hostsByBatches)
+        {
             //შევამოწმოთ და თუ არ არსებობს შევქმნათ შემდეგი 2 ჩანაწერი მოსაქაჩი გვერდების სიაში:
             //1. {_hostName}
             //2. {_hostName}robots.txt
             TrySaveUrl(crawlerRepository, $"{hostName}/", 0, _batchPart.BpId);
-        //TrySaveUrl($"{host}/robots.txt", 0, _batchPart.BpId);
+            TrySaveUrl(crawlerRepository, $"{hostName}/robots.txt", 0, _batchPart.BpId);
+        }
+
         foreach (var uri in startPoints.Select(UriFactory.GetUri).Where(x => x is not null))
             TrySaveUrl(crawlerRepository, uri!.AbsoluteUri, 0, _batchPart.BpId);
 

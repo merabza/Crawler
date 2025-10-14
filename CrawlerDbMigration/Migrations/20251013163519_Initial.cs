@@ -236,7 +236,8 @@ namespace CrawlerDbMigration.Migrations
                     BatchPartId = table.Column<int>(type: "int", nullable: false),
                     UrlId = table.Column<int>(type: "int", nullable: false),
                     ResponseStatusCode = table.Column<int>(type: "int", nullable: false),
-                    Finish = table.Column<DateTime>(type: "datetime", nullable: false)
+                    Finish = table.Column<DateTime>(type: "datetime", nullable: false),
+                    LastModifiedDateOnServer = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {

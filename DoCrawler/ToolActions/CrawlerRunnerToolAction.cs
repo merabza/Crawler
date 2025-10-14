@@ -49,6 +49,8 @@ public sealed class CrawlerRunnerToolAction : CrawlerToolAction
             if (batchPartRunner is null)
                 return ValueTask.FromResult(false);
 
+            batchPartRunner.InitBachPart(Task?.StartPoints ?? [], batch);
+
             batchPartRunner.RunBatchPart();
 
             batchPart = null;
