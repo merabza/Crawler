@@ -27,7 +27,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
         var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
 
         var (dataProvider, connectionString, commandTimeout) =
-            DbConnectionFactory.GetDataProviderAndConnectionString(_par.DatabaseParameters, databaseServerConnections);
+            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(_par.DatabaseParameters, databaseServerConnections);
 
         if (!string.IsNullOrEmpty(connectionString))
             switch (dataProvider)
