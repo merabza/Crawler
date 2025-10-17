@@ -15,6 +15,7 @@
     <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     <ProjectReference Include="..\DoCrawler\DoCrawler.csproj" />
     <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />
+    <ProjectReference Include="..\CrawlerDbMigration\CrawlerDbMigration.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
