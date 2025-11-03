@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading;
-using CliMenu;
+﻿using CliMenu;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using DoCrawler.ToolActions;
@@ -8,6 +6,10 @@ using LibCrawlerRepositories;
 using LibDataInput;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Threading;
 using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
@@ -56,11 +58,44 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunner = new OnePageCrawlerRunnerToolAction(_logger, _httpClientFactory,
+        var crawlerRunnerToolAction = new OnePageCrawlerRunnerToolAction(_logger, _httpClientFactory,
             _crawlerRepositoryCreatorFactory, parameters, par, _taskName, task, strUrl);
 
-        var result = crawlerRunner.Run(CancellationToken.None).Result;
+        var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
+        return crawlerRunner.Run();
 
-        return result;
+        ////დავინიშნოთ დრო
+        //var watch = Stopwatch.StartNew();
+        //Console.WriteLine("Crawler is running...");
+        //Console.WriteLine("---");
+
+        //try
+        //{
+        //    // ReSharper disable once using
+        //    // ReSharper disable once DisposableConstructor
+        //    using var cts = new CancellationTokenSource();
+        //    var token = cts.Token;
+        //    token.ThrowIfCancellationRequested();
+        //    var result = crawlerRunner.Run(token).Result;
+        //    return result;
+        //}
+        //catch (OperationCanceledException)
+        //{
+        //    Console.WriteLine("Operation was canceled.");
+        //}
+        //catch (Exception e)
+        //{
+        //    _logger.LogError(e, "Error in DbServerFoldersSetNameFieldEditor.UpdateField");
+        //    throw;
+        //}
+        //finally
+        //{
+        //    watch.Stop();
+        //    Console.WriteLine("---");
+        //    Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
+        //    StShared.Pause();
+        //}
+
+        //return false;
     }
 }

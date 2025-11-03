@@ -118,7 +118,8 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
         var databaseServerConnections = new DatabaseServerConnections(parameters.DatabaseServerConnections);
 
         var (dataProvider, connectionString, commandTimeout) =
-            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(databaseParameters, databaseServerConnections);
+            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(databaseParameters,
+                databaseServerConnections);
 
         if (dataProvider is null || connectionString is null)
         {
@@ -135,6 +136,12 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                 Console.WriteLine("dbConnectionParameters is null");
                 return false;
             }
+
+            // ReSharper disable once using
+            // ReSharper disable once DisposableConstructor
+            using var cts = new CancellationTokenSource();
+            var token = cts.Token;
+            token.ThrowIfCancellationRequested();
 
             switch (dataProvider.Value)
             {
@@ -182,7 +189,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                         return false;
                     }
 
-                    var testConnectionResult = dc.TestConnection(true, CancellationToken.None).Result;
+                    var testConnectionResult = dc.TestConnection(true, token).Result;
                     if (testConnectionResult.IsNone)
                         return true;
 
@@ -200,10 +207,16 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
 
             return false;
         }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("Operation was canceled.");
+        }
         catch (Exception e)
         {
             _logger.LogError(e, "Error in CheckConnection");
             return false;
         }
+
+        return false;
     }
 }

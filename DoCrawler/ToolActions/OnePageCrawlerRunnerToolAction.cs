@@ -22,18 +22,18 @@ public sealed class OnePageCrawlerRunnerToolAction : CrawlerToolAction
         _strUrl = strUrl;
     }
 
-    protected override ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
+    protected override async ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         //1. start
         var (batch, batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory);
 
         if (batch is null)
-            return ValueTask.FromResult(false);
+            return false;
         //1. Finish
 
         //2. Start
         var batchPartRunner = CreateBatchPartRunner(batchPart, batch);
         //2. Finish
-        return ValueTask.FromResult(batchPartRunner is not null && batchPartRunner.DoOnePage(_strUrl));
+        return batchPartRunner is not null && await batchPartRunner.DoOnePage(_strUrl, cancellationToken);
     }
 }

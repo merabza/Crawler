@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net.Http;
 using CliParametersDataEdit;
 using CrawlerDb;
+using DoCrawler;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
 using LibDatabaseParameters;
@@ -27,7 +29,8 @@ public sealed class CrawlerServicesCreator : ServicesCreator
         var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
 
         var (dataProvider, connectionString, commandTimeout) =
-            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(_par.DatabaseParameters, databaseServerConnections);
+            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(_par.DatabaseParameters,
+                databaseServerConnections);
 
         if (!string.IsNullOrEmpty(connectionString))
             switch (dataProvider)
@@ -52,6 +55,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
 
         services.AddScoped<ICrawlerRepository, CrawlerRepository>();
         services.AddSingleton<ICrawlerRepositoryCreatorFactory, CrawlerRepositoryCreatorFactory>();
-        services.AddHttpClient();
+        services.AddHttpClient(BatchPartRunner.CrawlerClient)
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
     }
 }

@@ -43,19 +43,44 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunner = new CrawlerRunnerToolAction(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory, _par, par,
-            Name, _batch);
+        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory,
+            _par, par, Name, _batch);
 
-        //დავინიშნოთ დრო
-        var watch = Stopwatch.StartNew();
-        Console.WriteLine("Crawler is running...");
-        Console.WriteLine("---");
-        var result = crawlerRunner.Run(CancellationToken.None).Result;
-        watch.Stop();
-        Console.WriteLine("---");
-        Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
-        StShared.Pause();
+        var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
+        return crawlerRunner.Run();
 
-        return result;
+        ////დავინიშნოთ დრო
+        //var watch = Stopwatch.StartNew();
+        //Console.WriteLine("Crawler is running...");
+        //Console.WriteLine("---");
+
+        //try
+        //{
+        //    // ReSharper disable once using
+        //    // ReSharper disable once DisposableConstructor
+        //    using var cts = new CancellationTokenSource();
+        //    var token = cts.Token;
+        //    token.ThrowIfCancellationRequested();
+        //    var result = crawlerRunner.Run(token).Result;
+        //    return result;
+        //}
+        //catch (OperationCanceledException)
+        //{
+        //    Console.WriteLine("Operation was canceled.");
+        //}
+        //catch (Exception e)
+        //{
+        //    _logger.LogError(e, "Error in DbServerFoldersSetNameFieldEditor.UpdateField");
+        //    throw;
+        //}
+        //finally
+        //{
+        //    watch.Stop();
+        //    Console.WriteLine("---");
+        //    Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
+        //    StShared.Pause();
+        //}
+
+        //return false;
     }
 }
