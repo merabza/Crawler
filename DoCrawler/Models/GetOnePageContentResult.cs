@@ -3,7 +3,7 @@ using System.Net;
 
 namespace DoCrawler.Models;
 
-public class GetOnePageContentResult
+public sealed class GetOnePageContentResult
 {
     public HttpStatusCode StatusCode { get; set; }
     public DateTime? LastModified { get; set; }

@@ -2,7 +2,7 @@
 
 //namespace CrawlerDb.Models;
 
-//public class UrlByBatchPart
+//public sealed class UrlByBatchPart
 //{
 //    public int UbpId { get; set; }
 //    public int UrlId { get; set; }

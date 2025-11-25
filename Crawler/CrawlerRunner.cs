@@ -7,7 +7,7 @@ using SystemToolsShared;
 
 namespace Crawler;
 
-public class CrawlerRunner
+public sealed class CrawlerRunner
 {
     private readonly CrawlerToolAction _crawlerRunner;
     private readonly ILogger _logger;

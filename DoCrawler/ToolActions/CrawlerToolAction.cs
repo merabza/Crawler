@@ -13,7 +13,7 @@ using SystemToolsShared;
 
 namespace DoCrawler.ToolActions;
 
-public class CrawlerToolAction : ToolAction
+public /*open*/ class CrawlerToolAction : ToolAction
 {
     private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
