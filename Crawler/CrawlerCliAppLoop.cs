@@ -117,7 +117,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
 
         var databaseServerConnections = new DatabaseServerConnections(parameters.DatabaseServerConnections);
 
-        var (dataProvider, connectionString, commandTimeout) =
+        var (dataProvider, connectionString, _) =
             DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(databaseParameters,
                 databaseServerConnections);
 

@@ -236,18 +236,18 @@ public sealed class BatchPartRunner
     //    return new GetOnePageContentResult { StatusCode = HttpStatusCode.BadRequest };
     //}
 
-    private DateTime? GetPageLastModified(Uri uri)
-    {
-        // ReSharper disable once using
-        var client = _httpClientFactory.CreateClient(CrawlerClient);
-        // ReSharper disable once using
-        // ReSharper disable once DisposableConstructor
-        using var request = new HttpRequestMessage(HttpMethod.Head, uri);
-        // ReSharper disable once using
-        using var response = client.Send(request);
+    //private DateTime? GetPageLastModified(Uri uri)
+    //{
+    //    // ReSharper disable once using
+    //    var client = _httpClientFactory.CreateClient(CrawlerClient);
+    //    // ReSharper disable once using
+    //    // ReSharper disable once DisposableConstructor
+    //    using var request = new HttpRequestMessage(HttpMethod.Head, uri);
+    //    // ReSharper disable once using
+    //    using var response = client.Send(request);
 
-        return GetPageLastModified(response);
-    }
+    //    return GetPageLastModified(response);
+    //}
 
     private static string? GetPageLocation(HttpResponseMessage response)
     {
@@ -758,7 +758,7 @@ public sealed class BatchPartRunner
                 getOnePageContentResult = await GetOnePageContent(uri, EContentType.SiteMapGzFile, token);
             else
                 //მოიქაჩოს მისამართის მიხედვით კონტენტი
-                getOnePageContentResult = await GetOnePageContent(uri, EContentType.http, token);
+                getOnePageContentResult = await GetOnePageContent(uri, EContentType.Http, token);
 
             var content = getOnePageContentResult.Content;
             var statusCode = getOnePageContentResult.StatusCode;
@@ -779,7 +779,6 @@ public sealed class BatchPartRunner
                         // location is relative, resolve against original uri
                         locationUri = new Uri(uri, location);
                     }
-
 
                     _consoleFormatter.WriteInSameLine("Page is redirected to:", locationUri.ToString());
                     _consoleFormatter.UseCurrentLine();

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Threading;
+﻿using System.Net.Http;
 using CliMenu;
 using DoCrawler.Domain;
 using DoCrawler.Models;
@@ -52,15 +49,11 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory,
-            parameters, par, _taskName, task, null);
+        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory,
+            _crawlerRepositoryCreatorFactory, parameters, par, _taskName, task, null);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
         return crawlerRunner.Run();
-
-
-
-
 
         ////დავინიშნოთ დრო
         //var watch = Stopwatch.StartNew();

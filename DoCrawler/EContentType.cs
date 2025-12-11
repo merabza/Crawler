@@ -2,6 +2,6 @@
 
 public enum EContentType
 {
-    http,
+    Http,
     SiteMapGzFile
 }

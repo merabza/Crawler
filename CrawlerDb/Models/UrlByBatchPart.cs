@@ -10,3 +10,4 @@
 //    public DateTime? LastModifiedDateOnServer { get; set; }
 //    public DateTime LastDownloadTryDate { get; set; }
 //}
+

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Threading;
+﻿using System.Net.Http;
 using CliMenu;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
@@ -43,8 +40,8 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory,
-            _par, par, Name, _batch);
+        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory,
+            _crawlerRepositoryCreatorFactory, _par, par, Name, _batch);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
         return crawlerRunner.Run();

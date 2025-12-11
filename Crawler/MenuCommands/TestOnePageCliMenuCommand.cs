@@ -1,4 +1,5 @@
-﻿using CliMenu;
+﻿using System.Net.Http;
+using CliMenu;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using DoCrawler.ToolActions;
@@ -6,10 +7,6 @@ using LibCrawlerRepositories;
 using LibDataInput;
 using LibParameters;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Threading;
 using SystemToolsShared;
 
 namespace Crawler.MenuCommands;
