@@ -8,6 +8,7 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\CrawlerDbMigration\CrawlerDbMigration.csproj" />
       <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     </ItemGroup>
     <PropertyGroup>
