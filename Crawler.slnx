@@ -6,6 +6,7 @@
   </Configurations>
   <Folder Name="/AppCliTools/">
     <Project Path="../AppCliTools/CliMenu/CliMenu.csproj" />
+    <Project Path="../AppCliTools/CliParameters.Tests/CliParameters.Tests.csproj" />
     <Project Path="../AppCliTools/CliParameters/CliParameters.csproj" />
     <Project Path="../AppCliTools/CliParametersApiClientsEdit/CliParametersApiClientsEdit.csproj" />
     <Project Path="../AppCliTools/CliParametersDataEdit/CliParametersDataEdit.csproj" />
@@ -36,8 +37,7 @@
     <Project Path="../SystemTools/ApiContracts/ApiContracts.csproj" />
     <Project Path="../SystemTools/DatabaseToolsShared.Tests/DatabaseToolsShared.Tests.csproj" />
     <Project Path="../SystemTools/DatabaseToolsShared/DatabaseToolsShared.csproj" />
-    <Project Path="../SystemTools/RepositoriesDom.Tests/RepositoriesDom.Tests.csproj" />
-    <Project Path="../SystemTools/RepositoriesDom/RepositoriesDom.csproj" />
+    <Project Path="../SystemTools/RepositoriesAbstraction/RepositoriesAbstraction.csproj" />
     <Project Path="../SystemTools/StringMessagesApiContracts.Tests/StringMessagesApiContracts.Tests.csproj" />
     <Project Path="../SystemTools/StringMessagesApiContracts/StringMessagesApiContracts.csproj" />
     <Project Path="../SystemTools/SystemToolsShared.Tests/SystemToolsShared.Tests.csproj" />
