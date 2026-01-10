@@ -37,6 +37,7 @@
     <Project Path="../SystemTools/ApiContracts/ApiContracts.csproj" />
     <Project Path="../SystemTools/DatabaseToolsShared.Tests/DatabaseToolsShared.Tests.csproj" />
     <Project Path="../SystemTools/DatabaseToolsShared/DatabaseToolsShared.csproj" />
+    <Project Path="../SystemTools/DomainShared/DomainShared.csproj" />
     <Project Path="../SystemTools/RepositoriesAbstraction/RepositoriesAbstraction.csproj" />
     <Project Path="../SystemTools/StringMessagesApiContracts.Tests/StringMessagesApiContracts.Tests.csproj" />
     <Project Path="../SystemTools/StringMessagesApiContracts/StringMessagesApiContracts.csproj" />
