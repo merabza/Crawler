@@ -42,8 +42,8 @@ public sealed class GetPagesState // : State
     public List<UrlModel> GetPages()
     {
         _logger.LogInformation("Loading Urls");
-        var urls = _repository.GetOnePortionUrls(_batchPart.BpId, _par.LoadPagesMaxCount);
-        var urlsCount = urls.Count;
+        List<UrlModel> urls = _repository.GetOnePortionUrls(_batchPart.BpId, _par.LoadPagesMaxCount);
+        int urlsCount = urls.Count;
         _logger.LogInformation("Loaded {UrlsCount} Urls", urlsCount);
         if (urls.Count > 0)
         {

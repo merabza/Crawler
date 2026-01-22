@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using CliParameters;
-using CliParameters.FieldEditors;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.FieldEditors;
 using DoCrawler.Models;
-using LibParameters;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
 
 namespace DoCrawler.Cruders;
 
@@ -70,7 +70,7 @@ public sealed class PunctuationCruder : ParCruder<PunctuationModel>
         }
         catch (Exception e)
         {
-            _logger.LogError(e, null);
+            _logger.LogError(e, "Exception occurred during validation in {MethodName}", nameof(CheckValidation));
             return false;
         }
     }

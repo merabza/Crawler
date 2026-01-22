@@ -1,15 +1,15 @@
 ﻿using System.Net.Http;
-using CliParameters;
-using CliParameters.FieldEditors;
-using CliParametersDataEdit.Cruders;
-using CliParametersDataEdit.FieldEditors;
-using CliParametersEdit.Cruders;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.CliParametersDataEdit.Cruders;
+using AppCliTools.CliParametersDataEdit.FieldEditors;
+using AppCliTools.CliParametersEdit.Cruders;
 using DoCrawler.Cruders;
 using DoCrawler.Models;
-using LibDatabaseParameters;
-using LibFileParameters.Models;
-using LibParameters;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibFileParameters.Models;
+using ParametersManagement.LibParameters;
 
 namespace Crawler;
 

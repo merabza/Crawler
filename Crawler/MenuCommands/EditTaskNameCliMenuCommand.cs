@@ -1,7 +1,8 @@
-﻿using CliMenu;
+﻿using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
 using DoCrawler.Models;
-using LibDataInput;
-using LibParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -22,7 +23,7 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var task = parameters.GetTask(_taskName);
+        TaskModel? task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
@@ -30,12 +31,16 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
         }
 
         //ამოცანის სახელის რედაქტირება
-        var newTaskName = Inputer.InputText("change  Task Name ", _taskName);
+        string? newTaskName = Inputer.InputText("change  Task Name ", _taskName);
         if (string.IsNullOrWhiteSpace(newTaskName))
+        {
             return false;
+        }
 
         if (_taskName == newTaskName)
+        {
             return false; //თუ ცვლილება მართლაც მოითხოვეს
+        }
 
         if (!parameters.CheckNewTaskNameValid(_taskName, newTaskName))
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using RobotsTxt.Entities;
 using RobotsTxt.Enums;
 
@@ -11,8 +12,11 @@ public static class RobotsFactory
     public static Robots? AnaliseContentAndCreateRobots(string content)
     {
         if (string.IsNullOrWhiteSpace(content))
+        {
             return null;
-        var lines = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+        }
+
+        string[] lines = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
             .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
         return lines.Length == 0 ? null : ReadLinesAndCreateRobots(lines);
     }
@@ -23,15 +27,15 @@ public static class RobotsFactory
         var specificAccessRules = new List<AccessAllowRule>();
         var crawlDelayRules = new List<CrawlDelayRule>();
         var sitemaps = new List<Sitemap>();
-        var malformed = false;
-        var isAnyPathDisallowed = false;
-        var hasRules = false;
+        bool malformed = false;
+        bool isAnyPathDisallowed = false;
+        bool hasRules = false;
 
-        var ruleCount = 0;
-        var lastLineWasUserAgentLine = false;
+        int ruleCount = 0;
+        bool lastLineWasUserAgentLine = false;
         var userAgents = new List<string>();
 
-        foreach (var line in lines)
+        foreach (string line in lines)
         {
             var robotsLine = Line.Create(line);
             switch (robotsLine.Type)
@@ -39,22 +43,34 @@ public static class RobotsFactory
                 case LineType.Comment: //ignore the comments
                     continue;
                 case LineType.UserAgent:
-                    var userAgentFromLine = robotsLine.Value;
+                    string? userAgentFromLine = robotsLine.Value;
                     if (string.IsNullOrWhiteSpace(userAgentFromLine))
+                    {
                         continue;
+                    }
+
                     if (!lastLineWasUserAgentLine)
+                    {
                         userAgents.Clear();
+                    }
+
                     userAgents.Add(userAgentFromLine);
                     lastLineWasUserAgentLine = true;
                     continue;
                 case LineType.Sitemap:
                     lastLineWasUserAgentLine = false;
-                    var siteMapPath = robotsLine.Value;
+                    string? siteMapPath = robotsLine.Value;
                     if (siteMapPath is null)
+                    {
                         continue;
-                    var siteMap = Sitemap.FromLine(siteMapPath);
+                    }
+
+                    Sitemap? siteMap = Sitemap.FromLine(siteMapPath);
                     if (siteMap is not null)
+                    {
                         sitemaps.Add(siteMap);
+                    }
+
                     continue;
                 case LineType.AccessRule:
                 case LineType.CrawlDelayRule:
@@ -66,24 +82,32 @@ public static class RobotsFactory
                         continue;
                     }
 
-                    foreach (var userAgent in userAgents)
+                    foreach (string userAgent in userAgents)
+                    {
                         if (robotsLine is { Type: LineType.AccessRule, Field: not null, Value: not null })
                         {
                             var accessRule = AccessAllowRule.Create(userAgent, robotsLine.Field, robotsLine.Value,
                                 ++ruleCount);
-                            if (accessRule.For.Equals("*"))
+                            if (accessRule.For.Equals("*", StringComparison.Ordinal))
+                            {
                                 globalAccessRules.Add(accessRule);
+                            }
                             else
+                            {
                                 specificAccessRules.Add(accessRule);
+                            }
 
                             if (!accessRule.Allowed && !string.IsNullOrEmpty(accessRule.Path))
                                 // We say !String.IsNullOrEmpty(x.Path) because the rule "Disallow: " means nothing is disallowed.
+                            {
                                 isAnyPathDisallowed = true;
+                            }
                         }
                         else
                         {
                             crawlDelayRules.Add(new CrawlDelayRule(userAgent, robotsLine, ++ruleCount));
                         }
+                    }
 
                     hasRules = true;
                     continue;
@@ -92,7 +116,8 @@ public static class RobotsFactory
                     malformed = true;
                     continue;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new SwitchExpressionException(
+                        "Unexpected LineType encountered in RobotsFactory.ReadLinesAndCreateRobots.");
             }
         }
 

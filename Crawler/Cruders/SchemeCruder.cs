@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CliParameters.Cruders;
-using CliParameters.FieldEditors;
+using AppCliTools.CliParameters.Cruders;
+using AppCliTools.CliParameters.FieldEditors;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
-using LibParameters;
+using ParametersManagement.LibParameters;
 
 namespace Crawler.Cruders;
 
@@ -26,30 +26,32 @@ public sealed class SchemeCruder : Cruder
 
     private List<SchemeModel> GetSchemes()
     {
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         return repo.GetSchemesList();
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        var schemesList = GetSchemes();
+        List<SchemeModel> schemesList = GetSchemes();
         return schemesList.ToDictionary(k => k.SchName, v => (ItemData)v);
     }
 
     public override bool ContainsRecordWithKey(string recordKey)
     {
-        var dict = GetCrudersDictionary();
+        Dictionary<string, ItemData> dict = GetCrudersDictionary();
         return dict.ContainsKey(recordKey);
     }
 
     public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not SchemeModel newScheme)
+        {
             return;
+        }
 
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
 
-        var scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
+        SchemeModel scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
 
         scheme.SchName = newScheme.SchName;
         repo.UpdateScheme(scheme);
@@ -60,8 +62,11 @@ public sealed class SchemeCruder : Cruder
     protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not SchemeModel newScheme)
+        {
             return;
-        var repo = GetCrawlerRepository();
+        }
+
+        ICrawlerRepository repo = GetCrawlerRepository();
         repo.CreateScheme(newScheme);
 
         repo.SaveChanges();
@@ -69,8 +74,8 @@ public sealed class SchemeCruder : Cruder
 
     protected override void RemoveRecordWithKey(string recordKey)
     {
-        var repo = GetCrawlerRepository();
-        var scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
+        ICrawlerRepository repo = GetCrawlerRepository();
+        SchemeModel scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
         repo.DeleteScheme(scheme);
 
         repo.SaveChanges();

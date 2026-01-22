@@ -31,7 +31,7 @@ public sealed class UrlGraphDeDuplicator
 
     public void CopyToRepository()
     {
-        foreach (var urlGraphNode in _urlGraphNodes.Values) //.Distinct()
+        foreach (UrlGraphNode urlGraphNode in _urlGraphNodes.Values) //.Distinct()
             //foreach (UrlGraphNode urlGraphNode in _urlGraphNodes
             //  .GroupBy(ugn => new {ugn.BatchPartId, ugn.FromUrlId, ugn.GotUrlId}).Select(group => group.First()))
         {

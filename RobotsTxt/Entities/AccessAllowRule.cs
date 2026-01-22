@@ -16,14 +16,22 @@ public sealed class AccessAllowRule : Rule
 
     public static AccessAllowRule Create(string userAgent, string field, string path, int order)
     {
+        const string uriPathDelimiter = "/";
         if (!string.IsNullOrEmpty(path))
         {
             // get rid of the preceding * wild char
-            while (path.StartsWith("*", StringComparison.Ordinal)) path = path[1..];
-            if (!path.StartsWith('/')) path = "/" + path;
+            while (path.StartsWith('*'))
+            {
+                path = path[1..];
+            }
+
+            if (!path.StartsWith('/'))
+            {
+                path = uriPathDelimiter + path;
+            }
         }
 
-        var allowed = field.ToLowerInvariant().Equals("allow");
+        bool allowed = string.Equals(field.ToUpperInvariant(), "ALLOW", StringComparison.Ordinal);
         return new AccessAllowRule(userAgent, path, allowed, order);
     }
 }

@@ -39,8 +39,8 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(SaveChanges)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName}.", nameof(SaveChanges));
+            throw new Exception($"Error occurred executing {nameof(SaveChanges)}. See inner exception for details.", e);
         }
     }
 
@@ -49,10 +49,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         try
         {
             // ReSharper disable once using
-            using var transaction = GetTransaction();
+            using IDbContextTransaction transaction = GetTransaction();
             try
             {
-                var ret = _context.SaveChanges();
+                int ret = _context.SaveChanges();
                 transaction.Commit();
                 _changesCount = 0;
                 return ret;
@@ -61,13 +61,16 @@ public sealed class CrawlerRepository : ICrawlerRepository
             {
                 _logger.LogError(e, $"Error occurred executing {nameof(SaveChangesWithTransaction)}.");
                 transaction.Rollback();
-                throw;
+                throw new Exception(
+                    $"Error occurred executing {nameof(SaveChangesWithTransaction)}. See inner exception for details.",
+                    e);
             }
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"Error occurred executing {nameof(SaveChangesWithTransaction)}.");
-            throw;
+            throw new Exception(
+                $"Error occurred executing {nameof(SaveChangesWithTransaction)}. See inner exception for details.", e);
         }
     }
 
@@ -78,7 +81,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public HostModel CheckAddHostName(string hostName)
     {
-        var hostModel = _context.Hosts.SingleOrDefault(a => a.HostName == hostName);
+        HostModel? hostModel = _context.Hosts.SingleOrDefault(a => a.HostName == hostName);
         if (hostModel != null)
         {
             return hostModel;
@@ -90,7 +93,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public ExtensionModel CheckAddExtensionName(string extensionName)
     {
-        var extensionModel = _context.Extensions.SingleOrDefault(a => a.ExtName == extensionName);
+        ExtensionModel? extensionModel = _context.Extensions.SingleOrDefault(a => a.ExtName == extensionName);
         if (extensionModel != null)
         {
             return extensionModel;
@@ -102,7 +105,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public SchemeModel CheckAddSchemeName(string schemeName)
     {
-        var schemeModel = _context.Schemes.SingleOrDefault(a => a.SchName == schemeName);
+        SchemeModel? schemeModel = _context.Schemes.SingleOrDefault(a => a.SchName == schemeName);
         if (schemeModel != null)
         {
             return schemeModel;
@@ -112,12 +115,12 @@ public sealed class CrawlerRepository : ICrawlerRepository
         return _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
     }
 
-    public UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string strUrl)
+    public UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string urName)
     {
-        var matchUrls = _context.Urls.Where(w =>
+        List<UrlModel> matchUrls = _context.Urls.Where(w =>
                 w.UrlHashCode == urlHashCode && w.HostId == hostId && w.ExtensionId == extId && w.SchemeId == scmId)
             .ToList();
-        return matchUrls.FirstOrDefault(url => url.UrlName == strUrl);
+        return matchUrls.FirstOrDefault(url => url.UrlName == urName);
     }
 
     //public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
@@ -127,13 +130,13 @@ public sealed class CrawlerRepository : ICrawlerRepository
     //}
 
     //public UrlModel AddUrl(string strUrl, int urlHashCode, int hostId, int extensionId, int schemeId)
-    public UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
+    public UrlModel AddUrl(string urName, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
         bool isSiteMap, bool isAllowed)
     {
         _changesCount++;
         return _context.Urls.Add(new UrlModel
         {
-            UrlName = strUrl,
+            UrlName = urName,
             HostNavigation = host,
             ExtensionNavigation = extension,
             SchemeNavigation = scheme,
@@ -172,7 +175,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
-            var hostByBatch = _context.HostsByBatches.SingleOrDefault(w =>
+            HostByBatch? hostByBatch = _context.HostsByBatches.SingleOrDefault(w =>
                 w.BatchId == batch.BatchId && w.SchemeNavigation.SchName == schemeName &&
                 w.HostNavigation.HostName == hostName);
 
@@ -184,7 +187,8 @@ public sealed class CrawlerRepository : ICrawlerRepository
         catch (Exception e)
         {
             _logger.LogError(e,
-                $"Error occurred executing {nameof(RemoveHostNamesByBatch)} for batchId={batch.BatchId}, schemeName={schemeName}, hostName={hostName}.");
+                "Error occurred executing {MethodName} for batchId={BatchId}, schemeName={SchemeName}, hostName={HostName}.",
+                nameof(RemoveHostNamesByBatch), batch.BatchId, schemeName, hostName);
             throw new Exception(
                 $"Error in {nameof(RemoveHostNamesByBatch)} for batchId={batch.BatchId}, schemeName={schemeName}, hostName={hostName}. See inner exception for details.",
                 e);
@@ -195,7 +199,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
-            var hostByBatch = _context.HostsByBatches.SingleOrDefault(w =>
+            HostByBatch? hostByBatch = _context.HostsByBatches.SingleOrDefault(w =>
                 w.BatchId == batch.BatchId && w.SchemeNavigation.SchName == schemeName &&
                 w.HostNavigation.HostName == hostName);
 
@@ -204,14 +208,14 @@ public sealed class CrawlerRepository : ICrawlerRepository
                 return;
             }
 
-            var scheme = _context.Schemes.SingleOrDefault(s => s.SchName == schemeName);
+            SchemeModel? scheme = _context.Schemes.SingleOrDefault(s => s.SchName == schemeName);
             if (scheme == null)
             {
                 _changesCount++;
                 scheme = _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
             }
 
-            var host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName);
+            HostModel? host = _context.Hosts.SingleOrDefault(s => s.HostName == hostName);
             if (host == null)
             {
                 _changesCount++;
@@ -243,7 +247,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public BatchPart TryCreateNewPart(int batchId)
     {
         var newBatchPart = new BatchPart { BatchId = batchId, Created = DateTime.Now };
-        var ent = _context.BatchParts.Add(newBatchPart).Entity;
+        BatchPart ent = _context.BatchParts.Add(newBatchPart).Entity;
         _context.Entry(ent).Reference(e => e.BatchNavigation).Load();
         _context.Entry(ent.BatchNavigation).Collection(b => b.HostsByBatches).Load();
         return ent;
@@ -272,17 +276,18 @@ public sealed class CrawlerRepository : ICrawlerRepository
         _context.ContentsAnalysis.Remove(contentAnalysis);
     }
 
-    public UrlModel UpdateUrlData(UrlModel urlModel)
+    public UrlModel UpdateUrlData(UrlModel urlForProcess)
     {
         try
         {
             _changesCount++;
-            return _context.Update(urlModel).Entity;
+            return _context.Update(urlForProcess).Entity;
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"Error occurred executing {nameof(UpdateUrlData)}.");
-            throw;
+            throw new Exception($"Error occurred executing {nameof(UpdateUrlData)}. See inner exception for details.",
+                e);
         }
     }
 
@@ -310,7 +315,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public void SaveRobotsTxtToBase(int batchPartId, int schemeId, int hostId, string robotsTxt)
     {
-        var robot = _context.Robots.SingleOrDefault(x =>
+        Robot? robot = _context.Robots.SingleOrDefault(x =>
             x.BatchPartId == batchPartId && x.SchemeId == schemeId && x.HostId == hostId);
         if (robot is null)
         {
@@ -443,7 +448,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
         catch (Exception e)
         {
             _logger.LogError(e, $"Error occurred executing {nameof(GetHostsList)}.");
-            throw;
+            throw new Exception($"Error in {nameof(GetHostsList)}. See inner exception for details.", e);
         }
     }
 
@@ -455,8 +460,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(GetHostByName)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for hostName={HostName}.", nameof(GetHostByName),
+                hostName);
+            throw new Exception(
+                $"Error in {nameof(GetHostByName)} for hostName={hostName}. See inner exception for details.", e);
         }
     }
 
@@ -468,8 +475,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(UpdateHost)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for hostId={HostId}.", nameof(UpdateHost),
+                host.HostId);
+            throw new Exception(
+                $"Error in {nameof(UpdateHost)} for hostId={host.HostId}. See inner exception for details.", e);
         }
     }
 
@@ -481,8 +490,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(CreateHost)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for hostName={HostName}.", nameof(CreateHost),
+                newHost.HostName);
+            throw new Exception(
+                $"Error in {nameof(CreateHost)} for hostName={newHost.HostName}. See inner exception for details.", e);
         }
     }
 
@@ -494,8 +505,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(DeleteHost)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for hostId={HostId}.", nameof(DeleteHost),
+                hostForDelete.HostId);
+            throw new Exception(
+                $"Error in {nameof(DeleteHost)} for hostId={hostForDelete.HostId}. See inner exception for details.",
+                e);
         }
     }
 
@@ -512,7 +526,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
         catch (Exception e)
         {
             _logger.LogError(e, $"Error occurred executing {nameof(GetSchemesList)}.");
-            throw;
+            throw new Exception($"Error in {nameof(GetSchemesList)}. See inner exception for details.", e);
         }
     }
 
@@ -524,8 +538,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(GetSchemeByName)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for schemeName={SchemeName}.",
+                nameof(GetSchemeByName), schemeName);
+            throw new Exception(
+                $"Error in {nameof(GetSchemeByName)} for schemeName={schemeName}. See inner exception for details.", e);
         }
     }
 
@@ -537,8 +553,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(UpdateScheme)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for schemeId={SchemeId}.", nameof(UpdateScheme),
+                scheme.SchId);
+            throw new Exception(
+                $"Error in {nameof(UpdateScheme)} for schemeId={scheme.SchId}. See inner exception for details.", e);
         }
     }
 
@@ -550,8 +568,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(CreateScheme)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for schemeName={SchemeName}.",
+                nameof(CreateScheme), newScheme.SchName);
+            throw new Exception(
+                $"Error in {nameof(CreateScheme)} for schemeName={newScheme.SchName}. See inner exception for details.",
+                e);
         }
     }
 
@@ -563,8 +584,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(DeleteScheme)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for schemeId={SchemeId}.", nameof(DeleteScheme),
+                schemeForDelete.SchId);
+            throw new Exception(
+                $"Error in {nameof(DeleteScheme)} for schemeId={schemeForDelete.SchId}. See inner exception for details.",
+                e);
         }
     }
 
@@ -581,7 +605,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
         catch (Exception e)
         {
             _logger.LogError(e, $"Error occurred executing {nameof(GetBatchesList)}.");
-            throw;
+            throw new Exception($"Error in {nameof(GetBatchesList)}. See inner exception for details.", e);
         }
     }
 
@@ -593,8 +617,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(GetBatchByName)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for batchName={BatchName}.",
+                nameof(GetBatchByName), batchName);
+            throw new Exception(
+                $"Error in {nameof(GetBatchByName)} for batchName={batchName}. See inner exception for details.", e);
         }
     }
 
@@ -606,8 +632,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(UpdateBatch)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for batchId={BatchId}.", nameof(UpdateBatch),
+                batch.BatchId);
+            throw new Exception(
+                $"Error in {nameof(UpdateBatch)} for batchId={batch.BatchId}. See inner exception for details.", e);
         }
     }
 
@@ -619,8 +647,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(CreateBatch)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for batchName={BatchName}.", nameof(CreateBatch),
+                newBatch.BatchName);
+            throw new Exception(
+                $"Error in {nameof(CreateBatch)} for batchName={newBatch.BatchName}. See inner exception for details.",
+                e);
         }
     }
 
@@ -632,8 +663,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(DeleteBatch)}.");
-            throw;
+            _logger.LogError(e, "Error occurred executing {MethodName} for batchId={BatchId}.", nameof(DeleteBatch),
+                batchForDelete.BatchId);
+            throw new Exception(
+                $"Error in {nameof(DeleteBatch)} for batchId={batchForDelete.BatchId}. See inner exception for details.",
+                e);
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using CrawlerDb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 

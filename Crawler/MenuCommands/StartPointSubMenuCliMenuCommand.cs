@@ -1,8 +1,9 @@
 ﻿using System;
-using CliMenu;
-using CliParameters.CliMenuCommands;
-using LibDataInput;
-using LibParameters;
+using System.Globalization;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.CliMenuCommands;
+using AppCliTools.LibDataInput;
+using ParametersManagement.LibParameters;
 
 namespace Crawler.MenuCommands;
 
@@ -30,7 +31,7 @@ public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
 
         taskSubMenuSet.AddMenuItem(new EditStartPointCliMenuCommand(_parametersManager, _taskName, _startPoint));
 
-        var key = ConsoleKey.Escape.Value().ToLower();
+        string key = ConsoleKey.Escape.Value().ToLower(CultureInfo.CurrentCulture);
         taskSubMenuSet.AddMenuItem(key, new ExitToMainMenuCliMenuCommand("Exit to Main menu", null), key.Length);
 
         return taskSubMenuSet;

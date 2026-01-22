@@ -28,21 +28,21 @@ public sealed class ParseOnePageParameters
             return null;
         }
 
-        var segmentFinisherPunctuationsRegex = par.GetSegmentFinisherPunctuationsRegex();
+        string segmentFinisherPunctuationsRegex = par.GetSegmentFinisherPunctuationsRegex();
         if (string.IsNullOrWhiteSpace(segmentFinisherPunctuationsRegex))
         {
             StShared.WriteErrorLine("segmentFinisherPunctuationsRegex cannot get from parameters", true);
             return null;
         }
 
-        var punctuationsRegex = par.GetPunctuationsRegex();
+        string punctuationsRegex = par.GetPunctuationsRegex();
         if (string.IsNullOrWhiteSpace(punctuationsRegex))
         {
             StShared.WriteErrorLine("punctuationsRegex cannot get from parameters", true);
             return null;
         }
 
-        var wordDelimiterRegex = par.GetWordDelimiterRegex();
+        string wordDelimiterRegex = par.GetWordDelimiterRegex();
         if (string.IsNullOrWhiteSpace(wordDelimiterRegex))
         {
             StShared.WriteErrorLine("wordDelimiterRegex cannot get from parameters", true);

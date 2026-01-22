@@ -1,12 +1,13 @@
 ﻿using System.Net.Http;
-using CliMenu;
+using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using DoCrawler.ToolActions;
 using LibCrawlerRepositories;
-using LibDataInput;
-using LibParameters;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -33,14 +34,14 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
     protected override bool RunBody()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
-        var task = parameters.GetTask(_taskName);
+        TaskModel? task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
             return false;
         }
 
-        var strUrl = Inputer.InputText("Page for Test", null);
+        string? strUrl = Inputer.InputText("Page for Test", null);
         if (string.IsNullOrWhiteSpace(strUrl))
         {
             StShared.WriteErrorLine("Page for Test is empty", true);

@@ -35,7 +35,7 @@ public sealed class CrawlerRunnerToolAction : CrawlerToolAction
     protected override async ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         //1. start
-        var (batch, batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory, _batch);
+        (Batch? batch, BatchPart? batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory, _batch);
 
         if (batch is null)
         {
@@ -46,7 +46,7 @@ public sealed class CrawlerRunnerToolAction : CrawlerToolAction
         while (true)
         {
             //2. Start
-            var batchPartRunner = CreateBatchPartRunner(batchPart, batch);
+            BatchPartRunner? batchPartRunner = CreateBatchPartRunner(batchPart, batch);
             //2. Finish
             if (batchPartRunner is null)
             {

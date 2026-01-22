@@ -42,19 +42,19 @@ public sealed class BatchCruder : Cruder
 
     private List<Batch> GetBatches()
     {
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         return repo.GetBatchesList();
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        var batchesList = GetBatches();
+        List<Batch> batchesList = GetBatches();
         return batchesList.ToDictionary(k => k.BatchName, v => (ItemData)v);
     }
 
     public override bool ContainsRecordWithKey(string recordKey)
     {
-        var dict = GetCrudersDictionary();
+        Dictionary<string, ItemData> dict = GetCrudersDictionary();
         return dict.ContainsKey(recordKey);
     }
 
@@ -65,9 +65,9 @@ public sealed class BatchCruder : Cruder
             return;
         }
 
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
 
-        var batch = repo.GetBatchByName(recordKey) ?? throw new Exception("batch is null");
+        Batch batch = repo.GetBatchByName(recordKey) ?? throw new Exception("batch is null");
         batch.BatchName = newBatch.BatchName;
         repo.UpdateBatch(batch);
 
@@ -81,7 +81,7 @@ public sealed class BatchCruder : Cruder
             return;
         }
 
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         repo.CreateBatch(newBatch);
 
         repo.SaveChanges();
@@ -89,8 +89,8 @@ public sealed class BatchCruder : Cruder
 
     protected override void RemoveRecordWithKey(string recordKey)
     {
-        var repo = GetCrawlerRepository();
-        var batch = repo.GetBatchByName(recordKey);
+        ICrawlerRepository repo = GetCrawlerRepository();
+        Batch? batch = repo.GetBatchByName(recordKey);
         if (batch is null)
         {
             return;
@@ -106,26 +106,26 @@ public sealed class BatchCruder : Cruder
         return new Batch { BatchName = recordKey ?? string.Empty };
     }
 
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordKey)
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string itemName)
     {
-        base.FillDetailsSubMenu(itemSubMenuSet, recordKey);
+        base.FillDetailsSubMenu(itemSubMenuSet, itemName);
 
-        var batchesList = GetBatches();
-        var batches = batchesList.ToDictionary(k => k.BatchName, v => v);
-        var batch = batches[recordKey];
+        List<Batch> batchesList = GetBatches();
+        Dictionary<string, Batch> batches = batchesList.ToDictionary(k => k.BatchName, v => v);
+        Batch batch = batches[itemName];
 
         itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _httpClientFactory,
             _crawlerRepositoryCreatorFactory, _par, batch));
 
         var detailsCruder = new HostByBatchCruder(_crawlerRepositoryCreatorFactory, batch);
         var newItemCommand =
-            new NewItemCliMenuCommand(detailsCruder, recordKey, $"Create New {detailsCruder.CrudName}");
+            new NewItemCliMenuCommand(detailsCruder, itemName, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
-        var hostNames = detailsCruder.GetHostNamesByBatch();
+        List<string> hostNames = detailsCruder.GetHostNamesByBatch();
 
-        foreach (var detailListCommand in hostNames.Select(s =>
-                     new HostSubMenuCliMenuCommand(detailsCruder, s, recordKey, true)))
+        foreach (HostSubMenuCliMenuCommand detailListCommand in hostNames.Select(s =>
+                     new HostSubMenuCliMenuCommand(detailsCruder, s, itemName, true)))
         {
             itemSubMenuSet.AddMenuItem(detailListCommand);
         }

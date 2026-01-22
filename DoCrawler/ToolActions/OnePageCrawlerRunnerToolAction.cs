@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CrawlerDb.Models;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
@@ -11,21 +12,21 @@ namespace DoCrawler.ToolActions;
 public sealed class OnePageCrawlerRunnerToolAction : CrawlerToolAction
 {
     private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
-    private readonly System.Uri _strUrl;
+    private readonly string _strUrName;
 
     public OnePageCrawlerRunnerToolAction(ILogger logger, IHttpClientFactory httpClientFactory,
         ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel? task, System.Uri strUrl) : base(logger,
-        par, taskName, task, crawlerRepositoryCreatorFactory, httpClientFactory, parseOnePageParameters)
+        ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel? task, string strUrName) : base(
+        logger, par, taskName, task, crawlerRepositoryCreatorFactory, httpClientFactory, parseOnePageParameters)
     {
         _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
-        _strUrl = strUrl;
+        _strUrName = strUrName;
     }
 
     protected override async ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         //1. start
-        var (batch, batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory);
+        (Batch? batch, BatchPart? batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory);
 
         if (batch is null)
         {
@@ -34,8 +35,8 @@ public sealed class OnePageCrawlerRunnerToolAction : CrawlerToolAction
         //1. Finish
 
         //2. Start
-        var batchPartRunner = CreateBatchPartRunner(batchPart, batch);
+        BatchPartRunner? batchPartRunner = CreateBatchPartRunner(batchPart, batch);
         //2. Finish
-        return batchPartRunner is not null && await batchPartRunner.DoOnePage(_strUrl, cancellationToken);
+        return batchPartRunner is not null && await batchPartRunner.DoOnePage(_strUrName, cancellationToken);
     }
 }

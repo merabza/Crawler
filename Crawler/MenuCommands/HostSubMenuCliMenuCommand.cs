@@ -1,6 +1,6 @@
 ﻿using System;
-using CliMenu;
-using CliParameters.Cruders;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.Cruders;
 
 namespace Crawler.MenuCommands;
 
@@ -19,14 +19,20 @@ public sealed class HostSubMenuCliMenuCommand : CliMenuCommand
     public override CliMenuSet GetSubMenu()
     {
         if (Name is null)
+        {
             throw new Exception("Name is null");
+        }
+
         return _cruder.GetItemMenu(Name);
     }
 
     protected override string GetStatus()
     {
         if (Name is null)
+        {
             throw new Exception("Name is null");
+        }
+
         return _cruder.GetStatusFor(Name) ?? string.Empty;
     }
 }

@@ -11,8 +11,8 @@ public static class StringExtension
             return string.Empty;
         }
 
-        var strToRet = strFrom;
-        var atLeastOneTrimmed = true;
+        string strToRet = strFrom;
+        bool atLeastOneTrimmed = true;
         while (atLeastOneTrimmed)
         {
             atLeastOneTrimmed = false;
@@ -43,10 +43,10 @@ public static class StringExtension
     {
         unchecked
         {
-            var hash1 = (5381 << 16) + 5381;
-            var hash2 = hash1;
+            int hash1 = (5381 << 16) + 5381;
+            int hash2 = hash1;
 
-            for (var i = 0; i < str.Length; i += 2)
+            for (int i = 0; i < str.Length; i += 2)
             {
                 hash1 = ((hash1 << 5) + hash1) ^ str[i];
                 if (i == str.Length - 1)
@@ -63,7 +63,7 @@ public static class StringExtension
 
     public static string? Truncate(this string? value, int maxLength, string? truncationSuffix = "…")
     {
-        var onlyValueLength = maxLength - truncationSuffix?.Length ?? 0;
+        int onlyValueLength = maxLength - truncationSuffix?.Length ?? 0;
         return value?.Length > onlyValueLength ? $"{value[..onlyValueLength]}{truncationSuffix}" : value;
     }
 }

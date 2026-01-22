@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using CliMenu;
-using CliParameters.CliMenuCommands;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.CliMenuCommands;
+using AppCliTools.LibDataInput;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
-using LibDataInput;
-using LibParameters;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
 
 namespace Crawler.MenuCommands;
 
@@ -46,15 +46,19 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var task = parameters.GetTask(Name);
+        TaskModel? task = parameters.GetTask(Name);
         var newStartPointCommand = new NewStartPointCliMenuCommand(_parametersManager, Name);
         taskSubMenuSet.AddMenuItem(newStartPointCommand);
 
         if (task?.StartPoints != null)
-            foreach (var startPoint in task.StartPoints.OrderBy(o => o))
+        {
+            foreach (string startPoint in task.StartPoints.OrderBy(o => o))
+            {
                 taskSubMenuSet.AddMenuItem(new StartPointSubMenuCliMenuCommand(_parametersManager, Name, startPoint));
+            }
+        }
 
-        var key = ConsoleKey.Escape.Value().ToLower();
+        string key = ConsoleKey.Escape.Value().ToUpperInvariant();
         taskSubMenuSet.AddMenuItem(key, new ExitToMainMenuCliMenuCommand("Exit to Main menu", null), key.Length);
 
         return taskSubMenuSet;

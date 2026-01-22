@@ -16,7 +16,7 @@ public sealed class CrawlerRepositoryCreatorFactory : ICrawlerRepositoryCreatorF
     public ICrawlerRepository GetCrawlerRepository()
     {
         // ReSharper disable once using
-        var scope = _services.CreateScope();
+        using IServiceScope scope = _services.CreateScope();
         return scope.ServiceProvider.GetRequiredService<ICrawlerRepository>();
     }
 }

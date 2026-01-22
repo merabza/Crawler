@@ -13,20 +13,22 @@ public static class UriFactory
         }
         catch (UriFormatException)
         {
+            // Intentionally left blank: return null if format is invalid
         }
 
         return newUri;
     }
 
-    public static Uri? GetUri(Uri baseUri, string relativeUri)
+    public static Uri? GetUri(Uri baseUri, string relativeUrName)
     {
         Uri? newUri = null;
         try
         {
-            newUri = new Uri(baseUri, relativeUri);
+            newUri = new Uri(baseUri, relativeUrName);
         }
         catch (UriFormatException)
         {
+            // Intentionally left blank: return null if format is invalid
         }
 
         return newUri;

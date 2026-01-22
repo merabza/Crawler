@@ -37,7 +37,7 @@ public /*open*/ class DesignTimeDbContextFactory<T> : IDesignTimeDbContextFactor
         Console.WriteLine($"Pass 1... CurrentDirectory is {Directory.GetCurrentDirectory()}");
 
         //თუ პარამეტრების json ფაილის სახელი პირდაპირ არ არის გადმოცემული, ვიყენებთ სტანდარტულ სახელს appsettings.json
-        var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+        IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile(_parametersJsonFileName ?? "appsettings.json", false, true)
             //.AddEncryptedJsonFile(Path.Combine(pathToContentRoot, "appsettingsEncoded.json"), optional: false, reloadOnChange: true, Key,
             //  Path.Combine(pathToContentRoot, "appsetenkeys.json"))
@@ -46,17 +46,16 @@ public /*open*/ class DesignTimeDbContextFactory<T> : IDesignTimeDbContextFactor
             //.AddEnvironmentVariables()
             .Build();
         //Console.WriteLine("Pass 2...");
-        var connectionString = configuration[_connectionParamName];
+        string? connectionString = configuration[_connectionParamName];
         //Console.WriteLine("Pass 3...");
 
         var builder = new DbContextOptionsBuilder<T>();
         //Console.WriteLine("Pass 4...");
         builder.UseSqlServer(connectionString, b => b.MigrationsAssembly(_assemblyName));
         //Console.WriteLine("Pass 5...");
-        var dbContext = Activator.CreateInstance(typeof(T), builder.Options, true);
+        object dbContext = Activator.CreateInstance(typeof(T), builder.Options, true) ??
+                           throw new Exception("dbContext does not created");
 
-        if (dbContext is null)
-            throw new Exception("dbContext does not created");
         //Console.WriteLine("Pass 6...");
         return (T)dbContext;
     }

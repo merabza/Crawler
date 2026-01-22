@@ -1,8 +1,8 @@
 ﻿using CrawlerDb.Models;
-using DatabaseToolsShared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SystemToolsShared;
+using SystemTools.DatabaseToolsShared;
+using SystemTools.SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
@@ -10,7 +10,7 @@ public sealed class RobotConfiguration : IEntityTypeConfiguration<Robot>
 {
     public void Configure(EntityTypeBuilder<Robot> builder)
     {
-        var tableName = nameof(Robot).Pluralize();
+        string tableName = nameof(Robot).Pluralize();
         builder.ToTable(tableName.UnCapitalize());
 
         builder.HasKey(e => e.RbtId);

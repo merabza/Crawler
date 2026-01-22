@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
-using CliMenu;
+using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
 using DoCrawler.Models;
-using LibDataInput;
-using LibParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -26,9 +27,11 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
         Console.WriteLine("Create new Task started");
 
         //ახალი ამოცანის სახელის შეტანა პროგრამაში
-        var newTaskName = Inputer.InputText("New Task Name", null);
+        string? newTaskName = Inputer.InputText("New Task Name", null);
         if (string.IsNullOrEmpty(newTaskName))
+        {
             return false;
+        }
 
         //გადავამოწმოთ ხომ არ არსებობს იგივე სახელით სხვა ამოცანა.
 

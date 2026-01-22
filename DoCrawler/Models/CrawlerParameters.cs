@@ -88,27 +88,22 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
 
     private static string GetPunctuationRegex(IEnumerable<KeyValuePair<string, PunctuationModel>> punctuations)
     {
-        var rex = string.Empty;
-        foreach (var pun in punctuations.OrderBy(s => s.Value.PctSortId))
+        var rex = new StringBuilder();
+        foreach (KeyValuePair<string, PunctuationModel> pun in punctuations.OrderBy(s => s.Value.PctSortId))
         {
-            if (!string.IsNullOrEmpty(rex))
+            if (rex.Length > 0)
             {
-                rex += "|";
+                rex.Append('|');
             }
 
-            if (pun.Value.PctRegexPattern == null)
-            {
-                rex += "(" + pun.Value.PctPunctuation + ")";
-            }
-            else
-            {
-                rex += "(" + pun.Value.PctRegexPattern + ")";
-            }
+            rex.Append('(');
+            rex.Append(pun.Value.PctRegexPattern ?? pun.Value.PctPunctuation);
+            rex.Append(')');
         }
 
         //if (rex != string.Empty)
         //  rex = "([" + rex + "])";
-        return rex;
+        return rex.ToString();
     }
 
     internal string GetPossibleSymbols()
@@ -120,13 +115,13 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
 
         var sb = new StringBuilder();
         //შეგროვდეს პუნქტუაციის ნიშნებში მონაწილე სიმბოლოები, ისე რომ ერთნაირი სიმბოლოები არ გამეორდეს
-        foreach (var pun in Punctuations)
+        foreach (KeyValuePair<string, PunctuationModel> pun in Punctuations)
         {
             sb.Append(pun.Value.PctPunctuation);
         }
 
         //დაემატოს ციფრები
-        for (var i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             sb.Append(i.ToString(CultureInfo.InvariantCulture));
         }

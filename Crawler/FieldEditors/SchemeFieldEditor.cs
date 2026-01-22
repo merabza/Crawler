@@ -1,5 +1,6 @@
-﻿using System.Linq;
-using CliParameters.FieldEditors;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AppCliTools.CliParameters.FieldEditors;
 using Crawler.Cruders;
 using LibCrawlerRepositories;
 
@@ -18,8 +19,8 @@ public sealed class SchemeFieldEditor : FieldEditor<string>
     public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
     {
         var schemeCruder = new SchemeCruder(_crawlerRepositoryCreatorFactory);
-        var keys = schemeCruder.GetKeys();
-        var def = keys.Count > 1 ? null : schemeCruder.GetKeys().SingleOrDefault();
+        List<string> keys = schemeCruder.GetKeys();
+        string? def = keys.Count > 1 ? null : schemeCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,
             schemeCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate, def), null, true));
     }

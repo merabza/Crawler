@@ -5,6 +5,7 @@ using CrawlerDb;
 using DoCrawler;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ParametersManagement.LibDatabaseParameters;
 using SystemTools.SystemToolsShared;
@@ -27,38 +28,43 @@ public sealed class CrawlerServicesCreator : ServicesCreator
 
         var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
 
-        var (dataProvider, connectionString, commandTimeout) =
+        (EDatabaseProvider? dataProvider, string? connectionString, int commandTimeout) =
             DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(_par.DatabaseParameters,
                 databaseServerConnections);
 
         if (!string.IsNullOrEmpty(connectionString))
         {
-            switch (dataProvider)
-            {
-                case EDatabaseProvider.SqlServer:
-                    services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString,
-                        sqlOptions =>
-                        {
-                            if (commandTimeout > -1)
-                            {
-                                sqlOptions.CommandTimeout(commandTimeout);
-                            }
-                        }));
-                    break;
-                case EDatabaseProvider.None:
-                case EDatabaseProvider.SqLite:
-                case EDatabaseProvider.OleDb:
-                case EDatabaseProvider.WebAgent:
-                case null:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dataProvider));
-            }
+            AddContextByProvider(services, dataProvider, connectionString, commandTimeout);
         }
 
         services.AddScoped<ICrawlerRepository, CrawlerRepository>();
         services.AddSingleton<ICrawlerRepositoryCreatorFactory, CrawlerRepositoryCreatorFactory>();
         services.AddHttpClient(BatchPartRunner.CrawlerClient)
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+    }
+
+    private static void AddContextByProvider(IServiceCollection services, EDatabaseProvider? dataProvider,
+        string connectionString, int commandTimeout)
+    {
+        switch (dataProvider)
+        {
+            case EDatabaseProvider.SqlServer:
+                services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    if (commandTimeout > -1)
+                    {
+                        sqlOptions.CommandTimeout(commandTimeout);
+                    }
+                }));
+                break;
+            case EDatabaseProvider.None:
+            case EDatabaseProvider.SqLite:
+            case EDatabaseProvider.OleDb:
+            case EDatabaseProvider.WebAgent:
+            case null:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(dataProvider));
+        }
     }
 }

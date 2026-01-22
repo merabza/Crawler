@@ -2,13 +2,13 @@
 
 <Project Sdk="Microsoft.NET.Sdk.Web">
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
+        <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     </ItemGroup>
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>

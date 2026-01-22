@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CliParameters.Cruders;
+using AppCliTools.CliParameters.Cruders;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
-using LibParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.Cruders;
 
@@ -27,30 +28,32 @@ public sealed class HostCruder : Cruder
 
     private List<HostModel> GetHosts()
     {
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         return repo.GetHostsList();
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        var hostsList = GetHosts();
+        List<HostModel> hostsList = GetHosts();
         return hostsList.ToDictionary(k => k.HostName, v => (ItemData)v);
     }
 
     public override bool ContainsRecordWithKey(string recordKey)
     {
-        var dict = GetCrudersDictionary();
+        Dictionary<string, ItemData> dict = GetCrudersDictionary();
         return dict.ContainsKey(recordKey);
     }
 
     public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not HostModel newHost)
+        {
             return;
+        }
 
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
 
-        var host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
+        HostModel host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
         host.HostName = newHost.HostName;
         repo.UpdateHost(host);
 
@@ -60,8 +63,11 @@ public sealed class HostCruder : Cruder
     protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not HostModel newHost)
+        {
             return;
-        var repo = GetCrawlerRepository();
+        }
+
+        ICrawlerRepository repo = GetCrawlerRepository();
         repo.CreateHost(newHost);
 
         repo.SaveChanges();
@@ -69,8 +75,8 @@ public sealed class HostCruder : Cruder
 
     protected override void RemoveRecordWithKey(string recordKey)
     {
-        var repo = GetCrawlerRepository();
-        var host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
+        ICrawlerRepository repo = GetCrawlerRepository();
+        HostModel host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
         repo.DeleteHost(host);
 
         repo.SaveChanges();
@@ -90,9 +96,12 @@ public sealed class HostCruder : Cruder
         }
 
         var re = new Regex(@"[-a-zA-Z0-9]{1,256}\.([-a-zA-Z0-9]{1,256}\.)*[a-zA-Z0-9()]{1,6}");
-        var m = re.Match(newHost.HostName);
+        Match m = re.Match(newHost.HostName);
         if (m is { Success: true, Groups.Count: 2 } && m.Groups[0].Value == newHost.HostName)
+        {
             return true;
+        }
+
         StShared.WriteErrorLine($"Invalid Host Name {newHost.HostName}.", true);
         return false;
     }

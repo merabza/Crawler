@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CliParameters;
-using CliParameters.Cruders;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.Cruders;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
-using LibParameters;
+using ParametersManagement.LibParameters;
 
 namespace Crawler.Cruders;
 
@@ -29,7 +29,7 @@ public sealed class HostByBatchCruder : Cruder
 
     public List<string> GetHostNamesByBatch()
     {
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         return repo.GetHostStartUrlNamesByBatch(_batch);
     }
 
@@ -45,7 +45,7 @@ public sealed class HostByBatchCruder : Cruder
 
     public override bool ContainsRecordWithKey(string recordKey)
     {
-        var hostNames = GetHostNamesByBatch();
+        List<string> hostNames = GetHostNamesByBatch();
         return hostNames.Contains(recordKey);
     }
 
@@ -53,7 +53,7 @@ public sealed class HostByBatchCruder : Cruder
     {
         //List<string> hostNames = GetHostNamesByBatch();
         //hostNames?.Remove(recordKey);
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         var uri = new Uri(recordKey);
         repo.RemoveHostNamesByBatch(_batch, uri.Scheme, uri.Host);
 
@@ -71,7 +71,7 @@ public sealed class HostByBatchCruder : Cruder
         //project.RedundantFileNames ??= new List<string>();
         //project.RedundantFileNames.Add(recordKey);
 
-        var repo = GetCrawlerRepository();
+        ICrawlerRepository repo = GetCrawlerRepository();
         var uri = new Uri(recordKey);
         repo.AddHostNamesByBatch(_batch, uri.Scheme, uri.Host);
         repo.SaveChanges();

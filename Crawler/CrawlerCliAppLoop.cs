@@ -1,34 +1,33 @@
 //Created by ProjectMainClassCreator at 4/22/2021 17:17:01
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.CliMenuCommands;
+using AppCliTools.CliParametersDataEdit;
+using AppCliTools.CliParametersDataEdit.Models;
 using AppCliTools.CliTools;
 using AppCliTools.CliTools.CliMenuCommands;
 using AppCliTools.LibDataInput;
-using CliMenu;
-using CliParameters.CliMenuCommands;
-using CliParametersDataEdit;
-using CliParametersDataEdit.Models;
-using CliTools;
-using CliTools.CliMenuCommands;
 using Crawler.Cruders;
 using Crawler.MenuCommands;
-using DbTools;
-using DbToolsFactory;
+using DatabaseTools.DbTools;
+using DatabaseTools.DbTools.Models;
+using DatabaseTools.DbToolsFactory;
 using DoCrawler.Models;
+using LanguageExt;
 using LibCrawlerRepositories;
-using LibDatabaseParameters;
-using LibDataInput;
-using LibParameters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OneOf;
+using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using SystemTools.SystemToolsShared;
 using SystemTools.SystemToolsShared.Errors;
-using SystemToolsShared.Errors;
 
 namespace Crawler;
 
@@ -91,9 +90,11 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                 var newAppTaskCommand = new NewTaskCliMenuCommand(_parametersManager);
                 mainMenuSet.AddMenuItem(newAppTaskCommand);
 
-                foreach (var kvp in parameters.Tasks.OrderBy(o => o.Key))
+                foreach (KeyValuePair<string, TaskModel> kvp in parameters.Tasks.OrderBy(o => o.Key))
+                {
                     mainMenuSet.AddMenuItem(new TaskSubMenuCliMenuCommand(_logger, _httpClientFactory,
                         _parametersManager, crawlerRepositoryCreatorFactory, kvp.Key));
+                }
             }
         }
 
@@ -103,7 +104,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
         //mainMenuSet.AddMenuItem(crawlerTaskListCommand.Name, crawlerTaskListCommand);
 
         //გასასვლელი
-        var key = ConsoleKey.Escape.Value().ToLower();
+        string key = ConsoleKey.Escape.Value().ToUpperInvariant();
         mainMenuSet.AddMenuItem(key, new ExitCliMenuCommand(), key.Length);
 
         return mainMenuSet;
@@ -113,7 +114,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var databaseParameters = parameters.DatabaseParameters;
+        DatabaseParameters? databaseParameters = parameters.DatabaseParameters;
 
         if (databaseParameters is null)
         {
@@ -123,7 +124,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
 
         var databaseServerConnections = new DatabaseServerConnections(parameters.DatabaseServerConnections);
 
-        var (dataProvider, connectionString, _) =
+        (EDatabaseProvider? dataProvider, string? connectionString, _) =
             DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(databaseParameters,
                 databaseServerConnections);
 
@@ -135,7 +136,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
 
         try
         {
-            var dbConnectionParameters =
+            DbConnectionParameters? dbConnectionParameters =
                 DbConnectionFactory.GetDbConnectionParameters(dataProvider.Value, connectionString);
             if (dbConnectionParameters is null)
             {
@@ -146,7 +147,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
             // ReSharper disable once using
             // ReSharper disable once DisposableConstructor
             using var cts = new CancellationTokenSource();
-            var token = cts.Token;
+            CancellationToken token = cts.Token;
             token.ThrowIfCancellationRequested();
 
             switch (dataProvider.Value)
@@ -174,7 +175,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                         return false;
                     }
 
-                    var dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
+                    OneOf<DbAuthSettingsBase, Err[]> dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
                         databaseServerConnectionData.WindowsNtIntegratedSecurity,
                         databaseServerConnectionData.ServerUser, databaseServerConnectionData.ServerPass, true);
 
@@ -184,7 +185,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                         return false;
                     }
 
-                    var dc = DbClientFactory.GetDbClient(_logger, true, dataProvider.Value,
+                    DbClient? dc = DbClientFactory.GetDbClient(_logger, true, dataProvider.Value,
                         databaseServerConnectionData.ServerAddress, dbAuthSettingsCreateResult.AsT0,
                         databaseServerConnectionData.TrustServerCertificate, ProgramAttributes.Instance.AppName,
                         databaseServerConnectionData.DatabaseName);
@@ -195,9 +196,11 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                         return false;
                     }
 
-                    var testConnectionResult = dc.TestConnection(true, token).Result;
+                    Option<Err[]> testConnectionResult = dc.TestConnection(true, token).Result;
                     if (testConnectionResult.IsNone)
+                    {
                         return true;
+                    }
 
                     Err.PrintErrorsOnConsole((Err[])testConnectionResult);
 
@@ -208,7 +211,7 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                     return
                         false; //აქ ფაილის შემოწმება არის გასაკეთებელი. ჭეშმარიტი დაბრუნდეს, თუ ფაილი არსებობს და იხსნება
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new SwitchExpressionException("Unsupported database provider.");
             }
 
             return false;

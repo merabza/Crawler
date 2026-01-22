@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using AppCliTools.LibDataInput;
 using CrawlerDb.Configurations;
@@ -40,7 +41,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
     {
         BatchPartRunner? batchPartRunner = null;
 
-        var createNewPart = false;
+        bool createNewPart = false;
         if (batchPart == null)
         {
             createNewPart = IsCreateNewPartAllowed(batch);
@@ -52,7 +53,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
 
         if (createNewPart)
         {
-            var crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+            ICrawlerRepository crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
             batchPart = crawlerRepository.TryCreateNewPart(batch.BatchId);
             crawlerRepository.SaveChanges();
         }
@@ -82,7 +83,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
             return null;
         }
 
-        var newBatchName = _taskName.Truncate(BatchConfiguration.BatchNameLength);
+        string? newBatchName = _taskName.Truncate(BatchConfiguration.BatchNameLength);
         if (newBatchName is null)
         {
             CrLogger.LogError("Invalid task name for new batch");
@@ -91,7 +92,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
 
         //მოიძებნოს ბაზაში Batch სახელით _taskName
         //თუ არ არსებობს Batch სახელით _taskName, შეიქმნას IsOpen=false, AutoCreateNextPart=false
-        var batch = crawlerRepository.GetBatchByName(_taskName);
+        Batch? batch = crawlerRepository.GetBatchByName(_taskName);
         if (batch == null)
         {
             batch = crawlerRepository.CreateBatch(new Batch
@@ -106,14 +107,14 @@ public /*open*/ class CrawlerToolAction : ToolAction
         //შემოწმდეს და თუ არ არსებობს ბაზაში ასეთი ჰოსტი ან სქემა, დარეგისტრირდეს თითოეული.
         //ამ სქემისა და ჰოსტის წყვილისთვის შემოწმდეს არის თუ არა დარეგისტრირებული HostByBatch ცხრილში
         //თუ არ არის დარეგისტრირებული, დარეგისტრირდეს.
-        foreach (var myUri in Task.StartPoints.Select(UriFactory.GetUri).Where(myUri => myUri != null))
+        foreach (Uri? myUri in Task.StartPoints.Select(UriFactory.GetUri).Where(myUri => myUri != null))
         {
             crawlerRepository.AddHostNamesByBatch(batch, myUri!.Scheme, myUri.Host);
         }
 
         crawlerRepository.SaveChanges();
 
-        var batchName = batch.BatchName;
+        string batchName = batch.BatchName;
         CrLogger.LogInformation("Crawling for batch {BatchName}", batchName);
 
         return batch;
@@ -135,8 +136,8 @@ public /*open*/ class CrawlerToolAction : ToolAction
             return (null, null);
         }
 
-        var repository = crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-        var batch = startBatch ?? GetBatchByTaskName(repository);
+        ICrawlerRepository repository = crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+        Batch? batch = startBatch ?? GetBatchByTaskName(repository);
 
         if (batch is not null)
         {

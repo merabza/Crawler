@@ -14,7 +14,7 @@ public interface ICrawlerRepository
     IDbContextTransaction GetTransaction();
 
     List<HostModel> GetHostsList();
-    HostModel? GetHostByName(string recordKey);
+    HostModel? GetHostByName(string hostName);
     HostModel UpdateHost(HostModel host);
     HostModel CreateHost(HostModel newHost);
     HostModel DeleteHost(HostModel hostForDelete);
@@ -34,29 +34,29 @@ public interface ICrawlerRepository
     HostModel CheckAddHostName(string hostName);
     ExtensionModel CheckAddExtensionName(string extensionName);
     SchemeModel CheckAddSchemeName(string schemeName);
-    UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string strUrl);
+    UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string urName);
 
-    UrlModel AddUrl(string strUrl, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
+    UrlModel AddUrl(string urName, int urlHashCode, HostModel host, ExtensionModel extension, SchemeModel scheme,
         bool isSiteMap, bool isAllowed);
 
     void AddUrlGraph(UrlGraphNode urlGraphNode);
-    void AddUrlGraph(int fromUrlPageId, UrlModel gotUrl, int batchId);
+    void AddUrlGraph(int fromUrlPageId, UrlModel gotUrl, int batchPartId);
     List<string> GetHostStartUrlNamesByBatch(Batch batch);
-    void RemoveHostNamesByBatch(Batch batch, string scheme, string host);
-    void AddHostNamesByBatch(Batch batch, string scheme, string host);
+    void RemoveHostNamesByBatch(Batch batch, string schemeName, string hostName);
+    void AddHostNamesByBatch(Batch batch, string schemeName, string hostName);
     BatchPart? GetOpenedBatchPart(int batchId);
     BatchPart TryCreateNewPart(int batchId);
     void FinishBatchPart(BatchPart batchPart);
-    List<UrlModel> GetOnePortionUrls(int batchPartBpId, int maxCount);
+    List<UrlModel> GetOnePortionUrls(int batchPartId, int maxCount);
     UrlGraphNode? GetUrlGraphEntry(int fromUrlPageId, int urlUrlId, int batchPartId);
 
-    void CreateContentAnalysisRecord(int batchPartBpId, int resultUrlId, HttpStatusCode statusCode,
+    void CreateContentAnalysisRecord(int batchPartBpId, int urlId, HttpStatusCode statusCode,
         DateTime? lastModifiedDateOnServer);
 
-    TermType CheckAddTermType(string termTypeName);
+    TermType CheckAddTermType(string termTypeKey);
     Term? GetTerm(string termText);
     Term AddTerm(string termText, TermType termTypeInBase);
-    void AddTermByUrl(int termBatchPartId, int termUrlId, Term term, int position);
+    void AddTermByUrl(int batchPartId, int urlId, Term term, int position);
     TermByUrl? GeTermByUrlEntry(int batchPartId, int urlId, int position);
     void ClearTermsTail(int batchPartId, int urlId, int position);
     void EditTermByUrl(TermByUrl termByUrl, Term term);

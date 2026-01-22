@@ -1,7 +1,7 @@
 ﻿using CrawlerDb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
 
 namespace CrawlerDb.Configurations;
 
@@ -11,7 +11,7 @@ public sealed class TermConfiguration : IEntityTypeConfiguration<Term>
 
     public void Configure(EntityTypeBuilder<Term> builder)
     {
-        var tableName = nameof(Term).Pluralize();
+        string tableName = nameof(Term).Pluralize();
         builder.ToTable(tableName.UnCapitalize());
 
         builder.HasKey(e => e.TrmId);

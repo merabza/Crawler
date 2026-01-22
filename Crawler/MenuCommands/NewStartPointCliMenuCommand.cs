@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
-using CliMenu;
+using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
 using DoCrawler.Models;
-using LibDataInput;
-using LibParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -24,7 +25,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var task = parameters.GetTask(_taskName);
+        TaskModel? task = parameters.GetTask(_taskName);
 
         if (task == null)
         {
@@ -36,12 +37,14 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         Console.WriteLine("Create new Start Point started");
 
         //ახალი ამოცანის სახელის შეტანა პროგრამაში
-        var newStartPoint = Inputer.InputText("New Start Point", null);
+        string? newStartPoint = Inputer.InputText("New Start Point", null);
         if (string.IsNullOrWhiteSpace(newStartPoint))
+        {
             return false;
+        }
         //გადავამოწმოთ ხომ არ არსებობს იგივე სახელით სხვა ამოცანა.
 
-        if (task.StartPoints.Any(a => a == newStartPoint))
+        if (task.StartPoints.Contains(newStartPoint))
         {
             StShared.WriteErrorLine(
                 $"Start Point with Name {newStartPoint} is already exists. cannot create Start Point with this name. ",

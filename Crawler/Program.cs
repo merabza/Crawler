@@ -1,13 +1,14 @@
 using System;
 using System.Net.Http;
-using CliParameters;
+using AppCliTools.CliParameters;
 using Crawler;
 using DoCrawler.Models;
-using LibParameters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
 using Serilog;
 using Serilog.Events;
+using SystemTools.SystemToolsShared;
 
 ILogger<Program>? logger = null;
 try
@@ -20,12 +21,9 @@ try
     ProgramAttributes.Instance.AppName = appName;
 
     var argParser = new ArgumentsParser<CrawlerParameters>(args, appName, null);
-    switch (argParser.Analysis())
+    if (argParser.Analysis() != EParseResult.Ok)
     {
-        case EParseResult.Ok: break;
-        case EParseResult.Usage: return 1;
-        case EParseResult.Error: return 2;
-        default: throw new ArgumentOutOfRangeException();
+        return 1;
     }
 
     var par = (CrawlerParameters?)argParser.Par;
@@ -35,10 +33,10 @@ try
         return 3;
     }
 
-    var parametersFileName = argParser.ParametersFileName;
+    string? parametersFileName = argParser.ParametersFileName;
     var servicesCreator = new CrawlerServicesCreator(par);
     // ReSharper disable once using
-    using var serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
+    using ServiceProvider? serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
 
     if (serviceProvider == null)
     {
@@ -71,5 +69,5 @@ catch (Exception e)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }

@@ -78,17 +78,23 @@ public sealed class Robots : IRobotsParser
     public bool IsPathAllowed(string userAgent, string path)
     {
         if (string.IsNullOrWhiteSpace(userAgent))
+        {
             throw new ArgumentException("Not a valid user-agent string.", nameof(userAgent));
+        }
 
         if (!HasRules || !IsAnyPathDisallowed)
+        {
             return true;
+        }
 
         path = NormalizePath(path);
-        var rulesForThisRobot =
+        List<AccessAllowRule> rulesForThisRobot =
             SpecificAccessRules.FindAll(x => userAgent.Contains(x.For, StringComparison.InvariantCultureIgnoreCase));
         if (GlobalAccessRules.Count == 0 && rulesForThisRobot.Count == 0)
             // no rules for this robot
+        {
             return true;
+        }
 
         // If there are rules for this robot, we should only check against them. 
         // If not, we check against the global rules.
@@ -96,14 +102,16 @@ public sealed class Robots : IRobotsParser
         // We say "String.IsNullOrEmpty(x.Path)" while filtering because "Disallow: " means "Allow all".
         // And the reason we remove the first characters of the paths before calling IsPathMatch() is because the first characters will always be '/',
         // so there is no point having IsPathMatch() compare them.
-        var matchingRules = rulesForThisRobot.Count > 0
+        List<AccessAllowRule> matchingRules = rulesForThisRobot.Count > 0
             ? rulesForThisRobot.FindAll(x => string.IsNullOrEmpty(x.Path) || IsPathMatch(path[1..], x.Path[1..]))
             : GlobalAccessRules.FindAll(x => string.IsNullOrEmpty(x.Path) || IsPathMatch(path[1..], x.Path[1..]));
 
         if (matchingRules.Count == 0)
+        {
             return true;
+        }
 
-        var ruleToUse = AllowRuleImplementation == AllowRuleImplementation.MoreSpecific
+        AccessAllowRule ruleToUse = AllowRuleImplementation == AllowRuleImplementation.MoreSpecific
             ? matchingRules.OrderByDescending(x => x.Path.Length).ThenBy(x => x.Order).First()
             : matchingRules.OrderBy(x => x.Order).First();
 
@@ -131,26 +139,33 @@ public sealed class Robots : IRobotsParser
     public long CrawlDelay(string userAgent)
     {
         if (string.IsNullOrWhiteSpace(userAgent))
+        {
             throw new ArgumentException("Not a valid user-agent string.", nameof(userAgent));
+        }
 
         if (!HasRules || CrawlDelayRules.Count == 0)
+        {
             return 0;
+        }
 
-        var rulesForAllRobots = CrawlDelayRules.FindAll(x => x.For.Equals("*"));
-        var rulesForThisRobot =
+        List<CrawlDelayRule> rulesForAllRobots =
+            CrawlDelayRules.FindAll(x => x.For.Equals("*", StringComparison.Ordinal));
+        List<CrawlDelayRule> rulesForThisRobot =
             CrawlDelayRules.FindAll(x => x.For.Contains(userAgent, StringComparison.InvariantCultureIgnoreCase));
         if (rulesForAllRobots.Count == 0 && rulesForThisRobot.Count == 0)
+        {
             return 0;
+        }
 
-        return rulesForThisRobot.Count > 0 ? rulesForThisRobot.First().Delay : rulesForAllRobots.First().Delay;
+        return rulesForThisRobot.Count > 0 ? rulesForThisRobot[0].Delay : rulesForAllRobots[0].Delay;
     }
 
     private static bool IsPathMatch(string path, string rulePath)
     {
-        var rulePathLength = rulePath.Length;
-        for (var i = 0; i < rulePathLength; i++)
+        int rulePathLength = rulePath.Length;
+        for (int i = 0; i < rulePathLength; i++)
         {
-            var c = rulePath[i];
+            char c = rulePath[i];
             switch (c)
             {
                 case '$' when i == rulePathLength - 1:
@@ -162,22 +177,28 @@ public sealed class Robots : IRobotsParser
                     // (example : when rulePath is "/foo*" and path is "/foobar")
                     return true;
                 case '*':
-                {
-                    for (var j = i; j < path.Length; j++)
-                        // When the '*' wildcard is not the last char,
-                        // recursively call the method to see if the part of rulePath after '*' and the rest of the path matches.
-                        if (IsPathMatch(path[j..], rulePath[(i + 1)..]))
-                            return true;
+                    {
+                        for (int j = i; j < path.Length; j++)
+                            // When the '*' wildcard is not the last char,
+                            // recursively call the method to see if the part of rulePath after '*' and the rest of the path matches.
+                        {
+                            if (IsPathMatch(path[j..], rulePath[(i + 1)..]))
+                            {
+                                return true;
+                            }
+                        }
 
-                    // There's no match between the rest of the paths...
-                    return false;
-                }
+                        // There's no match between the rest of the paths...
+                        return false;
+                    }
             }
 
             // When the char is not a wild card, check if path has any chars left to compare to.
             // And we return false when path has no more chars to compare to or if the comparison with the current char fails.
             if (i >= path.Length || !c.Equals(path[i]))
+            {
                 return false;
+            }
         }
 
         // Ran out of rulePath characters... If the rest matches, that's good enough.
@@ -187,14 +208,23 @@ public sealed class Robots : IRobotsParser
 
     private static string NormalizePath(string path)
     {
+        const string uriPathDelimiter = "/";
+        const string uriPathDelimiterDouble = "//";
+
         if (string.IsNullOrWhiteSpace(path))
-            path = "/";
+        {
+            path = uriPathDelimiter;
+        }
 
-        if (!path.StartsWith('/'))
-            path = "/" + path;
+        if (!path.StartsWith(uriPathDelimiter, StringComparison.Ordinal))
+        {
+            path = uriPathDelimiter + path;
+        }
 
-        while (path.Contains("//"))
-            path = path.Replace("//", "/");
+        while (path.Contains(uriPathDelimiterDouble))
+        {
+            path = path.Replace(uriPathDelimiterDouble, uriPathDelimiter);
+        }
 
         return path;
     }

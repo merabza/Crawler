@@ -15,6 +15,7 @@ public sealed class ProcData // : IDisposable
     //private readonly ConcurrentDictionary<int, List<UrlAllowModel>> _urlAllowsCache = new();
     private readonly Dictionary<int, Robots?> _robots = new();
     private readonly Dictionary<string, SchemeModel> _schemesCache = new();
+    private readonly Lock _stateIdLock = new();
     private readonly Dictionary<string, Term> _termCache = new();
     private readonly Dictionary<string, TermType> _termTypesCache = new();
     private readonly Dictionary<int, UrlModel> _urlCache = new();
@@ -22,7 +23,6 @@ public sealed class ProcData // : IDisposable
     //private readonly Queue<UrlModel> _urlsQueue = new();
 
     private int _lastStateId;
-    private readonly Lock _stateIdLock = new();
 
     public UrlModel? GetUrlByHashCode(int hashCode)
     {
@@ -65,8 +65,6 @@ public sealed class ProcData // : IDisposable
         {
             _termCache.Clear();
         }
-
-        GC.Collect();
     }
 
     //public void ClearUrlAllows(int hostId)

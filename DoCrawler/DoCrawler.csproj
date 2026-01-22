@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParameters\AppCliTools.CliParameters.csproj" />
     <ProjectReference Include="..\..\AppCliTools\AppCliTools.LibDataInput\AppCliTools.LibDataInput.csproj" />
     <ProjectReference Include="..\..\ParametersManagement\ParametersManagement.LibApiClientParameters\ParametersManagement.LibApiClientParameters.csproj" />
     <ProjectReference Include="..\..\ParametersManagement\ParametersManagement.LibDatabaseParameters\ParametersManagement.LibDatabaseParameters.csproj" />
