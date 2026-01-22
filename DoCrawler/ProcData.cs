@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using CrawlerDb.Models;
 using RobotsTxt;
 
@@ -21,6 +22,7 @@ public sealed class ProcData // : IDisposable
     //private readonly Queue<UrlModel> _urlsQueue = new();
 
     private int _lastStateId;
+    private readonly Lock _stateIdLock = new();
 
     public UrlModel? GetUrlByHashCode(int hashCode)
     {
@@ -35,17 +37,35 @@ public sealed class ProcData // : IDisposable
     public void ReduceCache()
     {
         if (_urlCache.Count > MaxCacheRecordCount)
+        {
             _urlCache.Clear();
+        }
+
         if (_schemesCache.Count > MaxCacheRecordCount)
+        {
             _schemesCache.Clear();
+        }
+
         if (_extensionsCache.Count > MaxCacheRecordCount)
+        {
             _extensionsCache.Clear();
+        }
+
         if (_hostsCache.Count > MaxCacheRecordCount)
+        {
             _hostsCache.Clear();
+        }
+
         if (_termTypesCache.Count > MaxCacheRecordCount)
+        {
             _termTypesCache.Clear();
+        }
+
         if (_termCache.Count > MaxCacheRecordCount)
+        {
             _termCache.Clear();
+        }
+
         GC.Collect();
     }
 
@@ -88,12 +108,14 @@ public sealed class ProcData // : IDisposable
     public void AddUrl(UrlModel url)
     {
         if (!_urlCache.TryAdd(url.UrlHashCode, url))
+        {
             _urlCache[url.UrlHashCode] = url;
+        }
     }
 
     internal int GetNewStateId()
     {
-        lock (this)
+        lock (_stateIdLock)
         {
             _lastStateId++;
             return _lastStateId;
@@ -153,7 +175,9 @@ public sealed class ProcData // : IDisposable
     public void SetRobotsCache(int hostId, Robots robots)
     {
         if (!_robots.TryAdd(hostId, robots))
+        {
             _robots[hostId] = robots;
+        }
     }
 
     public bool IsHostCachedInRobotsDictionary(int hostId)

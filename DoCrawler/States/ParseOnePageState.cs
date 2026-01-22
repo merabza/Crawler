@@ -15,12 +15,12 @@ namespace DoCrawler.States;
 
 public sealed partial class ParseOnePageState // : State
 {
-    public readonly List<string> ListOfUris = [];
-    public readonly List<UriTerm> UriTerms = [];
     private readonly string _content;
     private readonly ILogger _logger;
     private readonly ParseOnePageParameters _par;
     private readonly UrlModel _url;
+    public readonly List<string> ListOfUris = [];
+    public readonly List<UriTerm> UriTerms = [];
     private Uri? _currentUri;
 
     // ReSharper disable once ConvertToPrimaryConstructor
@@ -43,15 +43,23 @@ public sealed partial class ParseOnePageState // : State
 
         var nodeHtml = htmlDoc.DocumentNode.ChildNodes.FirstOrDefault(s => s.Name == "html");
         if (nodeHtml == null)
+        {
             return;
+        }
 
         var nodeHead = nodeHtml.ChildNodes.FirstOrDefault(s => s.Name == "head");
         var nodeBase = nodeHead?.ChildNodes.FirstOrDefault(s => s.Name == "base");
         var attributeHref = nodeBase?.Attributes.FirstOrDefault(s => s.Name == "href");
-        if (attributeHref != null && attributeHref.Value != string.Empty)
+        if (attributeHref != null && !string.IsNullOrEmpty(attributeHref.Value))
+        {
             _currentUri = UriFactory.GetUri(attributeHref.Value);
+        }
+
         if (_currentUri == null)
+        {
             return;
+        }
+
         ExtractAllLinks(htmlDoc.DocumentNode);
 
         var innerText = ExtractText(htmlDoc.DocumentNode);
@@ -69,12 +77,16 @@ public sealed partial class ParseOnePageState // : State
         foreach (var node in htmlDocDocumentNode.SelectNodes("//text()"))
         {
             if (node.ParentNode.Name is "script" or "style")
+            {
                 continue;
+            }
 
             var text = WebUtility.HtmlDecode(node.InnerText).Trim();
 
-            if (text == string.Empty)
+            if (string.IsNullOrEmpty(text))
+            {
                 continue;
+            }
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (node.NextSibling is not null && node.NextSibling.Name == "b")
@@ -87,9 +99,13 @@ public sealed partial class ParseOnePageState // : State
             {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (node.ParentNode.NextSibling != null)
+                {
                     sb.Append(text);
+                }
                 else
+                {
                     sb.AppendLine(text);
+                }
             }
             else
             {
@@ -105,7 +121,10 @@ public sealed partial class ParseOnePageState // : State
         var links = htmlDocDocumentNode.SelectNodes("//a[@href]");
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (links is null || links.Count == 0)
+        {
             return;
+        }
+
         foreach (var link in links)
         {
             // Get the value of the HREF attribute
@@ -119,19 +138,23 @@ public sealed partial class ParseOnePageState // : State
         var text = WebUtility.HtmlDecode(content);
         //თუ ტექსტი საერთოდ არ შეიცავს ქართულ ასოებს, მაშინ არ გვაინტერესებს
         if (!text.Any(c => _par.Alphabet.Contains(c)))
+        {
             return;
+        }
 
         var paragraphs = NewLineSplitterRegex().Split(text);
         foreach (var paragraph in paragraphs)
         {
             var parTrim = paragraph.Trim();
-            if (parTrim == string.Empty)
+            if (string.IsNullOrEmpty(parTrim))
+            {
                 continue;
+            }
 
-            //FIXME პარამეტრებზე უნდა გადავიდეს პარაგრაფების შესახებ ინფორმაციის შენახვის საჭიროება
+            //პარამეტრებზე უნდა გადავიდეს პარაგრაფების შესახებ ინფორმაციის შენახვის საჭიროება
             //UriTerms.Add(new UriTerm { TermType = ETermType.ParagraphStart});
             ParseStatements(parTrim);
-            //FIXME პარამეტრებზე უნდა გადავიდეს პარაგრაფების შესახებ ინფორმაციის შენახვის საჭიროება
+            //პარამეტრებზე უნდა გადავიდეს პარაგრაფების შესახებ ინფორმაციის შენახვის საჭიროება
             //UriTerms.Add(new UriTerm { TermType = ETermType.ParagraphFinish});
         }
     }
@@ -139,12 +162,16 @@ public sealed partial class ParseOnePageState // : State
     private void ParseStatements(string context)
     {
         //თუ კონტენტი ცარიელია, გასაანალიზებელიც არაფერია
-        if (context == string.Empty)
+        if (string.IsNullOrEmpty(context))
+        {
             return;
+        }
 
         //თუ ტექსტი საერთოდ არ შეიცავს ქართულ ასოებს, მაშინ არ გვაინტერესებს
         if (!ContainsAnyAlphabetSymbols(context))
+        {
             return;
+        }
 
         var re = new Regex(_par.SegmentFinisherPunctuationsRegex);
         var strTestParts = re.Split(context);
@@ -164,11 +191,15 @@ public sealed partial class ParseOnePageState // : State
             }
 
             if (strTestParts.Length % 2 != 1)
+            {
                 return;
+            }
 
             var lastPart = strTestParts[^1];
-            if (lastPart == string.Empty)
+            if (string.IsNullOrEmpty(lastPart))
+            {
                 return;
+            }
 
             AddStatementStart();
             ParsePunctuations(lastPart);
@@ -196,8 +227,10 @@ public sealed partial class ParseOnePageState // : State
 
     private void ParsePunctuations(string context)
     {
-        if (context == string.Empty)
+        if (string.IsNullOrEmpty(context))
+        {
             return;
+        }
 
         var re = new Regex(_par.PunctuationsRegex); //ყველა პუნქტუაციის ნიშანი
         var strTestParts = re.Split(context);
@@ -215,7 +248,9 @@ public sealed partial class ParseOnePageState // : State
             }
 
             if (strTestParts.Length % 2 != 1)
+            {
                 return;
+            }
 
             ParseWords(strTestParts[^1]);
         }
@@ -229,16 +264,25 @@ public sealed partial class ParseOnePageState // : State
     private void ParseWords(string context)
     {
         //ცარელა სტრიქონს არ განვიხილავთ
-        if (context == string.Empty)
+        if (string.IsNullOrEmpty(context))
+        {
             return;
+        }
+
         //ყველა ის პუნქტუაციის ნიშანი, რომელიც არ შეიძლება აღიქმებოდეს სიტყვის ნაწილად
         var re = new Regex(_par.WordDelimiterRegex);
         var strTestParts = re.Split(context);
         if (strTestParts.Length < 3)
+        {
             AddWord(strTestParts[0]);
+        }
         else
+        {
             for (var i = 0; i < strTestParts.Length; i += 3)
+            {
                 AddWord(strTestParts[i]);
+            }
+        }
         //AddWord(strTestParts[^1]);
     }
 
@@ -256,8 +300,11 @@ public sealed partial class ParseOnePageState // : State
         //trimmedWord = trimmedWord.TrimStart('*');
 
         //ცარელა სიტყვის შენახვა არ გვჭირდება
-        if (trimmedWord == string.Empty)
+        if (string.IsNullOrEmpty(trimmedWord))
+        {
             return;
+        }
+
         //თუ ტექსტი საერთოდ არ შეიცავს ქართულ ასოებს, მაშინ არ გვაინტერესებს
         UriTerms.Add(ContainsAnyAlphabetSymbols(trimmedWord)
             ? new UriTerm(ETermType.Word, trimmedWord)
@@ -266,10 +313,12 @@ public sealed partial class ParseOnePageState // : State
 
     private void ExtractUrl(string uriCandidate)
     {
-        //ელექტრონული ფოსტის მისამართების შენახვა არ გვჭირდება
-        //ასევე არ გვჭირდება ისეთი ლინკების შენახვა, რომელიც მხოლოდ ფრაგმენტს აღნიშნავს
-        if (uriCandidate.StartsWith("mailto:") || uriCandidate.StartsWith('#'))
+        // ელექტრონული ფოსტის მისამართების შენახვა არ გვჭირდება
+        // ასევე არ გვჭირდება ისეთი ლინკების შენახვა, რომელიც მხოლოდ ფრაგმენტს აღნიშნავს
+        if (uriCandidate.StartsWith("mailto:", StringComparison.Ordinal) || uriCandidate.StartsWith('#'))
+        {
             return;
+        }
 
         var strUri = uriCandidate.Trim('"', '\'', '#', ' ', '>');
         try
@@ -278,24 +327,39 @@ public sealed partial class ParseOnePageState // : State
             if (newUri == null || !newUri.IsAbsoluteUri)
             {
                 if (_currentUri is null)
+                {
                     return;
+                }
+
                 var tempUri = UriFactory.GetUri(_currentUri, strUri);
                 if (tempUri == null)
+                {
                     return;
+                }
+
                 strUri = GetAbsoluteUri(tempUri);
                 if (strUri == null)
+                {
                     return;
+                }
+
                 newUri = UriFactory.GetUri(strUri);
             }
 
             if (newUri == null)
+            {
                 return;
+            }
 
             if (newUri.Scheme != Uri.UriSchemeHttp && newUri.Scheme != Uri.UriSchemeHttps)
+            {
                 return;
+            }
 
             if (newUri.LocalPath.Contains("//"))
+            {
                 return;
+            }
 
             //if (newUri.Host != CurrentUri.Host && KeepSameServer == true)
             //  continue;
@@ -312,7 +376,7 @@ public sealed partial class ParseOnePageState // : State
             //string strUri = NewUri.AbsoluteUri;
             //Uri AbsUri = new Uri(strUri);
             var startQuery = newUri.Query;
-            if (startQuery != string.Empty)
+            if (!string.IsNullOrEmpty(startQuery))
             {
                 //თუ მისამართი შეიცავს ქვერის ნაწილს
                 var newQuery = NormalizeQuery(startQuery, '&');
@@ -334,7 +398,7 @@ public sealed partial class ParseOnePageState // : State
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "An error occurred while extracting URL: {Message}", ex.Message);
         }
     }
 
@@ -352,6 +416,7 @@ public sealed partial class ParseOnePageState // : State
         }
         catch (UriFormatException)
         {
+            // Intentionally left blank: Ignore invalid URI format exceptions
         }
 
         return strToRet;
@@ -361,16 +426,21 @@ public sealed partial class ParseOnePageState // : State
     {
         char[] delimiters = [delimiter];
         if (startQuery.Length <= 1)
+        {
             return startQuery;
+        }
 
         var parts = startQuery[1..].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
-        var newQuery = string.Empty;
+        var newQuery = new StringBuilder();
         var isLeastOneAdded = false;
         foreach (var p in parts)
         {
             if (isLeastOneAdded)
-                newQuery += delimiter;
-            newQuery += p;
+            {
+                newQuery.Append(delimiter);
+            }
+
+            newQuery.Append(p);
             isLeastOneAdded = true;
         }
 

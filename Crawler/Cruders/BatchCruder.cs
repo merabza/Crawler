@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using CliMenu;
-using CliParameters.CliMenuCommands;
-using CliParameters.Cruders;
-using CliParameters.FieldEditors;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.CliMenuCommands;
+using AppCliTools.CliParameters.Cruders;
+using AppCliTools.CliParameters.FieldEditors;
 using Crawler.MenuCommands;
 using CrawlerDb.Models;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
-using LibParameters;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
 
 namespace Crawler.Cruders;
 
@@ -61,7 +61,9 @@ public sealed class BatchCruder : Cruder
     public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not Batch newBatch)
+        {
             return;
+        }
 
         var repo = GetCrawlerRepository();
 
@@ -75,7 +77,9 @@ public sealed class BatchCruder : Cruder
     protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
         if (newRecord is not Batch newBatch)
+        {
             return;
+        }
 
         var repo = GetCrawlerRepository();
         repo.CreateBatch(newBatch);
@@ -88,7 +92,10 @@ public sealed class BatchCruder : Cruder
         var repo = GetCrawlerRepository();
         var batch = repo.GetBatchByName(recordKey);
         if (batch is null)
+        {
             return;
+        }
+
         repo.DeleteBatch(batch);
 
         repo.SaveChanges();
@@ -119,6 +126,8 @@ public sealed class BatchCruder : Cruder
 
         foreach (var detailListCommand in hostNames.Select(s =>
                      new HostSubMenuCliMenuCommand(detailsCruder, s, recordKey, true)))
+        {
             itemSubMenuSet.AddMenuItem(detailListCommand);
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using DoCrawler.ToolActions;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler;
 
@@ -30,9 +30,9 @@ public sealed class CrawlerRunner
             // ReSharper disable once using
             // ReSharper disable once DisposableConstructor
             using var cts = new CancellationTokenSource();
-            var token = cts.Token;
+            CancellationToken token = cts.Token;
             token.ThrowIfCancellationRequested();
-            var result = _crawlerRunner.Run(token).Result;
+            bool result = _crawlerRunner.Run(token).Result;
             return result;
         }
         catch (OperationCanceledException)
@@ -41,8 +41,9 @@ public sealed class CrawlerRunner
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error in DbServerFoldersSetNameFieldEditor.UpdateField");
-            throw;
+            string contextualMessage = "Error occurred while running the crawler in CrawlerRunner.Run";
+            _logger.LogError(e, "{ContextualMessage}", contextualMessage);
+            throw new Exception(contextualMessage, e);
         }
         finally
         {

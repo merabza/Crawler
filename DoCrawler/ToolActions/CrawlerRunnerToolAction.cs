@@ -32,13 +32,15 @@ public sealed class CrawlerRunnerToolAction : CrawlerToolAction
         _batch = batch;
     }
 
-    protected override async ValueTask<bool> RunAction(CancellationToken token = default)
+    protected override async ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         //1. start
         var (batch, batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory, _batch);
 
         if (batch is null)
+        {
             return false;
+        }
         //1. Finish
 
         while (true)
@@ -47,11 +49,13 @@ public sealed class CrawlerRunnerToolAction : CrawlerToolAction
             var batchPartRunner = CreateBatchPartRunner(batchPart, batch);
             //2. Finish
             if (batchPartRunner is null)
+            {
                 return false;
+            }
 
             batchPartRunner.InitBachPart(Task?.StartPoints ?? [], batch);
 
-            await batchPartRunner.RunBatchPart(token);
+            await batchPartRunner.RunBatchPart(cancellationToken);
 
             batchPart = null;
         }

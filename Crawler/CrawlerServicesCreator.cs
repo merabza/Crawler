@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Net.Http;
-using CliParametersDataEdit;
+using AppCliTools.CliParametersDataEdit;
 using CrawlerDb;
 using DoCrawler;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
-using LibDatabaseParameters;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SystemToolsShared;
+using ParametersManagement.LibDatabaseParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler;
 
@@ -33,6 +32,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
                 databaseServerConnections);
 
         if (!string.IsNullOrEmpty(connectionString))
+        {
             switch (dataProvider)
             {
                 case EDatabaseProvider.SqlServer:
@@ -40,7 +40,9 @@ public sealed class CrawlerServicesCreator : ServicesCreator
                         sqlOptions =>
                         {
                             if (commandTimeout > -1)
+                            {
                                 sqlOptions.CommandTimeout(commandTimeout);
+                            }
                         }));
                     break;
                 case EDatabaseProvider.None:
@@ -52,6 +54,7 @@ public sealed class CrawlerServicesCreator : ServicesCreator
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataProvider));
             }
+        }
 
         services.AddScoped<ICrawlerRepository, CrawlerRepository>();
         services.AddSingleton<ICrawlerRepositoryCreatorFactory, CrawlerRepositoryCreatorFactory>();

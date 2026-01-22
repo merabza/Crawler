@@ -1,12 +1,12 @@
 ﻿using System.Net.Http;
-using CliMenu;
+using AppCliTools.CliMenu;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using DoCrawler.ToolActions;
 using LibCrawlerRepositories;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 

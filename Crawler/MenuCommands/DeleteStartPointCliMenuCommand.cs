@@ -1,8 +1,8 @@
-﻿using CliMenu;
+﻿using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
 using DoCrawler.Models;
-using LibDataInput;
-using LibParameters;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -25,7 +25,7 @@ public sealed class DeleteStartPointCliMenuCommand : CliMenuCommand
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var task = parameters.GetTask(_taskName);
+        TaskModel? task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
@@ -39,7 +39,9 @@ public sealed class DeleteStartPointCliMenuCommand : CliMenuCommand
         }
 
         if (!Inputer.InputBool($"This will Delete Start Point {_startPoint}. are you sure?", false, false))
+        {
             return false;
+        }
 
         task.StartPoints.Remove(_startPoint);
         _parametersManager.Save(parameters, $"Start Point {_startPoint} deleted.");

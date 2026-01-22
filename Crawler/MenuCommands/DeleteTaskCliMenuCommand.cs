@@ -1,8 +1,9 @@
-﻿using CliMenu;
+﻿using System.Collections.Generic;
+using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
 using DoCrawler.Models;
-using LibDataInput;
-using LibParameters;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -23,7 +24,7 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var tasks = parameters.Tasks;
+        Dictionary<string, TaskModel> tasks = parameters.Tasks;
 
         if (!tasks.ContainsKey(_taskName))
         {
@@ -32,7 +33,9 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
         }
 
         if (!Inputer.InputBool($"This will Delete  Task {_taskName}. are you sure?", false, false))
+        {
             return false;
+        }
 
         tasks.Remove(_taskName);
         _parametersManager.Save(parameters, $"Task {_taskName} deleted.");

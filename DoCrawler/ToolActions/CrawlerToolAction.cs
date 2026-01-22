@@ -1,27 +1,27 @@
 ﻿using System.Linq;
 using System.Net.Http;
+using AppCliTools.LibDataInput;
 using CrawlerDb.Configurations;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
-using LibDataInput;
-using LibToolActions;
 using Microsoft.Extensions.Logging;
 using RobotsTxt;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
+using ToolsManagement.LibToolActions;
 
 namespace DoCrawler.ToolActions;
 
 public /*open*/ class CrawlerToolAction : ToolAction
 {
-    protected readonly ILogger CrLogger;
-    protected readonly CrawlerParameters Par;
-    protected readonly TaskModel? Task;
     private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly string? _taskName;
+    protected readonly ILogger CrLogger;
+    protected readonly CrawlerParameters Par;
+    protected readonly TaskModel? Task;
 
     protected CrawlerToolAction(ILogger logger, CrawlerParameters par, string taskName, TaskModel? task,
         ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, IHttpClientFactory httpClientFactory,
@@ -45,7 +45,9 @@ public /*open*/ class CrawlerToolAction : ToolAction
         {
             createNewPart = IsCreateNewPartAllowed(batch);
             if (!createNewPart)
+            {
                 return null;
+            }
         }
 
         if (createNewPart)
@@ -56,8 +58,10 @@ public /*open*/ class CrawlerToolAction : ToolAction
         }
 
         if (batchPart is not null)
+        {
             batchPartRunner = new BatchPartRunner(CrLogger, _httpClientFactory, _crawlerRepositoryCreatorFactory, Par,
                 _parseOnePageParameters, batchPart);
+        }
 
         if (batchPartRunner is null)
         {
@@ -103,12 +107,14 @@ public /*open*/ class CrawlerToolAction : ToolAction
         //ამ სქემისა და ჰოსტის წყვილისთვის შემოწმდეს არის თუ არა დარეგისტრირებული HostByBatch ცხრილში
         //თუ არ არის დარეგისტრირებული, დარეგისტრირდეს.
         foreach (var myUri in Task.StartPoints.Select(UriFactory.GetUri).Where(myUri => myUri != null))
+        {
             crawlerRepository.AddHostNamesByBatch(batch, myUri!.Scheme, myUri.Host);
+        }
 
         crawlerRepository.SaveChanges();
 
         var batchName = batch.BatchName;
-        CrLogger.LogInformation("Crawling for batch {batchName}", batchName);
+        CrLogger.LogInformation("Crawling for batch {BatchName}", batchName);
 
         return batch;
     }
@@ -133,7 +139,9 @@ public /*open*/ class CrawlerToolAction : ToolAction
         var batch = startBatch ?? GetBatchByTaskName(repository);
 
         if (batch is not null)
+        {
             return (batch, repository.GetOpenedBatchPart(batch.BatchId));
+        }
 
         StShared.WriteErrorLine("batch is null", true);
         return (null, null);

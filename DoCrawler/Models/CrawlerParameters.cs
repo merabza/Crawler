@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using LibApiClientParameters;
-using LibDatabaseParameters;
-using LibFileParameters.Interfaces;
-using LibFileParameters.Models;
+using ParametersManagement.LibApiClientParameters;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibFileParameters.Interfaces;
+using ParametersManagement.LibFileParameters.Models;
 
 namespace DoCrawler.Models;
 
@@ -53,10 +53,14 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
     public bool CheckNewTaskNameValid(string oldTaskName, string newTaskName)
     {
         if (oldTaskName == newTaskName)
+        {
             return true;
+        }
 
         if (!Tasks.ContainsKey(oldTaskName))
+        {
             return false;
+        }
 
         return !Tasks.ContainsKey(newTaskName);
     }
@@ -73,9 +77,12 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
 
     public string GetSegmentFinisherPunctuationsRegex()
     {
-        if (_segmentFinisherPunctuationRegex == string.Empty)
+        if (string.IsNullOrEmpty(_segmentFinisherPunctuationRegex))
+        {
             _segmentFinisherPunctuationRegex =
                 GetPunctuationRegex(Punctuations.Where(s => s.Value.PctSentenceFinisher));
+        }
+
         return _segmentFinisherPunctuationRegex;
     }
 
@@ -84,12 +91,19 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
         var rex = string.Empty;
         foreach (var pun in punctuations.OrderBy(s => s.Value.PctSortId))
         {
-            if (rex != string.Empty)
+            if (!string.IsNullOrEmpty(rex))
+            {
                 rex += "|";
+            }
+
             if (pun.Value.PctRegexPattern == null)
+            {
                 rex += "(" + pun.Value.PctPunctuation + ")";
+            }
             else
+            {
                 rex += "(" + pun.Value.PctRegexPattern + ")";
+            }
         }
 
         //if (rex != string.Empty)
@@ -99,15 +113,24 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
 
     internal string GetPossibleSymbols()
     {
-        if (_possibleSymbols != string.Empty)
+        if (!string.IsNullOrEmpty(_possibleSymbols))
+        {
             return _possibleSymbols;
+        }
+
         var sb = new StringBuilder();
         //შეგროვდეს პუნქტუაციის ნიშნებში მონაწილე სიმბოლოები, ისე რომ ერთნაირი სიმბოლოები არ გამეორდეს
         foreach (var pun in Punctuations)
+        {
             sb.Append(pun.Value.PctPunctuation);
+        }
+
         //დაემატოს ციფრები
         for (var i = 0; i < 10; i++)
+        {
             sb.Append(i.ToString(CultureInfo.InvariantCulture));
+        }
+
         //დაემატოს ანბანი
         sb.Append(Alphabet);
         //დაემატოს პრობელი
@@ -118,16 +141,22 @@ public sealed class CrawlerParameters : IParametersWithDatabaseServerConnections
 
     internal string GetPunctuationsRegex()
     {
-        if (_punctuationRegex == string.Empty)
+        if (string.IsNullOrEmpty(_punctuationRegex))
+        {
             _punctuationRegex = GetPunctuationRegex(Punctuations);
+        }
+
         return _punctuationRegex;
     }
 
     internal string GetWordDelimiterRegex()
     {
-        if (_wordDelimiterRegex == string.Empty)
+        if (string.IsNullOrEmpty(_wordDelimiterRegex))
+        {
             _wordDelimiterRegex = "({" + GetPunctuationRegex(Punctuations.Where(s => !s.Value.PctCanBePartOfWord)) +
                                   @"|(\s)|(\n)})";
+        }
+
         return _wordDelimiterRegex;
     }
 }

@@ -80,7 +80,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         var hostModel = _context.Hosts.SingleOrDefault(a => a.HostName == hostName);
         if (hostModel != null)
+        {
             return hostModel;
+        }
+
         _changesCount++;
         return _context.Hosts.Add(new HostModel { HostName = hostName }).Entity;
     }
@@ -89,7 +92,10 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         var extensionModel = _context.Extensions.SingleOrDefault(a => a.ExtName == extensionName);
         if (extensionModel != null)
+        {
             return extensionModel;
+        }
+
         _changesCount++;
         return _context.Extensions.Add(new ExtensionModel { ExtName = extensionName }).Entity;
     }
@@ -97,7 +103,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
     public SchemeModel CheckAddSchemeName(string schemeName)
     {
         var schemeModel = _context.Schemes.SingleOrDefault(a => a.SchName == schemeName);
-        if (schemeModel != null) return schemeModel;
+        if (schemeModel != null)
+        {
+            return schemeModel;
+        }
+
         _changesCount++;
         return _context.Schemes.Add(new SchemeModel { SchName = schemeName }).Entity;
     }
@@ -167,12 +177,17 @@ public sealed class CrawlerRepository : ICrawlerRepository
                 w.HostNavigation.HostName == hostName);
 
             if (hostByBatch != null)
+            {
                 _context.HostsByBatches.Remove(hostByBatch);
+            }
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(RemoveHostNamesByBatch)}.");
-            throw;
+            _logger.LogError(e,
+                $"Error occurred executing {nameof(RemoveHostNamesByBatch)} for batchId={batch.BatchId}, schemeName={schemeName}, hostName={hostName}.");
+            throw new Exception(
+                $"Error in {nameof(RemoveHostNamesByBatch)} for batchId={batch.BatchId}, schemeName={schemeName}, hostName={hostName}. See inner exception for details.",
+                e);
         }
     }
 
@@ -185,7 +200,9 @@ public sealed class CrawlerRepository : ICrawlerRepository
                 w.HostNavigation.HostName == hostName);
 
             if (hostByBatch != null)
+            {
                 return;
+            }
 
             var scheme = _context.Schemes.SingleOrDefault(s => s.SchName == schemeName);
             if (scheme == null)
@@ -208,8 +225,12 @@ public sealed class CrawlerRepository : ICrawlerRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error occurred executing {nameof(CreateHost)}.");
-            throw;
+            _logger.LogError(e,
+                "Error occurred executing AddHostNamesByBatch for batchId={BatchId}, schemeName={SchemeName}, hostName={HostName}.",
+                batch.BatchId, schemeName, hostName);
+            throw new Exception(
+                $"Error in {nameof(AddHostNamesByBatch)} for batchId={batch.BatchId}, schemeName={schemeName}, hostName={hostName}. See inner exception for details.",
+                e);
         }
     }
 

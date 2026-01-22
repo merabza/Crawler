@@ -1,5 +1,5 @@
 ﻿using DoCrawler.Models;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
 
 namespace DoCrawler.Domain;
 

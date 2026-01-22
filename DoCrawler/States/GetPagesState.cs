@@ -44,7 +44,7 @@ public sealed class GetPagesState // : State
         _logger.LogInformation("Loading Urls");
         var urls = _repository.GetOnePortionUrls(_batchPart.BpId, _par.LoadPagesMaxCount);
         var urlsCount = urls.Count;
-        _logger.LogInformation("Loaded {urlsCount} Urls", urlsCount);
+        _logger.LogInformation("Loaded {UrlsCount} Urls", urlsCount);
         if (urls.Count > 0)
         {
             _logger.LogInformation("Add urls to Queue");
@@ -57,7 +57,9 @@ public sealed class GetPagesState // : State
         _repository.FinishBatchPart(_batchPart);
         _repository.SaveChanges();
         if (!_batchPart.BatchNavigation.AutoCreateNextPart)
+        {
             return [];
+        }
 
         _repository.TryCreateNewPart(_batchPart.BatchId);
         _repository.SaveChanges();

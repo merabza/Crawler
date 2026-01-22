@@ -1,12 +1,12 @@
 ﻿using System.Net.Http;
-using CliMenu;
+using AppCliTools.CliMenu;
 using DoCrawler.Domain;
 using DoCrawler.Models;
 using DoCrawler.ToolActions;
 using LibCrawlerRepositories;
-using LibParameters;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.MenuCommands;
 
@@ -33,7 +33,7 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
     protected override bool RunBody()
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
-        var task = parameters.GetTask(_taskName);
+        TaskModel? task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
