@@ -45,6 +45,9 @@
     <Project Path="../SystemTools/SystemTools.SystemToolsShared/SystemTools.SystemToolsShared.csproj" />
     <Project Path="../SystemTools/SystemTools.TestApiContracts/SystemTools.TestApiContracts.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Crawler.Tests/Crawler.Tests.csproj" Id="6daedb83-87d1-4ab8-9c6c-c14c64639686" />
+  </Folder>
   <Folder Name="/ToolsManagement/">
     <Project Path="../ToolsManagement/ToolsManagement.ApiClientsManagement/ToolsManagement.ApiClientsManagement.csproj" />
     <Project Path="../ToolsManagement/ToolsManagement.DatabasesManagement/ToolsManagement.DatabasesManagement.csproj" />

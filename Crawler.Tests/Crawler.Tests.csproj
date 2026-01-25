@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Crawler\Crawler.csproj" />
+    <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
+    <ProjectReference Include="..\DoCrawler\DoCrawler.csproj" />
+    <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliMenu\AppCliTools.CliMenu.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParameters\AppCliTools.CliParameters.csproj" />
+  </ItemGroup>
+
+</Project>
