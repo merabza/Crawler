@@ -18,30 +18,26 @@ namespace Crawler.Tests.Cruders;
 
 public sealed class BatchCruderTests
 {
-    private readonly Mock<ILogger> _loggerMock;
-    private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
-    private readonly Mock<ICrawlerRepositoryCreatorFactory> _crawlerRepositoryCreatorFactoryMock;
     private readonly Mock<ICrawlerRepository> _crawlerRepositoryMock;
-    private readonly CrawlerParameters _crawlerParameters;
     private readonly BatchCruder _batchCruder;
 
     public BatchCruderTests()
     {
-        _loggerMock = new Mock<ILogger>();
-        _httpClientFactoryMock = new Mock<IHttpClientFactory>();
-        _crawlerRepositoryCreatorFactoryMock = new Mock<ICrawlerRepositoryCreatorFactory>();
+        var loggerMock = new Mock<ILogger>();
+        var httpClientFactoryMock = new Mock<IHttpClientFactory>();
+        var crawlerRepositoryCreatorFactoryMock = new Mock<ICrawlerRepositoryCreatorFactory>();
         _crawlerRepositoryMock = new Mock<ICrawlerRepository>();
-        _crawlerParameters = new CrawlerParameters();
+        var crawlerParameters = new CrawlerParameters();
 
-        _crawlerRepositoryCreatorFactoryMock
+        crawlerRepositoryCreatorFactoryMock
             .Setup(x => x.GetCrawlerRepository())
             .Returns(_crawlerRepositoryMock.Object);
 
         _batchCruder = new BatchCruder(
-            _loggerMock.Object,
-            _httpClientFactoryMock.Object,
-            _crawlerRepositoryCreatorFactoryMock.Object,
-            _crawlerParameters
+            loggerMock.Object,
+            httpClientFactoryMock.Object,
+            crawlerRepositoryCreatorFactoryMock.Object,
+            crawlerParameters
         );
     }
 
@@ -59,8 +55,8 @@ public sealed class BatchCruderTests
         // Arrange
         var batches = new List<Batch>
         {
-            new Batch { BatchId = 1, BatchName = "Batch1", IsOpen = true, AutoCreateNextPart = false },
-            new Batch { BatchId = 2, BatchName = "Batch2", IsOpen = false, AutoCreateNextPart = true }
+            new() { BatchId = 1, BatchName = "Batch1", IsOpen = true, AutoCreateNextPart = false },
+            new() { BatchId = 2, BatchName = "Batch2", IsOpen = false, AutoCreateNextPart = true }
         };
 
         _crawlerRepositoryMock
@@ -84,7 +80,7 @@ public sealed class BatchCruderTests
         // Arrange
         var batches = new List<Batch>
         {
-            new Batch { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false }
+            new() { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false }
         };
 
         _crawlerRepositoryMock
@@ -104,7 +100,7 @@ public sealed class BatchCruderTests
         // Arrange
         var batches = new List<Batch>
         {
-            new Batch { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false }
+            new() { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false }
         };
 
         _crawlerRepositoryMock
@@ -323,7 +319,7 @@ public sealed class BatchCruderTests
 
         _crawlerRepositoryMock
             .Setup(x => x.GetHostStartUrlNamesByBatch(It.IsAny<Batch>()))
-            .Returns(new List<string> { "host1.com", "host2.com" });
+            .Returns(["host1.com", "host2.com"]);
 
         var menuSet = new CliMenuSet("Test Menu");
 

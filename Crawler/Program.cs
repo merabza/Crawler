@@ -36,7 +36,7 @@ try
     string? parametersFileName = argParser.ParametersFileName;
     var servicesCreator = new CrawlerServicesCreator(par);
     // ReSharper disable once using
-    using ServiceProvider? serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
+    await using ServiceProvider? serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
 
     if (serviceProvider == null)
     {
