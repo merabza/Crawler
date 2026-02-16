@@ -1,26 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using AppCliTools.CliMenu;
 using AppCliTools.CliParameters;
 using Crawler.Cruders;
-using Crawler.MenuCommands;
 using CrawlerDb.Models;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ParametersManagement.LibParameters;
 using SystemTools.SystemToolsShared;
-using Xunit;
 
 namespace Crawler.Tests.Cruders;
 
 public sealed class BatchCruderTests
 {
-    private readonly Mock<ICrawlerRepository> _crawlerRepositoryMock;
     private readonly BatchCruder _batchCruder;
+    private readonly Mock<ICrawlerRepository> _crawlerRepositoryMock;
 
     public BatchCruderTests()
     {
@@ -30,16 +27,10 @@ public sealed class BatchCruderTests
         _crawlerRepositoryMock = new Mock<ICrawlerRepository>();
         var crawlerParameters = new CrawlerParameters();
 
-        crawlerRepositoryCreatorFactoryMock
-            .Setup(x => x.GetCrawlerRepository())
-            .Returns(_crawlerRepositoryMock.Object);
+        crawlerRepositoryCreatorFactoryMock.Setup(x => x.GetCrawlerRepository()).Returns(_crawlerRepositoryMock.Object);
 
-        _batchCruder = new BatchCruder(
-            loggerMock.Object,
-            httpClientFactoryMock.Object,
-            crawlerRepositoryCreatorFactoryMock.Object,
-            crawlerParameters
-        );
+        _batchCruder = new BatchCruder(loggerMock.Object, httpClientFactoryMock.Object,
+            crawlerRepositoryCreatorFactoryMock.Object, crawlerParameters);
     }
 
     [Fact]
@@ -60,9 +51,7 @@ public sealed class BatchCruderTests
             new() { BatchId = 2, BatchName = "Batch2", IsOpen = false, AutoCreateNextPart = true }
         };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchesList())
-            .Returns(batches);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchesList()).Returns(batches);
 
         // Act
         var result = InvokeProtectedMethod<Dictionary<string, ItemData>>(_batchCruder, "GetCrudersDictionary");
@@ -84,12 +73,10 @@ public sealed class BatchCruderTests
             new() { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false }
         };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchesList())
-            .Returns(batches);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchesList()).Returns(batches);
 
         // Act
-        var result = _batchCruder.ContainsRecordWithKey("TestBatch");
+        bool result = _batchCruder.ContainsRecordWithKey("TestBatch");
 
         // Assert
         Assert.True(result);
@@ -104,12 +91,10 @@ public sealed class BatchCruderTests
             new() { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false }
         };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchesList())
-            .Returns(batches);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchesList()).Returns(batches);
 
         // Act
-        var result = _batchCruder.ContainsRecordWithKey("NonExistentBatch");
+        bool result = _batchCruder.ContainsRecordWithKey("NonExistentBatch");
 
         // Assert
         Assert.False(result);
@@ -121,27 +106,17 @@ public sealed class BatchCruderTests
         // Arrange
         var existingBatch = new Batch
         {
-            BatchId = 1,
-            BatchName = "OldBatchName",
-            IsOpen = true,
-            AutoCreateNextPart = false
+            BatchId = 1, BatchName = "OldBatchName", IsOpen = true, AutoCreateNextPart = false
         };
 
         var updatedBatch = new Batch
         {
-            BatchId = 1,
-            BatchName = "NewBatchName",
-            IsOpen = false,
-            AutoCreateNextPart = true
+            BatchId = 1, BatchName = "NewBatchName", IsOpen = false, AutoCreateNextPart = true
         };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchByName("OldBatchName"))
-            .Returns(existingBatch);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchByName("OldBatchName")).Returns(existingBatch);
 
-        _crawlerRepositoryMock
-            .Setup(x => x.UpdateBatch(It.IsAny<Batch>()))
-            .Returns(existingBatch);
+        _crawlerRepositoryMock.Setup(x => x.UpdateBatch(It.IsAny<Batch>())).Returns(existingBatch);
 
         // Act
         _batchCruder.UpdateRecordWithKey("OldBatchName", updatedBatch);
@@ -158,15 +133,10 @@ public sealed class BatchCruderTests
         // Arrange
         var updatedBatch = new Batch
         {
-            BatchId = 1,
-            BatchName = "NewBatchName",
-            IsOpen = false,
-            AutoCreateNextPart = true
+            BatchId = 1, BatchName = "NewBatchName", IsOpen = false, AutoCreateNextPart = true
         };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchByName("NonExistent"))
-            .Returns((Batch?)null);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchByName("NonExistent")).Returns((Batch?)null);
 
         // Act & Assert
         Assert.Throws<Exception>(() => _batchCruder.UpdateRecordWithKey("NonExistent", updatedBatch));
@@ -191,17 +161,9 @@ public sealed class BatchCruderTests
     public void AddRecordWithKey_WithValidBatch_ShouldCreateNewBatch()
     {
         // Arrange
-        var newBatch = new Batch
-        {
-            BatchId = 0,
-            BatchName = "NewBatch",
-            IsOpen = true,
-            AutoCreateNextPart = false
-        };
+        var newBatch = new Batch { BatchId = 0, BatchName = "NewBatch", IsOpen = true, AutoCreateNextPart = false };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.CreateBatch(It.IsAny<Batch>()))
-            .Returns(newBatch);
+        _crawlerRepositoryMock.Setup(x => x.CreateBatch(It.IsAny<Batch>())).Returns(newBatch);
 
         // Act
         InvokeProtectedMethod(_batchCruder, "AddRecordWithKey", "NewBatch", newBatch);
@@ -231,19 +193,12 @@ public sealed class BatchCruderTests
         // Arrange
         var existingBatch = new Batch
         {
-            BatchId = 1,
-            BatchName = "BatchToDelete",
-            IsOpen = true,
-            AutoCreateNextPart = false
+            BatchId = 1, BatchName = "BatchToDelete", IsOpen = true, AutoCreateNextPart = false
         };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchByName("BatchToDelete"))
-            .Returns(existingBatch);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchByName("BatchToDelete")).Returns(existingBatch);
 
-        _crawlerRepositoryMock
-            .Setup(x => x.DeleteBatch(It.IsAny<Batch>()))
-            .Returns(existingBatch);
+        _crawlerRepositoryMock.Setup(x => x.DeleteBatch(It.IsAny<Batch>())).Returns(existingBatch);
 
         // Act
         InvokeProtectedMethod(_batchCruder, "RemoveRecordWithKey", "BatchToDelete");
@@ -258,9 +213,7 @@ public sealed class BatchCruderTests
     public void RemoveRecordWithKey_WhenBatchDoesNotExist_ShouldNotDelete()
     {
         // Arrange
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchByName("NonExistent"))
-            .Returns((Batch?)null);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchByName("NonExistent")).Returns((Batch?)null);
 
         // Act
         InvokeProtectedMethod(_batchCruder, "RemoveRecordWithKey", "NonExistent");
@@ -304,22 +257,13 @@ public sealed class BatchCruderTests
     public void FillDetailsSubMenu_ShouldAddMenuItems()
     {
         // Arrange
-        var batch = new Batch
-        {
-            BatchId = 1,
-            BatchName = "TestBatch",
-            IsOpen = true,
-            AutoCreateNextPart = false
-        };
+        var batch = new Batch { BatchId = 1, BatchName = "TestBatch", IsOpen = true, AutoCreateNextPart = false };
 
         var batches = new List<Batch> { batch };
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetBatchesList())
-            .Returns(batches);
+        _crawlerRepositoryMock.Setup(x => x.GetBatchesList()).Returns(batches);
 
-        _crawlerRepositoryMock
-            .Setup(x => x.GetHostStartUrlNamesByBatch(It.IsAny<Batch>()))
+        _crawlerRepositoryMock.Setup(x => x.GetHostStartUrlNamesByBatch(It.IsAny<Batch>()))
             .Returns(["host1.com", "host2.com"]);
 
         var menuSet = new CliMenuSet("Test Menu");
@@ -335,28 +279,19 @@ public sealed class BatchCruderTests
     }
 
     // Helper method to invoke protected methods using reflection
-    private T? InvokeProtectedMethod<T>(object obj, string methodName, params object?[] parameters)
+    private static T? InvokeProtectedMethod<T>(object obj, string methodName, params object?[] parameters)
     {
-        var method = obj.GetType().GetMethod(methodName,
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
 
-        if (method is null)
-        {
-            throw new InvalidOperationException($"Method '{methodName}' not found");
-        }
-
-        return (T?)method.Invoke(obj, parameters);
+        return method is null
+            ? throw new InvalidOperationException($"Method '{methodName}' not found")
+            : (T?)method.Invoke(obj, parameters);
     }
 
-    private void InvokeProtectedMethod(object obj, string methodName, params object?[] parameters)
+    private static void InvokeProtectedMethod(object obj, string methodName, params object?[] parameters)
     {
-        var method = obj.GetType().GetMethod(methodName,
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-        if (method is null)
-        {
-            throw new InvalidOperationException($"Method '{methodName}' not found");
-        }
+        var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance) ??
+                     throw new InvalidOperationException($"Method '{methodName}' not found");
 
         method.Invoke(obj, parameters);
     }

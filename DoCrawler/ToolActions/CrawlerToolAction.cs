@@ -115,7 +115,10 @@ public /*open*/ class CrawlerToolAction : ToolAction
         crawlerRepository.SaveChanges();
 
         string batchName = batch.BatchName;
-        CrLogger.LogInformation("Crawling for batch {BatchName}", batchName);
+        if (CrLogger.IsEnabled(LogLevel.Information))
+        {
+            CrLogger.LogInformation("Crawling for batch {BatchName}", batchName);
+        }
 
         return batch;
     }

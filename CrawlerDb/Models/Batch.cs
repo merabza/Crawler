@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ParametersManagement.LibParameters;
 using SystemTools.SystemToolsShared;
 
 // ReSharper disable CollectionNeverUpdated.Global

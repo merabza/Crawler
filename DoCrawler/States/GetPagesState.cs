@@ -44,7 +44,11 @@ public sealed class GetPagesState // : State
         _logger.LogInformation("Loading Urls");
         List<UrlModel> urls = _repository.GetOnePortionUrls(_batchPart.BpId, _par.LoadPagesMaxCount);
         int urlsCount = urls.Count;
-        _logger.LogInformation("Loaded {UrlsCount} Urls", urlsCount);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Loaded {UrlsCount} Urls", urlsCount);
+        }
+
         if (urls.Count > 0)
         {
             _logger.LogInformation("Add urls to Queue");
