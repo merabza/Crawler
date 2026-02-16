@@ -6,6 +6,7 @@ using AppCliTools.CliParameters.FieldEditors;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
 using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.Cruders;
 
@@ -33,7 +34,7 @@ public sealed class SchemeCruder : Cruder
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
         List<SchemeModel> schemesList = GetSchemes();
-        return schemesList.ToDictionary(k => k.SchName, v => (ItemData)v);
+        return schemesList.ToDictionary(k => k.SchName, ItemData (v) => v);
     }
 
     public override bool ContainsRecordWithKey(string recordKey)

@@ -6,6 +6,7 @@ using AppCliTools.CliParameters.Cruders;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
 using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.Cruders;
 
@@ -35,7 +36,7 @@ public sealed class HostByBatchCruder : Cruder
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        return GetHostNamesByBatch().ToDictionary(k => k, v => (ItemData)new TextItemData { Text = v });
+        return GetHostNamesByBatch().ToDictionary(k => k, ItemData (v) => new TextItemData { Text = v });
     }
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)

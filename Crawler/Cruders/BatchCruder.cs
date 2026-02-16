@@ -12,6 +12,7 @@ using DoCrawler.Models;
 using LibCrawlerRepositories;
 using Microsoft.Extensions.Logging;
 using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler.Cruders;
 
@@ -49,7 +50,7 @@ public sealed class BatchCruder : Cruder
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
         List<Batch> batchesList = GetBatches();
-        return batchesList.ToDictionary(k => k.BatchName, v => (ItemData)v);
+        return batchesList.ToDictionary(k => k.BatchName, ItemData (v) => v);
     }
 
     public override bool ContainsRecordWithKey(string recordKey)
