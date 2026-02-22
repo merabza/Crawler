@@ -60,7 +60,7 @@ try
 
     var crawler = new CrawlerCliAppLoop(logger, httpClientFactory, new ParametersManager(parametersFileName, par),
         serviceProvider);
-    return crawler.Run() ? 0 : 1;
+    return await crawler.Run() ? 0 : 1;
 }
 catch (Exception e)
 {

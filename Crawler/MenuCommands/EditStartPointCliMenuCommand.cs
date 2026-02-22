@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliMenu;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
 using ParametersManagement.LibParameters;
@@ -21,7 +23,7 @@ public sealed class EditStartPointCliMenuCommand : CliMenuCommand
         _startPoint = startPoint;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -78,7 +80,7 @@ public sealed class EditStartPointCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        _parametersManager.Save(parameters, $" Start Point Changed from {_startPoint} To {newStartPoint}");
+        await _parametersManager.Save(parameters, $" Start Point Changed from {_startPoint} To {newStartPoint}");
 
         return true;
     }

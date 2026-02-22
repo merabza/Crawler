@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
@@ -20,7 +22,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         _taskName = taskName;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -55,7 +57,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         task.StartPoints.Add(newStartPoint);
 
         //პარამეტრების შენახვა (ცვლილებების გათვალისწინებით)
-        _parametersManager.Save(parameters, "Create New Task Finished");
+        await _parametersManager.Save(parameters, "Create New Task Finished");
 
         //ცვლილებების შენახვა დასრულდა
         //Console.WriteLine("Create new Task Finished");

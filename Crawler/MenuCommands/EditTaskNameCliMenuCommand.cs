@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliMenu;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
 using ParametersManagement.LibParameters;
@@ -19,7 +21,7 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
         _taskName = taskName;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -62,7 +64,7 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        _parametersManager.Save(parameters, $" Task Renamed from {_taskName} To {newTaskName}");
+        await _parametersManager.Save(parameters, $" Task Renamed from {_taskName} To {newTaskName}");
 
         return true;
     }

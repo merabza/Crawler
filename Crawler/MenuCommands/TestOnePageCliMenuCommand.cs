@@ -1,4 +1,6 @@
 ﻿using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Domain;
@@ -31,68 +33,34 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
         _taskName = taskName;
     }
 
-    protected override bool RunBody()
+    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
         TaskModel? task = parameters.GetTask(_taskName);
         if (task == null)
         {
             StShared.WriteErrorLine($"Task with name {_taskName} is not found", true);
-            return false;
+            return ValueTask.FromResult(false);
         }
 
         string? strUrl = Inputer.InputText("Page for Test", null);
         if (string.IsNullOrWhiteSpace(strUrl))
         {
             StShared.WriteErrorLine("Page for Test is empty", true);
-            return false;
+            return ValueTask.FromResult(false);
         }
 
         var par = ParseOnePageParameters.Create(parameters);
         if (par is null)
         {
             StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
-            return false;
+            return ValueTask.FromResult(false);
         }
 
         var crawlerRunnerToolAction = new OnePageCrawlerRunnerToolAction(_logger, _httpClientFactory,
             _crawlerRepositoryCreatorFactory, parameters, par, _taskName, task, strUrl);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
-        return crawlerRunner.Run();
-
-        ////დავინიშნოთ დრო
-        //var watch = Stopwatch.StartNew();
-        //Console.WriteLine("Crawler is running...");
-        //Console.WriteLine("---");
-
-        //try
-        //{
-        //    // ReSharper disable once using
-        //    // ReSharper disable once DisposableConstructor
-        //    using var cts = new CancellationTokenSource();
-        //    var token = cts.Token;
-        //    token.ThrowIfCancellationRequested();
-        //    var result = crawlerRunner.Run(token).Result;
-        //    return result;
-        //}
-        //catch (OperationCanceledException)
-        //{
-        //    Console.WriteLine("Operation was canceled.");
-        //}
-        //catch (Exception e)
-        //{
-        //    _logger.LogError(e, "Error in DbServerFoldersSetNameFieldEditor.UpdateField");
-        //    throw;
-        //}
-        //finally
-        //{
-        //    watch.Stop();
-        //    Console.WriteLine("---");
-        //    Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
-        //    StShared.Pause();
-        //}
-
-        //return false;
+        return ValueTask.FromResult(crawlerRunner.Run());
     }
 }

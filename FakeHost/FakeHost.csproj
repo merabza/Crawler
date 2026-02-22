@@ -10,9 +10,4 @@
     <ItemGroup>
         <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     </ItemGroup>
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>disable</ImplicitUsings>
-    </PropertyGroup>
 </Project>

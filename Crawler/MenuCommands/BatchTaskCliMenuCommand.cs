@@ -1,4 +1,6 @@
 ﻿using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using CrawlerDb.Models;
 using DoCrawler.Domain;
@@ -31,53 +33,19 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
         _batch = batch;
     }
 
-    protected override bool RunBody()
+    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var par = ParseOnePageParameters.Create(_par);
         if (par is null)
         {
             StShared.WriteErrorLine("ParseOnePageParameters does not created", true);
-            return false;
+            return ValueTask.FromResult(false);
         }
 
         var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory,
             _crawlerRepositoryCreatorFactory, _par, par, Name, _batch);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
-        return crawlerRunner.Run();
-
-        ////დავინიშნოთ დრო
-        //var watch = Stopwatch.StartNew();
-        //Console.WriteLine("Crawler is running...");
-        //Console.WriteLine("---");
-
-        //try
-        //{
-        //    // ReSharper disable once using
-        //    // ReSharper disable once DisposableConstructor
-        //    using var cts = new CancellationTokenSource();
-        //    var token = cts.Token;
-        //    token.ThrowIfCancellationRequested();
-        //    var result = crawlerRunner.Run(token).Result;
-        //    return result;
-        //}
-        //catch (OperationCanceledException)
-        //{
-        //    Console.WriteLine("Operation was canceled.");
-        //}
-        //catch (Exception e)
-        //{
-        //    _logger.LogError(e, "Error in DbServerFoldersSetNameFieldEditor.UpdateField");
-        //    throw;
-        //}
-        //finally
-        //{
-        //    watch.Stop();
-        //    Console.WriteLine("---");
-        //    Console.WriteLine($"Crawler Finished. Time taken: {watch.Elapsed.Seconds} second(s)");
-        //    StShared.Pause();
-        //}
-
-        //return false;
+        return ValueTask.FromResult(crawlerRunner.Run());
     }
 }

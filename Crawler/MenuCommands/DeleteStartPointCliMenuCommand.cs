@@ -1,4 +1,6 @@
-﻿using AppCliTools.CliMenu;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
 using ParametersManagement.LibParameters;
@@ -21,7 +23,7 @@ public sealed class DeleteStartPointCliMenuCommand : CliMenuCommand
         _startPoint = startPoint;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -44,7 +46,7 @@ public sealed class DeleteStartPointCliMenuCommand : CliMenuCommand
         }
 
         task.StartPoints.Remove(_startPoint);
-        _parametersManager.Save(parameters, $"Start Point {_startPoint} deleted.");
+        await _parametersManager.Save(parameters, $"Start Point {_startPoint} deleted.");
 
         return true;
     }

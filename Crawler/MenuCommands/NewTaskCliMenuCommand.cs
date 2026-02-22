@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
@@ -19,7 +21,7 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
         _parametersManager = parametersManager;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -48,7 +50,7 @@ public sealed class NewTaskCliMenuCommand : CliMenuCommand
         parameters.Tasks.Add(newTaskName, new TaskModel());
 
         //პარამეტრების შენახვა (ცვლილებების გათვალისწინებით)
-        _parametersManager.Save(parameters, "Create New Task Finished");
+        await _parametersManager.Save(parameters, "Create New Task Finished");
 
         //ცვლილებების შენახვა დასრულდა
         //Console.WriteLine("Create new Task Finished");

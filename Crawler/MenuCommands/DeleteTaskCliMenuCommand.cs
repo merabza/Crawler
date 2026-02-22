@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
@@ -20,7 +22,7 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
         _taskName = taskName;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
@@ -38,7 +40,7 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
         }
 
         tasks.Remove(_taskName);
-        _parametersManager.Save(parameters, $"Task {_taskName} deleted.");
+        await _parametersManager.Save(parameters, $"Task {_taskName} deleted.");
 
         return true;
     }
