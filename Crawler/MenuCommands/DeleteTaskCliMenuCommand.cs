@@ -40,7 +40,7 @@ public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
         }
 
         tasks.Remove(_taskName);
-        await _parametersManager.Save(parameters, $"Task {_taskName} deleted.");
+        await _parametersManager.Save(parameters, $"Task {_taskName} deleted.", null, cancellationToken);
 
         return true;
     }

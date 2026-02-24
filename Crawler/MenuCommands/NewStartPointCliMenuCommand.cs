@@ -57,7 +57,7 @@ public sealed class NewStartPointCliMenuCommand : CliMenuCommand
         task.StartPoints.Add(newStartPoint);
 
         //პარამეტრების შენახვა (ცვლილებების გათვალისწინებით)
-        await _parametersManager.Save(parameters, "Create New Task Finished");
+        await _parametersManager.Save(parameters, "Create New Task Finished", null, cancellationToken);
 
         //ცვლილებების შენახვა დასრულდა
         //Console.WriteLine("Create new Task Finished");

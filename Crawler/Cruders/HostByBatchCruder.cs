@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliParameters;
 using AppCliTools.CliParameters.Cruders;
 using CrawlerDb.Models;
@@ -49,7 +51,7 @@ public sealed class HostByBatchCruder : Cruder
         return hostNames.Contains(recordKey);
     }
 
-    protected override void RemoveRecordWithKey(string recordKey)
+    protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
         //List<string> hostNames = GetHostNamesByBatch();
         //hostNames?.Remove(recordKey);
@@ -58,9 +60,11 @@ public sealed class HostByBatchCruder : Cruder
         repo.RemoveHostNamesByBatch(_batch, uri.Scheme, uri.Host);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
+    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         //SupportToolsParameters parameters = (SupportToolsParameters)ParametersManager?.Parameters;
         //Dictionary<string, ProjectModel> projects = parameters?.Projects;
@@ -75,5 +79,6 @@ public sealed class HostByBatchCruder : Cruder
         var uri = new Uri(recordKey);
         repo.AddHostNamesByBatch(_batch, uri.Scheme, uri.Host);
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 }

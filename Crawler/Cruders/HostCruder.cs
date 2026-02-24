@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliParameters.Cruders;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
@@ -43,11 +45,12 @@ public sealed class HostCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
+    public override ValueTask UpdateRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         if (newRecord is not HostModel newHost)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         ICrawlerRepository repo = GetCrawlerRepository();
@@ -57,28 +60,32 @@ public sealed class HostCruder : Cruder
         repo.UpdateHost(host);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
+    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         if (newRecord is not HostModel newHost)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         ICrawlerRepository repo = GetCrawlerRepository();
         repo.CreateHost(newHost);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void RemoveRecordWithKey(string recordKey)
+    protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
         ICrawlerRepository repo = GetCrawlerRepository();
         HostModel host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
         repo.DeleteHost(host);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)

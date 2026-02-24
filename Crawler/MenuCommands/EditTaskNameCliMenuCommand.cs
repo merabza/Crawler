@@ -64,7 +64,8 @@ public sealed class EditTaskNameCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        await _parametersManager.Save(parameters, $" Task Renamed from {_taskName} To {newTaskName}");
+        await _parametersManager.Save(parameters, $" Task Renamed from {_taskName} To {newTaskName}", null,
+            cancellationToken);
 
         return true;
     }

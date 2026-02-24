@@ -46,7 +46,7 @@ public sealed class DeleteStartPointCliMenuCommand : CliMenuCommand
         }
 
         task.StartPoints.Remove(_startPoint);
-        await _parametersManager.Save(parameters, $"Start Point {_startPoint} deleted.");
+        await _parametersManager.Save(parameters, $"Start Point {_startPoint} deleted.", null, cancellationToken);
 
         return true;
     }

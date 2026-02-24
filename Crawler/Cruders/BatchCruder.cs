@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using AppCliTools.CliParameters.CliMenuCommands;
 using AppCliTools.CliParameters.Cruders;
@@ -58,11 +60,11 @@ public sealed class BatchCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
+    public override ValueTask UpdateRecordWithKey(string recordKey, ItemData newRecord, CancellationToken cancellationToken = default)
     {
         if (newRecord is not Batch newBatch)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         ICrawlerRepository repo = GetCrawlerRepository();
@@ -72,34 +74,39 @@ public sealed class BatchCruder : Cruder
         repo.UpdateBatch(batch);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
+    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord, CancellationToken cancellationToken = default)
     {
         if (newRecord is not Batch newBatch)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         ICrawlerRepository repo = GetCrawlerRepository();
         repo.CreateBatch(newBatch);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void RemoveRecordWithKey(string recordKey)
+
+    protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
         ICrawlerRepository repo = GetCrawlerRepository();
         Batch? batch = repo.GetBatchByName(recordKey);
         if (batch is null)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         repo.DeleteBatch(batch);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
+
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {

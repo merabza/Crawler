@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliParameters.Cruders;
 using AppCliTools.CliParameters.FieldEditors;
 using CrawlerDb.Models;
@@ -42,11 +44,12 @@ public sealed class SchemeCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override void UpdateRecordWithKey(string recordKey, ItemData newRecord)
+    public override ValueTask UpdateRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         if (newRecord is not SchemeModel newScheme)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         ICrawlerRepository repo = GetCrawlerRepository();
@@ -57,28 +60,32 @@ public sealed class SchemeCruder : Cruder
         repo.UpdateScheme(scheme);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
+    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         if (newRecord is not SchemeModel newScheme)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         ICrawlerRepository repo = GetCrawlerRepository();
         repo.CreateScheme(newScheme);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
-    protected override void RemoveRecordWithKey(string recordKey)
+    protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
         ICrawlerRepository repo = GetCrawlerRepository();
         SchemeModel scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
         repo.DeleteScheme(scheme);
 
         repo.SaveChanges();
+        return ValueTask.CompletedTask;
     }
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)

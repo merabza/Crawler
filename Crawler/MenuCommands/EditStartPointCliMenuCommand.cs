@@ -80,7 +80,8 @@ public sealed class EditStartPointCliMenuCommand : CliMenuCommand
             return false;
         }
 
-        await _parametersManager.Save(parameters, $" Start Point Changed from {_startPoint} To {newStartPoint}");
+        await _parametersManager.Save(parameters, $" Start Point Changed from {_startPoint} To {newStartPoint}", null,
+            cancellationToken);
 
         return true;
     }

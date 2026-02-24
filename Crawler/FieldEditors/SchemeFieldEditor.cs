@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliParameters.FieldEditors;
 using Crawler.Cruders;
 using LibCrawlerRepositories;
@@ -16,12 +18,14 @@ public sealed class SchemeFieldEditor : FieldEditor<string>
         _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
+    public override async ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         var schemeCruder = new SchemeCruder(_crawlerRepositoryCreatorFactory);
         List<string> keys = schemeCruder.GetKeys();
         string? def = keys.Count > 1 ? null : schemeCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,
-            schemeCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate, def), null, true));
+            await schemeCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate, def), null, true,
+                cancellationToken));
     }
 }
