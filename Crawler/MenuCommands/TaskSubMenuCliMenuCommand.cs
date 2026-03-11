@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using AppCliTools.CliMenu;
+using AppCliTools.CliMenu.CliMenuCommands;
 using AppCliTools.CliParameters.CliMenuCommands;
 using AppCliTools.LibDataInput;
 using DoCrawler.Models;
