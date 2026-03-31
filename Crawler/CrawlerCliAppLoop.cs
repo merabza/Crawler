@@ -175,13 +175,13 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                         return false;
                     }
 
-                    OneOf<DbAuthSettingsBase, Err[]> dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
+                    OneOf<DbAuthSettingsBase, Error[]> dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
                         databaseServerConnectionData.WindowsNtIntegratedSecurity,
                         databaseServerConnectionData.ServerUser, databaseServerConnectionData.ServerPass, true);
 
                     if (dbAuthSettingsCreateResult.IsT1)
                     {
-                        Err.PrintErrorsOnConsole(dbAuthSettingsCreateResult.AsT1);
+                        Error.PrintErrorsOnConsole(dbAuthSettingsCreateResult.AsT1);
                         return false;
                     }
 
@@ -196,13 +196,13 @@ public sealed class CrawlerCliAppLoop : CliAppLoop
                         return false;
                     }
 
-                    Option<Err[]> testConnectionResult = dc.TestConnection(true, token).Result;
+                    Option<Error[]> testConnectionResult = dc.TestConnection(true, token).Result;
                     if (testConnectionResult.IsNone)
                     {
                         return true;
                     }
 
-                    Err.PrintErrorsOnConsole((Err[])testConnectionResult);
+                    Error.PrintErrorsOnConsole((Error[])testConnectionResult);
 
                     Console.WriteLine("Database test connection failed");
                     break;

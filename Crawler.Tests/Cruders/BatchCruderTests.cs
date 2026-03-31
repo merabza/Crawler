@@ -281,7 +281,7 @@ public sealed class BatchCruderTests
     // Helper method to invoke protected methods using reflection
     private static T? InvokeProtectedMethod<T>(object obj, string methodName, params object?[] parameters)
     {
-        var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+        MethodInfo? method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
 
         return method is null
             ? throw new InvalidOperationException($"Method '{methodName}' not found")
@@ -290,8 +290,8 @@ public sealed class BatchCruderTests
 
     private static void InvokeProtectedMethod(object obj, string methodName, params object?[] parameters)
     {
-        var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance) ??
-                     throw new InvalidOperationException($"Method '{methodName}' not found");
+        MethodInfo method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance) ??
+                            throw new InvalidOperationException($"Method '{methodName}' not found");
 
         method.Invoke(obj, parameters);
     }

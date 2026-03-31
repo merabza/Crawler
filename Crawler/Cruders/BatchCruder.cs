@@ -60,7 +60,8 @@ public sealed class BatchCruder : Cruder
         return dict.ContainsKey(recordKey);
     }
 
-    public override ValueTask UpdateRecordWithKey(string recordKey, ItemData newRecord, CancellationToken cancellationToken = default)
+    public override ValueTask UpdateRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         if (newRecord is not Batch newBatch)
         {
@@ -77,7 +78,8 @@ public sealed class BatchCruder : Cruder
         return ValueTask.CompletedTask;
     }
 
-    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord, CancellationToken cancellationToken = default)
+    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         if (newRecord is not Batch newBatch)
         {
@@ -90,7 +92,6 @@ public sealed class BatchCruder : Cruder
         repo.SaveChanges();
         return ValueTask.CompletedTask;
     }
-
 
     protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
@@ -106,7 +107,6 @@ public sealed class BatchCruder : Cruder
         repo.SaveChanges();
         return ValueTask.CompletedTask;
     }
-
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
