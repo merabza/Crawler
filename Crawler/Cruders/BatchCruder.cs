@@ -20,32 +20,34 @@ namespace Crawler.Cruders;
 public sealed class BatchCruder : Cruder
 {
     private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
 
     public BatchCruder(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par) : base("Batch",
+        CrawlerParameters par, ICrawlerRepository crawlerRepository, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) : base("Batch",
         "Batches")
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _par = par;
+        _crawlerRepository = crawlerRepository;
+        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
 
         FieldEditors.Add(new BoolFieldEditor(nameof(Batch.IsOpen)));
         FieldEditors.Add(new BoolFieldEditor(nameof(Batch.AutoCreateNextPart)));
     }
 
-    private ICrawlerRepository GetCrawlerRepository()
-    {
-        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-    }
+    //private ICrawlerRepository GetCrawlerRepository()
+    //{
+    //    return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+    //}
 
     private List<Batch> GetBatches()
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        return repo.GetBatchesList();
+        //ICrawlerRepository repo = GetCrawlerRepository();
+        return _crawlerRepository.GetBatchesList();
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
@@ -68,13 +70,13 @@ public sealed class BatchCruder : Cruder
             return ValueTask.CompletedTask;
         }
 
-        ICrawlerRepository repo = GetCrawlerRepository();
+        //ICrawlerRepository repo = GetCrawlerRepository();
 
-        Batch batch = repo.GetBatchByName(recordKey) ?? throw new Exception("batch is null");
+        Batch batch = _crawlerRepository.GetBatchByName(recordKey) ?? throw new Exception("batch is null");
         batch.BatchName = newBatch.BatchName;
-        repo.UpdateBatch(batch);
+        _crawlerRepository.UpdateBatch(batch);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
@@ -86,25 +88,25 @@ public sealed class BatchCruder : Cruder
             return ValueTask.CompletedTask;
         }
 
-        ICrawlerRepository repo = GetCrawlerRepository();
-        repo.CreateBatch(newBatch);
+        //ICrawlerRepository repo = GetCrawlerRepository();
+        _crawlerRepository.CreateBatch(newBatch);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
     protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        Batch? batch = repo.GetBatchByName(recordKey);
+        //ICrawlerRepository repo = GetCrawlerRepository();
+        Batch? batch = _crawlerRepository.GetBatchByName(recordKey);
         if (batch is null)
         {
             return ValueTask.CompletedTask;
         }
 
-        repo.DeleteBatch(batch);
+        _crawlerRepository.DeleteBatch(batch);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 

@@ -1,70 +1,70 @@
-﻿using System;
-using System.Net.Http;
-using AppCliTools.CliParametersDataEdit;
-using CrawlerDb;
-using DoCrawler;
-using DoCrawler.Models;
-using LibCrawlerRepositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using ParametersManagement.LibDatabaseParameters;
-using SystemTools.SystemToolsShared;
+﻿//using System;
+//using System.Net.Http;
+//using AppCliTools.CliParametersDataEdit;
+//using CrawlerDb;
+//using DoCrawler;
+//using DoCrawler.Models;
+//using LibCrawlerRepositories;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.DependencyInjection;
+//using ParametersManagement.LibDatabaseParameters;
+//using SystemTools.SystemToolsShared;
 
-namespace Crawler;
+//namespace Crawler;
 
-public sealed class CrawlerServicesCreator : ServicesCreator
-{
-    private readonly CrawlerParameters _par;
+//public sealed class CrawlerServicesCreator : ServicesCreator
+//{
+//    private readonly CrawlerParameters _par;
 
-    // ReSharper disable once ConvertToPrimaryConstructor
-    public CrawlerServicesCreator(CrawlerParameters par) : base(par.LogFolder, null, "Crawler")
-    {
-        _par = par;
-    }
+//    // ReSharper disable once ConvertToPrimaryConstructor
+//    public CrawlerServicesCreator(CrawlerParameters par) : base(par.LogFolder, null, "Crawler")
+//    {
+//        _par = par;
+//    }
 
-    protected override void ConfigureServices(IServiceCollection services)
-    {
-        base.ConfigureServices(services);
+//    protected override void ConfigureServices(IServiceCollection services)
+//    {
+//        base.ConfigureServices(services);
 
-        var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
+//        var databaseServerConnections = new DatabaseServerConnections(_par.DatabaseServerConnections);
 
-        (EDatabaseProvider? dataProvider, string? connectionString, int commandTimeout) =
-            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(_par.DatabaseParameters,
-                databaseServerConnections);
+//        (EDatabaseProvider? dataProvider, string? connectionString, int commandTimeout) =
+//            DbConnectionFactory.GetDataProviderConnectionStringCommandTimeOut(_par.DatabaseParameters,
+//                databaseServerConnections);
 
-        if (!string.IsNullOrEmpty(connectionString))
-        {
-            AddContextByProvider(services, dataProvider, connectionString, commandTimeout);
-        }
+//        if (!string.IsNullOrEmpty(connectionString))
+//        {
+//            AddContextByProvider(services, dataProvider, connectionString, commandTimeout);
+//        }
 
-        services.AddScoped<ICrawlerRepository, CrawlerRepository>();
-        services.AddSingleton<ICrawlerRepositoryCreatorFactory, CrawlerRepositoryCreatorFactory>();
-        services.AddHttpClient(BatchPartRunner.CrawlerClient)
-            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
-    }
+//        services.AddScoped<ICrawlerRepository, CrawlerRepository>();
+//        services.AddSingleton<ICrawlerRepositoryCreatorFactory, CrawlerRepositoryCreatorFactory>();
+//        services.AddHttpClient(BatchPartRunner.CrawlerClient)
+//            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+//    }
 
-    private static void AddContextByProvider(IServiceCollection services, EDatabaseProvider? dataProvider,
-        string connectionString, int commandTimeout)
-    {
-        switch (dataProvider)
-        {
-            case EDatabaseProvider.SqlServer:
-                services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    if (commandTimeout > -1)
-                    {
-                        sqlOptions.CommandTimeout(commandTimeout);
-                    }
-                }));
-                break;
-            case EDatabaseProvider.None:
-            case EDatabaseProvider.SqLite:
-            case EDatabaseProvider.OleDb:
-            case EDatabaseProvider.WebAgent:
-            case null:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(dataProvider));
-        }
-    }
-}
+//    private static void AddContextByProvider(IServiceCollection services, EDatabaseProvider? dataProvider,
+//        string connectionString, int commandTimeout)
+//    {
+//        switch (dataProvider)
+//        {
+//            case EDatabaseProvider.SqlServer:
+//                services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString, sqlOptions =>
+//                {
+//                    if (commandTimeout > -1)
+//                    {
+//                        sqlOptions.CommandTimeout(commandTimeout);
+//                    }
+//                }));
+//                break;
+//            case EDatabaseProvider.None:
+//            case EDatabaseProvider.SqLite:
+//            case EDatabaseProvider.OleDb:
+//            case EDatabaseProvider.WebAgent:
+//            case null:
+//                break;
+//            default:
+//                throw new ArgumentOutOfRangeException(nameof(dataProvider));
+//        }
+//    }
+//}

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AppCliTools.CliParameters.Cruders;
+using AppCliTools.CliParameters.FieldEditors;
 using CrawlerDb.Models;
 using LibCrawlerRepositories;
 using SystemTools.SystemToolsShared;
@@ -13,24 +14,26 @@ namespace Crawler.Cruders;
 
 public sealed class HostCruder : Cruder
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
+    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public HostCruder(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) : base("Host", "Hosts")
+    public HostCruder(ICrawlerRepository crawlerRepository) : base("Host", "Hosts")
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
-        //FieldEditors.Add(new TextFieldEditor(nameof(HostModel.HostName)));
+        //_crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
+        _crawlerRepository = crawlerRepository;
+        FieldEditors.Add(new TextFieldEditor(nameof(HostModel.HostName)));
     }
 
-    private ICrawlerRepository GetCrawlerRepository()
-    {
-        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-    }
+    //private ICrawlerRepository GetCrawlerRepository()
+    //{
+    //    return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+    //}
 
     private List<HostModel> GetHosts()
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        return repo.GetHostsList();
+        //ICrawlerRepository repo = GetCrawlerRepository();
+        return _crawlerRepository.GetHostsList();
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
@@ -53,13 +56,13 @@ public sealed class HostCruder : Cruder
             return ValueTask.CompletedTask;
         }
 
-        ICrawlerRepository repo = GetCrawlerRepository();
+        //ICrawlerRepository repo = GetCrawlerRepository();
 
-        HostModel host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
+        HostModel host = _crawlerRepository.GetHostByName(recordKey) ?? throw new Exception("host is null");
         host.HostName = newHost.HostName;
-        repo.UpdateHost(host);
+        _crawlerRepository.UpdateHost(host);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
@@ -71,20 +74,20 @@ public sealed class HostCruder : Cruder
             return ValueTask.CompletedTask;
         }
 
-        ICrawlerRepository repo = GetCrawlerRepository();
-        repo.CreateHost(newHost);
+        //ICrawlerRepository repo = GetCrawlerRepository();
+        _crawlerRepository.CreateHost(newHost);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
     protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        HostModel host = repo.GetHostByName(recordKey) ?? throw new Exception("host is null");
-        repo.DeleteHost(host);
+        //ICrawlerRepository repo = GetCrawlerRepository();
+        HostModel host = _crawlerRepository.GetHostByName(recordKey) ?? throw new Exception("host is null");
+        _crawlerRepository.DeleteHost(host);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 

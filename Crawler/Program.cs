@@ -1,13 +1,12 @@
 using System;
-using System.Net.Http;
+using System.Runtime.CompilerServices;
 using AppCliTools.CliParameters;
+using AppCliTools.CliTools;
 using Crawler;
 using DoCrawler.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ParametersManagement.LibParameters;
 using Serilog;
-using Serilog.Events;
 using SystemTools.SystemToolsShared;
 
 ILogger<Program>? logger = null;
@@ -16,56 +15,40 @@ try
     Console.WriteLine("Loading...");
 
     const string appName = "Crawler";
+    var argParser = new ArgumentsParser<CrawlerParameters>(args, appName);
 
-    //პროგრამის ატრიბუტების დაყენება 
-    ProgramAttributes.Instance.AppName = appName;
-
-    var argParser = new ArgumentsParser<CrawlerParameters>(args, appName, null);
-    if (argParser.Analysis() != EParseResult.Ok)
+    switch (argParser.Analysis())
     {
-        return 1;
+        case EParseResult.Ok:
+            break;
+        case EParseResult.Usage:
+            return 1;
+        case EParseResult.Error:
+            return 2;
+        default:
+            throw new SwitchExpressionException();
     }
 
-    var par = (CrawlerParameters?)argParser.Par;
-    if (par is null)
-    {
-        StShared.WriteErrorLine("CrawlerParameters is null", true);
-        return 3;
-    }
+    var serviceCollection = new ServiceCollection();
 
-    string? parametersFileName = argParser.ParametersFileName;
-    var servicesCreator = new CrawlerServicesCreator(par);
     // ReSharper disable once using
-    await using ServiceProvider? serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Error);
+    await using ServiceProvider serviceProvider = serviceCollection
+        .AddServices(appName, argParser.Par!, argParser.ParametersFileName!).BuildServiceProvider();
 
-    if (serviceProvider == null)
+    (CliAppLoopParameters? cliLoopPar, logger) = CliAppLoopParameters.Create<Program>(serviceProvider);
+    if (cliLoopPar is null)
     {
-        Console.WriteLine("Logger not created");
-        return 8;
-    }
-
-    logger = serviceProvider.GetService<ILogger<Program>>();
-    if (logger is null)
-    {
-        StShared.WriteErrorLine("logger is null", true);
         return 3;
     }
 
-    var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-    if (httpClientFactory is null)
-    {
-        StShared.WriteErrorLine("httpClientFactory is null", true);
-        return 5;
-    }
+    var cliAppLoop = new CliAppLoop(cliLoopPar);
 
-    var crawler = new CrawlerCliAppLoop(logger, httpClientFactory, new ParametersManager(parametersFileName, par),
-        serviceProvider);
-    return await crawler.Run() ? 0 : 1;
+    return await cliAppLoop.Run() ? 0 : 100;
 }
 catch (Exception e)
 {
     StShared.WriteException(e, true, logger);
-    return 7;
+    return 4;
 }
 finally
 {
