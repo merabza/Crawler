@@ -16,7 +16,7 @@ namespace DoCrawler.ToolActions;
 
 public /*open*/ class CrawlerToolAction : ToolAction
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly string? _taskName;
@@ -25,16 +25,16 @@ public /*open*/ class CrawlerToolAction : ToolAction
     protected readonly TaskModel? Task;
 
     protected CrawlerToolAction(ILogger logger, CrawlerParameters par, string taskName, TaskModel? task,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, IHttpClientFactory httpClientFactory,
+        ICrawlerRepository crawlerRepository, IHttpClientFactory httpClientFactory,
         ParseOnePageParameters parseOnePageParameters) : base(logger, taskName, null, null, true)
     {
         CrLogger = logger;
         Par = par;
         _taskName = taskName;
         Task = task;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _httpClientFactory = httpClientFactory;
         _parseOnePageParameters = parseOnePageParameters;
+        _crawlerRepository = crawlerRepository;
     }
 
     protected BatchPartRunner? CreateBatchPartRunner(BatchPart? batchPart, Batch batch)
@@ -53,14 +53,13 @@ public /*open*/ class CrawlerToolAction : ToolAction
 
         if (createNewPart)
         {
-            ICrawlerRepository crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-            batchPart = crawlerRepository.TryCreateNewPart(batch.BatchId);
-            crawlerRepository.SaveChanges();
+            batchPart = _crawlerRepository.TryCreateNewPart(batch.BatchId);
+            _crawlerRepository.SaveChanges();
         }
 
         if (batchPart is not null)
         {
-            batchPartRunner = new BatchPartRunner(CrLogger, _httpClientFactory, _crawlerRepositoryCreatorFactory, Par,
+            batchPartRunner = new BatchPartRunner(CrLogger, _httpClientFactory, _crawlerRepository, Par,
                 _parseOnePageParameters, batchPart);
         }
 
@@ -129,8 +128,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
                Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?", true, false);
     }
 
-    protected (Batch?, BatchPart?) PrepareBatchPart(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory,
-        Batch? startBatch = null)
+    protected (Batch?, BatchPart?) PrepareBatchPart(Batch? startBatch = null)
     {
         var par = ParseOnePageParameters.Create(Par);
         if (par is null)
@@ -139,12 +137,11 @@ public /*open*/ class CrawlerToolAction : ToolAction
             return (null, null);
         }
 
-        ICrawlerRepository repository = crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-        Batch? batch = startBatch ?? GetBatchByTaskName(repository);
+        Batch? batch = startBatch ?? GetBatchByTaskName(_crawlerRepository);
 
         if (batch is not null)
         {
-            return (batch, repository.GetOpenedBatchPart(batch.BatchId));
+            return (batch, _crawlerRepository.GetOpenedBatchPart(batch.BatchId));
         }
 
         StShared.WriteErrorLine("batch is null", true);

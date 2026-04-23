@@ -10,18 +10,17 @@ namespace Crawler.FieldEditors;
 
 public sealed class SchemeFieldEditor : FieldEditor<string>
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
 
-    public SchemeFieldEditor(string propertyName, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) :
-        base(propertyName)
+    public SchemeFieldEditor(string propertyName, ICrawlerRepository crawlerRepository) : base(propertyName)
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
+        _crawlerRepository = crawlerRepository;
     }
 
     public override async ValueTask UpdateField(string? recordKey, object recordForUpdate,
         CancellationToken cancellationToken = default)
     {
-        var schemeCruder = new SchemeCruder(_crawlerRepositoryCreatorFactory);
+        var schemeCruder = new SchemeCruder(_crawlerRepository);
         List<string> keys = schemeCruder.GetKeys();
         string? def = keys.Count > 1 ? null : schemeCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,

@@ -12,30 +12,29 @@ namespace DoCrawler.ToolActions;
 public sealed class CrawlerRunnerToolAction : CrawlerToolAction
 {
     private readonly Batch? _batch;
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+
+    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
 
     public CrawlerRunnerToolAction(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel? task, Batch? batch) : base(logger,
-        par, taskName, task, crawlerRepositoryCreatorFactory, httpClientFactory, parseOnePageParameters)
+        ICrawlerRepository crawlerRepository, CrawlerParameters par, ParseOnePageParameters parseOnePageParameters,
+        string taskName, TaskModel? task, Batch? batch) : base(logger, par, taskName, task, crawlerRepository,
+        httpClientFactory, parseOnePageParameters)
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _batch = batch;
     }
 
     public CrawlerRunnerToolAction(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, string taskName, Batch? batch) : base(logger, par, taskName,
-        null, crawlerRepositoryCreatorFactory, httpClientFactory, parseOnePageParameters)
+        ICrawlerRepository crawlerRepository, CrawlerParameters par, ParseOnePageParameters parseOnePageParameters,
+        string taskName, Batch? batch) : base(logger, par, taskName, null, crawlerRepository, httpClientFactory,
+        parseOnePageParameters)
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _batch = batch;
     }
 
     protected override async ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         //1. start
-        (Batch? batch, BatchPart? batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory, _batch);
+        (Batch? batch, BatchPart? batchPart) = PrepareBatchPart(_batch);
 
         if (batch is null)
         {

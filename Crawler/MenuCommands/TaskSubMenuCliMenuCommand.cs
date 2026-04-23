@@ -13,20 +13,21 @@ namespace Crawler.MenuCommands;
 
 public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public TaskSubMenuCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ParametersManager parametersManager, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory,
-        string taskName) : base(taskName, EMenuAction.LoadSubMenu)
+        ParametersManager parametersManager, ICrawlerRepository crawlerRepository, string taskName) : base(taskName,
+        EMenuAction.LoadSubMenu)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
+        _crawlerRepository = crawlerRepository;
     }
 
     public override CliMenuSet GetSubMenu()
@@ -38,11 +39,11 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
 
         taskSubMenuSet.AddMenuItem(new EditTaskNameCliMenuCommand(_parametersManager, Name));
 
-        taskSubMenuSet.AddMenuItem(new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepositoryCreatorFactory,
+        taskSubMenuSet.AddMenuItem(new TaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepository,
             _parametersManager, Name));
 
-        taskSubMenuSet.AddMenuItem(new TestOnePageCliMenuCommand(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFactory, _parametersManager, Name));
+        taskSubMenuSet.AddMenuItem(new TestOnePageCliMenuCommand(_logger, _httpClientFactory, _crawlerRepository,
+            _parametersManager, Name));
 
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 

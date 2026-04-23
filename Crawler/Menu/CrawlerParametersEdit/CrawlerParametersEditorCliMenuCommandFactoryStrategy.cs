@@ -31,8 +31,8 @@ public class CrawlerParametersEditorCliMenuCommandFactoryStrategy : IMenuCommand
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var supportToolsParametersEditor = new CrawlerParametersEditor(_application.AppName, parameters, _parametersManager,
-            _logger, _httpClientFactory);
+        var supportToolsParametersEditor = new CrawlerParametersEditor(_application.AppName, parameters,
+            _parametersManager, _logger, _httpClientFactory);
         return new ParametersEditorListCliMenuCommand(supportToolsParametersEditor);
     }
 }

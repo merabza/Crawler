@@ -14,7 +14,9 @@ namespace Crawler.MenuCommands;
 
 public sealed class TaskCliMenuCommand : CliMenuCommand
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
+
+    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
@@ -22,14 +24,14 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public TaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, IParametersManager parametersManager,
-        string taskName) : base("Run this task", EMenuAction.Reload)
+        ICrawlerRepository crawlerRepository, IParametersManager parametersManager, string taskName) : base(
+        "Run this task", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _parametersManager = parametersManager;
         _taskName = taskName;
+        _crawlerRepository = crawlerRepository;
     }
 
     protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
@@ -51,8 +53,8 @@ public sealed class TaskCliMenuCommand : CliMenuCommand
             return ValueTask.FromResult(false);
         }
 
-        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFactory, parameters, par, _taskName, task, null);
+        var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory, _crawlerRepository,
+            parameters, par, _taskName, task, null);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
         return ValueTask.FromResult(crawlerRunner.Run());

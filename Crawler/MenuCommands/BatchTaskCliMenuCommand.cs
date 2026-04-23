@@ -15,7 +15,7 @@ namespace Crawler.MenuCommands;
 public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 {
     private readonly Batch _batch;
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly ILogger _logger;
@@ -23,14 +23,14 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchTaskCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par, Batch batch) : base(
-        "Run this batch", EMenuAction.Reload)
+        ICrawlerRepository crawlerRepository, CrawlerParameters par, Batch batch) : base("Run this batch",
+        EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _par = par;
         _batch = batch;
+        _crawlerRepository = crawlerRepository;
     }
 
     protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
@@ -43,7 +43,7 @@ public sealed class BatchTaskCliMenuCommand : CliMenuCommand
         }
 
         var crawlerRunnerToolAction = new CrawlerRunnerToolAction(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFactory, _par, par, Name, _batch);
+            _crawlerRepository, _par, par, Name, _batch);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
         return ValueTask.FromResult(crawlerRunner.Run());

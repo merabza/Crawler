@@ -13,23 +13,17 @@ namespace Crawler.Cruders;
 
 public sealed class SchemeCruder : Cruder
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
 
-    public SchemeCruder(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) : base("Scheme", "Schemes")
+    public SchemeCruder(ICrawlerRepository crawlerRepository) : base("Scheme", "Schemes")
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
+        _crawlerRepository = crawlerRepository;
         FieldEditors.Add(new BoolFieldEditor(nameof(SchemeModel.SchProhibited)));
-    }
-
-    private ICrawlerRepository GetCrawlerRepository()
-    {
-        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
     }
 
     private List<SchemeModel> GetSchemes()
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        return repo.GetSchemesList();
+        return _crawlerRepository.GetSchemesList();
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
@@ -52,14 +46,12 @@ public sealed class SchemeCruder : Cruder
             return ValueTask.CompletedTask;
         }
 
-        ICrawlerRepository repo = GetCrawlerRepository();
-
-        SchemeModel scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
+        SchemeModel scheme = _crawlerRepository.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
 
         scheme.SchName = newScheme.SchName;
-        repo.UpdateScheme(scheme);
+        _crawlerRepository.UpdateScheme(scheme);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
@@ -71,20 +63,18 @@ public sealed class SchemeCruder : Cruder
             return ValueTask.CompletedTask;
         }
 
-        ICrawlerRepository repo = GetCrawlerRepository();
-        repo.CreateScheme(newScheme);
+        _crawlerRepository.CreateScheme(newScheme);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
     protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        SchemeModel scheme = repo.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
-        repo.DeleteScheme(scheme);
+        SchemeModel scheme = _crawlerRepository.GetSchemeByName(recordKey) ?? throw new Exception("scheme is null");
+        _crawlerRepository.DeleteScheme(scheme);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 

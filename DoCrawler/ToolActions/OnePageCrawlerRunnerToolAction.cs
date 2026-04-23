@@ -11,22 +11,20 @@ namespace DoCrawler.ToolActions;
 
 public sealed class OnePageCrawlerRunnerToolAction : CrawlerToolAction
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly string _strUrName;
 
     public OnePageCrawlerRunnerToolAction(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, string taskName, TaskModel? task, string strUrName) : base(
-        logger, par, taskName, task, crawlerRepositoryCreatorFactory, httpClientFactory, parseOnePageParameters)
+        ICrawlerRepository crawlerRepository, CrawlerParameters par, ParseOnePageParameters parseOnePageParameters,
+        string taskName, TaskModel? task, string strUrName) : base(logger, par, taskName, task, crawlerRepository,
+        httpClientFactory, parseOnePageParameters)
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _strUrName = strUrName;
     }
 
     protected override async ValueTask<bool> RunAction(CancellationToken cancellationToken = default)
     {
         //1. start
-        (Batch? batch, BatchPart? batchPart) = PrepareBatchPart(_crawlerRepositoryCreatorFactory);
+        (Batch? batch, BatchPart? batchPart) = PrepareBatchPart();
 
         if (batch is null)
         {

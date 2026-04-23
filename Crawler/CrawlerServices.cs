@@ -6,6 +6,7 @@ using AppCliTools.CliTools.App;
 using AppCliTools.CliTools.DependencyInjection;
 using AppCliTools.CliTools.Services.MenuBuilder;
 using Crawler.Menu.CrawlerParametersEdit;
+using Crawler.Menu.Tasks;
 using CrawlerDb;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
@@ -43,8 +44,8 @@ public static class CrawlerServices
 
             //.AddMemoryCache()
             //.AddSingleton<MenuParameters>()
-            //.AddTransientAllStrategies<IMenuCommandListFactoryStrategy>(
-            //    typeof(ProjectGroupsListFactoryStrategy).Assembly)
+            .AddTransientAllStrategies<IMenuCommandListFactoryStrategy>(
+                typeof(TasksListFactoryStrategy).Assembly)
             //.AddSingleton<IProcesses, Processes>()
             .AddSingleton<IMenuBuilder, CrawlerMenuBuilder>()
             .AddTransientAllStrategies<IMenuCommandFactoryStrategy>(

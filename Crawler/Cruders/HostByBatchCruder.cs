@@ -14,25 +14,20 @@ namespace Crawler.Cruders;
 public sealed class HostByBatchCruder : Cruder
 {
     private readonly Batch _batch;
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+
+    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public HostByBatchCruder(ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, Batch batch) : base(
-        "Host Name", "Host Names")
+    public HostByBatchCruder(ICrawlerRepository crawlerRepository, Batch batch) : base("Host Name", "Host Names")
     {
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _batch = batch;
-    }
-
-    private ICrawlerRepository GetCrawlerRepository()
-    {
-        return _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+        _crawlerRepository = crawlerRepository;
     }
 
     public List<string> GetHostNamesByBatch()
     {
-        ICrawlerRepository repo = GetCrawlerRepository();
-        return repo.GetHostStartUrlNamesByBatch(_batch);
+        return _crawlerRepository.GetHostStartUrlNamesByBatch(_batch);
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
@@ -55,11 +50,10 @@ public sealed class HostByBatchCruder : Cruder
     {
         //List<string> hostNames = GetHostNamesByBatch();
         //hostNames?.Remove(recordKey);
-        ICrawlerRepository repo = GetCrawlerRepository();
         var uri = new Uri(recordKey);
-        repo.RemoveHostNamesByBatch(_batch, uri.Scheme, uri.Host);
+        _crawlerRepository.RemoveHostNamesByBatch(_batch, uri.Scheme, uri.Host);
 
-        repo.SaveChanges();
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 
@@ -75,10 +69,9 @@ public sealed class HostByBatchCruder : Cruder
         //project.RedundantFileNames ??= new List<string>();
         //project.RedundantFileNames.Add(recordKey);
 
-        ICrawlerRepository repo = GetCrawlerRepository();
         var uri = new Uri(recordKey);
-        repo.AddHostNamesByBatch(_batch, uri.Scheme, uri.Host);
-        repo.SaveChanges();
+        _crawlerRepository.AddHostNamesByBatch(_batch, uri.Scheme, uri.Host);
+        _crawlerRepository.SaveChanges();
         return ValueTask.CompletedTask;
     }
 }

@@ -31,7 +31,7 @@ public sealed class BatchPartRunner
 
     private readonly BatchPart _batchPart;
     private readonly ConsoleFormatter _consoleFormatter = new();
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
@@ -42,42 +42,39 @@ public sealed class BatchPartRunner
     //private readonly UrlGraphDeDuplicator _urlGraphDeDuplicator;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, CrawlerParameters par,
-        ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
+    public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository crawlerRepository,
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _par = par;
         _parseOnePageParameters = parseOnePageParameters;
         _batchPart = batchPart;
+        _crawlerRepository = crawlerRepository;
         //_urlGraphDeDuplicator = new UrlGraphDeDuplicator(repository);
     }
 
     public void InitBachPart(List<string> startPoints, Batch batch)
     {
-        ICrawlerRepository crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
-
         //_urlGraphNodes.Clear();
-        List<string> hostsByBatches = crawlerRepository.GetHostStartUrlNamesByBatch(batch);
+        List<string> hostsByBatches = _crawlerRepository.GetHostStartUrlNamesByBatch(batch);
         foreach (string hostName in hostsByBatches)
         {
             //შევამოწმოთ და თუ არ არსებობს შევქმნათ შემდეგი 2 ჩანაწერი მოსაქაჩი გვერდების სიაში:
             //1. {_hostName}
             //2. {_hostName}robots.txt
-            TrySaveUrl(crawlerRepository, $"{hostName}/", 0, _batchPart.BpId);
-            TrySaveUrl(crawlerRepository, $"{hostName}/robots.txt", 0, _batchPart.BpId);
+            TrySaveUrl(_crawlerRepository, $"{hostName}/", 0, _batchPart.BpId);
+            TrySaveUrl(_crawlerRepository, $"{hostName}/robots.txt", 0, _batchPart.BpId);
         }
 
         foreach (Uri? uri in startPoints.Select(UriFactory.GetUri).Where(x => x is not null))
         {
-            TrySaveUrl(crawlerRepository, uri!.AbsoluteUri, 0, _batchPart.BpId);
+            TrySaveUrl(_crawlerRepository, uri!.AbsoluteUri, 0, _batchPart.BpId);
         }
 
         //_urlGraphDeDuplicator.CopyToRepository();
 
-        SaveChangesAndReduceCache(crawlerRepository);
+        SaveChangesAndReduceCache(_crawlerRepository);
 
         //რაც არსებობს ამ პარტიის ფარგლებში ყველა Url დაკოპირდეს ახლად შექმნის ნაწილში.
         //ეს საშუალებას მოგვცემს დავადგინოთ საიტზე რომელიმე გვერდი მოკვდა თუ არა.
@@ -90,10 +87,9 @@ public sealed class BatchPartRunner
         //აქედან უნდა დავიწყოთ პორციების ჩატვირთვის ციკლი
         while (true)
         {
-            ICrawlerRepository crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
             _procData = new ProcData();
 
-            List<UrlModel> loadedUrls = LoadUrls(crawlerRepository, _batchPart);
+            List<UrlModel> loadedUrls = LoadUrls(_crawlerRepository, _batchPart);
 
             if (loadedUrls.Count == 0)
             {
@@ -105,15 +101,14 @@ public sealed class BatchPartRunner
             int analyzedCount = 0;
             foreach (UrlModel urlModel in loadedUrls)
             {
-                await ProcessPage(crawlerRepository, urlModel, _batchPart, token);
+                await ProcessPage(_crawlerRepository, urlModel, _batchPart, token);
                 analyzedCount++;
-                if (!_procData.NeedsToReduceCache() && !crawlerRepository.NeedSaveChanges())
+                if (!_procData.NeedsToReduceCache() && !_crawlerRepository.NeedSaveChanges())
                 {
                     continue;
                 }
 
-                SaveChangesAndReduceCache(crawlerRepository);
-                crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
+                SaveChangesAndReduceCache(_crawlerRepository);
                 _procData = new ProcData();
 
                 StShared.ConsoleWriteInformationLine(_logger, true,
@@ -122,7 +117,7 @@ public sealed class BatchPartRunner
                 _consoleFormatter.UseCurrentLine();
             }
 
-            SaveChangesAndReduceCache(crawlerRepository);
+            SaveChangesAndReduceCache(_crawlerRepository);
         }
     }
 
@@ -939,10 +934,9 @@ public sealed class BatchPartRunner
 
     public async ValueTask<bool> DoOnePage(string strUrName, CancellationToken token = default)
     {
-        ICrawlerRepository crawlerRepository = _crawlerRepositoryCreatorFactory.GetCrawlerRepository();
         _procData = new ProcData();
 
-        UrlData? urlData = GetUrlData(crawlerRepository, strUrName);
+        UrlData? urlData = GetUrlData(_crawlerRepository, strUrName);
         if (urlData == null)
         {
             StShared.WriteErrorLine($"Cannot prepare data for uri {strUrName}", true);
@@ -950,7 +944,7 @@ public sealed class BatchPartRunner
         }
 
         ContentAnalysis? contentAnalysis = urlData.Url is not null
-            ? crawlerRepository.GetContentAnalysis(_batchPart.BpId, urlData.Url.UrlId)
+            ? _crawlerRepository.GetContentAnalysis(_batchPart.BpId, urlData.Url.UrlId)
             : null;
         if (contentAnalysis != null)
         {
@@ -961,10 +955,10 @@ public sealed class BatchPartRunner
                 return false;
             }
 
-            crawlerRepository.DeleteContentAnalysis(contentAnalysis);
+            _crawlerRepository.DeleteContentAnalysis(contentAnalysis);
         }
 
-        await SaveUrlAndProcessOnePage(crawlerRepository, urlData.CheckedUrName, token: token);
+        await SaveUrlAndProcessOnePage(_crawlerRepository, urlData.CheckedUrName, token: token);
 
         return true;
     }

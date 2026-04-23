@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using Crawler.Menu.Batches;
 using Crawler.Menu.CrawlerParametersEdit;
 using Crawler.Menu.Hosts;
+using Crawler.Menu.Schemes;
+using Crawler.Menu.Tasks;
 
 namespace Crawler.Menu;
 
@@ -11,7 +14,15 @@ public static class MenuData
         //ძირითადი პარამეტრების რედაქტირება
         nameof(CrawlerParametersEditorCliMenuCommandFactoryStrategy),
         //ჰოსტების რედაქტორი
-        nameof(HostListCliMenuCommandFactoryStrategy)
+        nameof(HostListCliMenuCommandFactoryStrategy),
+        //სქემების რედაქტორი
+        nameof(SchemeListCliMenuCommandFactoryStrategy),
+        //პაკეტების რედაქტორი
+        nameof(BatchListCliMenuCommandFactoryStrategy),
+        //ახალი ამოცანის შექმნა
+        nameof(NewTaskCliMenuCommandFactoryStrategy),
+        //ამოცანების ჩამონათვალი
+        nameof(TasksListFactoryStrategy)
         ////სერვერის პარამეტრების რედაქტირება
         //nameof(SupportToolsServerEditorListCliMenuCommandFactoryStrategy),
         ////ახალი პროექტების შემქმნელი სუბმენიუ

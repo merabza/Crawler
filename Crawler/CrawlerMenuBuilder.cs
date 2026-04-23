@@ -8,7 +8,10 @@ using AppCliTools.CliParametersDataEdit;
 using AppCliTools.CliParametersDataEdit.Models;
 using AppCliTools.CliTools.Services.MenuBuilder;
 using Crawler.Menu;
+using Crawler.Menu.Batches;
 using Crawler.Menu.Hosts;
+using Crawler.Menu.Schemes;
+using Crawler.Menu.Tasks;
 using DatabaseTools.DbTools;
 using DatabaseTools.DbTools.Models;
 using DatabaseTools.DbToolsFactory;
@@ -47,6 +50,10 @@ public sealed class CrawlerMenuBuilder : IMenuBuilder
         if (!CheckConnection())
         {
             excludeList.Add(nameof(HostListCliMenuCommandFactoryStrategy));
+            excludeList.Add(nameof(SchemeListCliMenuCommandFactoryStrategy));
+            excludeList.Add(nameof(BatchListCliMenuCommandFactoryStrategy));
+            excludeList.Add(nameof(NewTaskCliMenuCommandFactoryStrategy));
+            excludeList.Add(nameof(TasksListFactoryStrategy));
         }
 
         //მთავარი მენიუს ჩატვირთვა

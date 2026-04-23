@@ -15,7 +15,8 @@ namespace Crawler.MenuCommands;
 
 public sealed class TestOnePageCliMenuCommand : CliMenuCommand
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
+    private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
@@ -23,14 +24,14 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public TestOnePageCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory, ParametersManager parametersManager,
-        string taskName) : base("Test One Page", EMenuAction.Reload)
+        ICrawlerRepository crawlerRepository, ParametersManager parametersManager, string taskName) : base(
+        "Test One Page", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
         _parametersManager = parametersManager;
         _taskName = taskName;
+        _crawlerRepository = crawlerRepository;
     }
 
     protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
@@ -58,7 +59,7 @@ public sealed class TestOnePageCliMenuCommand : CliMenuCommand
         }
 
         var crawlerRunnerToolAction = new OnePageCrawlerRunnerToolAction(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFactory, parameters, par, _taskName, task, strUrl);
+            _crawlerRepository, parameters, par, _taskName, task, strUrl);
 
         var crawlerRunner = new CrawlerRunner(crawlerRunnerToolAction, _logger);
         return ValueTask.FromResult(crawlerRunner.Run());

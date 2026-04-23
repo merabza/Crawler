@@ -19,21 +19,18 @@ namespace Crawler.Cruders;
 
 public sealed class BatchCruder : Cruder
 {
-    private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly CrawlerParameters _par;
 
-    public BatchCruder(ILogger logger, IHttpClientFactory httpClientFactory,
-        CrawlerParameters par, ICrawlerRepository crawlerRepository, ICrawlerRepositoryCreatorFactory crawlerRepositoryCreatorFactory) : base("Batch",
-        "Batches")
+    public BatchCruder(ILogger logger, IHttpClientFactory httpClientFactory, CrawlerParameters par,
+        ICrawlerRepository crawlerRepository) : base("Batch", "Batches")
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _par = par;
         _crawlerRepository = crawlerRepository;
-        _crawlerRepositoryCreatorFactory = crawlerRepositoryCreatorFactory;
 
         FieldEditors.Add(new BoolFieldEditor(nameof(Batch.IsOpen)));
         FieldEditors.Add(new BoolFieldEditor(nameof(Batch.AutoCreateNextPart)));
@@ -123,10 +120,10 @@ public sealed class BatchCruder : Cruder
         Dictionary<string, Batch> batches = batchesList.ToDictionary(k => k.BatchName, v => v);
         Batch batch = batches[itemName];
 
-        itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _httpClientFactory,
-            _crawlerRepositoryCreatorFactory, _par, batch));
+        itemSubMenuSet.AddMenuItem(new BatchTaskCliMenuCommand(_logger, _httpClientFactory, _crawlerRepository, _par,
+            batch));
 
-        var detailsCruder = new HostByBatchCruder(_crawlerRepositoryCreatorFactory, batch);
+        var detailsCruder = new HostByBatchCruder(_crawlerRepository, batch);
         var newItemCommand = new NewItemCliMenuCommand(detailsCruder, itemName, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 

@@ -187,7 +187,7 @@
 
 //                    DbClient? dc = DbClientFactory.GetDbClient(_logger, true, dataProvider.Value,
 //                        databaseServerConnectionData.ServerAddress, dbAuthSettingsCreateResult.AsT0,
-//                        databaseServerConnectionData.TrustServerCertificate, ProgramAttributes.Instance.AppName,
+//                        databaseServerConnectionData.TrustServerCertificate, "Crawler",
 //                        databaseServerConnectionData.DatabaseName);
 
 //                    if (dc is null)
@@ -229,3 +229,5 @@
 //        return false;
 //    }
 //}
+
+
