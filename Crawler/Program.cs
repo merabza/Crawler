@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using AppCliTools.CliParameters;
 using AppCliTools.CliTools;
-using Crawler;
+using Crawler.DependencyInjection;
 using DoCrawler.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

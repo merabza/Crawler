@@ -6,6 +6,7 @@
     <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     <ProjectReference Include="..\DoCrawler\DoCrawler.csproj" />
     <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />
+    <ProjectReference Include="..\SystemTools.DependencyInjection\SystemTools.DependencyInjection.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

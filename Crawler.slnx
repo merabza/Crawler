@@ -45,6 +45,7 @@
     <Project Path="../SystemTools/SystemTools.StringMessagesApiContracts/SystemTools.StringMessagesApiContracts.csproj" />
     <Project Path="../SystemTools/SystemTools.SystemToolsShared/SystemTools.SystemToolsShared.csproj" />
     <Project Path="../SystemTools/SystemTools.TestApiContracts/SystemTools.TestApiContracts.csproj" />
+    <Project Path="SystemTools.DependencyInjection/SystemTools.DependencyInjection.csproj" Id="b9ede85c-247e-4752-9ada-c8c89ff441ef" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Crawler.Tests/Crawler.Tests.csproj" Id="6daedb83-87d1-4ab8-9c6c-c14c64639686" />

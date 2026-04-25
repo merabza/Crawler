@@ -1,8 +1,6 @@
-﻿using System;
-using AppCliTools.CliMenu;
+﻿using AppCliTools.CliMenu;
 using AppCliTools.CliMenu.DependencyInjection;
 using AppCliTools.CliParametersDataEdit;
-using AppCliTools.CliTools.App;
 using AppCliTools.CliTools.DependencyInjection;
 using AppCliTools.CliTools.Services.MenuBuilder;
 using Crawler.Menu.CrawlerParametersEdit;
@@ -10,14 +8,14 @@ using Crawler.Menu.Tasks;
 using CrawlerDb;
 using DoCrawler.Models;
 using LibCrawlerRepositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ParametersManagement.LibDatabaseParameters;
-using ParametersManagement.LibParameters;
+using ParametersManagement.LibParameters.DependencyInjection;
 using Serilog.Events;
+using SystemTools.DependencyInjection;
 using SystemTools.SystemToolsShared;
 
-namespace Crawler;
+namespace Crawler.DependencyInjection;
 
 public static class CrawlerServices
 {
@@ -32,7 +30,7 @@ public static class CrawlerServices
 
         if (!string.IsNullOrEmpty(connectionString))
         {
-            services.AddContextByProvider(dataProvider, connectionString, commandTimeout);
+            services.AddContextByProvider<CrawlerDbContext>(dataProvider, connectionString, commandTimeout);
         }
 
         // @formatter:off
@@ -67,66 +65,6 @@ public static class CrawlerServices
             });
 
         // @formatter:on
-        //if (!string.IsNullOrWhiteSpace(par.RecentCommandsFileName) && par.RecentCommandsCount > 0)
-        //{
-        //    services.AddRecentCommandsService(x =>
-        //    {
-        //        x.RecentCommandsFileName = par.RecentCommandsFileName;
-        //        x.RecentCommandsCount = par.RecentCommandsCount;
-        //    });
-        //}
-
-        return services;
-    }
-
-    private static IServiceCollection AddApplication(this IServiceCollection services,
-        Action<ApplicationOptions> setupAction)
-    {
-        services.AddSingleton<IApplication, Application>();
-        services.Configure(setupAction);
-        return services;
-    }
-
-    private static IServiceCollection AddMainParametersManager(this IServiceCollection services,
-        Action<MainParametersManagerOptions> setupAction)
-    {
-        services.AddSingleton<IParametersManager, ParametersManager>();
-        services.Configure(setupAction);
-        return services;
-    }
-
-    //private static IServiceCollection AddRecentCommandsService(this IServiceCollection services,
-    //    Action<RecentCommandOptions> setupAction)
-    //{
-    //    services.AddSingleton<IRecentCommandsService, RecentCommandsService>();
-    //    services.Configure(setupAction);
-    //    return services;
-    //}
-
-    private static IServiceCollection AddContextByProvider(this IServiceCollection services,
-        EDatabaseProvider? dataProvider, string connectionString, int commandTimeout)
-    {
-        switch (dataProvider)
-        {
-            case EDatabaseProvider.SqlServer:
-                services.AddDbContext<CrawlerDbContext>(options => options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    if (commandTimeout > -1)
-                    {
-                        sqlOptions.CommandTimeout(commandTimeout);
-                    }
-                }));
-                break;
-            case EDatabaseProvider.None:
-            case EDatabaseProvider.SqLite:
-            case EDatabaseProvider.OleDb:
-            case EDatabaseProvider.WebAgent:
-            case null:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(dataProvider));
-        }
-
         return services;
     }
 }
