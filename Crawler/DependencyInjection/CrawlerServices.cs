@@ -14,6 +14,7 @@ using ParametersManagement.LibParameters.DependencyInjection;
 using Serilog.Events;
 using SystemTools.DependencyInjection;
 using SystemTools.SystemToolsShared;
+using SystemTools.SystemToolsShared.DependencyInjection;
 
 namespace Crawler.DependencyInjection;
 
