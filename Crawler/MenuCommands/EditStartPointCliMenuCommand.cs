@@ -10,13 +10,13 @@ namespace Crawler.MenuCommands;
 
 public sealed class EditStartPointCliMenuCommand : CliMenuCommand
 {
-    private readonly ParametersManager _parametersManager;
+    private readonly IParametersManager _parametersManager;
     private readonly string _startPoint;
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public EditStartPointCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) : base(
-        "Edit Start Point", EMenuAction.LevelUp, EMenuAction.Reload, taskName)
+    public EditStartPointCliMenuCommand(IParametersManager parametersManager, string taskName, string startPoint) :
+        base("Edit Start Point", EMenuAction.LevelUp, EMenuAction.Reload, taskName)
     {
         _parametersManager = parametersManager;
         _taskName = taskName;

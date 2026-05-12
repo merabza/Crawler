@@ -11,11 +11,11 @@ namespace Crawler.MenuCommands;
 
 public sealed class DeleteTaskCliMenuCommand : CliMenuCommand
 {
-    private readonly ParametersManager _parametersManager;
+    private readonly IParametersManager _parametersManager;
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public DeleteTaskCliMenuCommand(ParametersManager parametersManager, string taskName) : base("Delete Task",
+    public DeleteTaskCliMenuCommand(IParametersManager parametersManager, string taskName) : base("Delete Task",
         EMenuAction.LevelUp)
     {
         _parametersManager = parametersManager;

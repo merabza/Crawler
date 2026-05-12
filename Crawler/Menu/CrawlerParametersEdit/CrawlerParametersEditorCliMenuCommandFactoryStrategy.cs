@@ -16,7 +16,6 @@ public class CrawlerParametersEditorCliMenuCommandFactoryStrategy : IMenuCommand
     private readonly ILogger<CrawlerParametersEditorCliMenuCommandFactoryStrategy> _logger;
     private readonly IParametersManager _parametersManager;
 
-    // ReSharper disable once ConvertToPrimaryConstructor
     public CrawlerParametersEditorCliMenuCommandFactoryStrategy(
         ILogger<CrawlerParametersEditorCliMenuCommandFactoryStrategy> logger, IHttpClientFactory httpClientFactory,
         IParametersManager parametersManager, IApplication application)
@@ -31,7 +30,7 @@ public class CrawlerParametersEditorCliMenuCommandFactoryStrategy : IMenuCommand
     {
         var parameters = (CrawlerParameters)_parametersManager.Parameters;
 
-        var supportToolsParametersEditor = new CrawlerParametersEditor(_application.AppName, parameters,
+        var supportToolsParametersEditor = new CrawlerParametersEditor(_application, parameters,
             _parametersManager, _logger, _httpClientFactory);
         return new ParametersEditorListCliMenuCommand(supportToolsParametersEditor);
     }

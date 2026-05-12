@@ -13,20 +13,18 @@ namespace Crawler.Menu.Tasks;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class TasksListFactoryStrategy : IMenuCommandListFactoryStrategy
 {
-    //private readonly ICrawlerRepositoryCreatorFactory _crawlerRepositoryCreatorFactory;
     private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<TasksListFactoryStrategy> _logger;
-    private readonly ParametersManager _parametersManager;
+    private readonly IParametersManager _parametersManager;
 
-    // ReSharper disable once ConvertToPrimaryConstructor
     public TasksListFactoryStrategy(ILogger<TasksListFactoryStrategy> logger, IHttpClientFactory httpClientFactory,
         IParametersManager parametersManager, ICrawlerRepository crawlerRepository)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _crawlerRepository = crawlerRepository;
-        _parametersManager = (ParametersManager)parametersManager;
+        _parametersManager = parametersManager;
     }
 
     public List<CliMenuCommand> CreateMenuCommandsList()

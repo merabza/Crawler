@@ -9,12 +9,12 @@ namespace Crawler.MenuCommands;
 
 public sealed class StartPointSubMenuCliMenuCommand : CliMenuCommand
 {
-    private readonly ParametersManager _parametersManager;
+    private readonly IParametersManager _parametersManager;
     private readonly string _startPoint;
     private readonly string _taskName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public StartPointSubMenuCliMenuCommand(ParametersManager parametersManager, string taskName, string startPoint) :
+    public StartPointSubMenuCliMenuCommand(IParametersManager parametersManager, string taskName, string startPoint) :
         base(taskName, EMenuAction.LoadSubMenu)
     {
         _parametersManager = parametersManager;

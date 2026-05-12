@@ -9,7 +9,6 @@ public class NewTaskCliMenuCommandFactoryStrategy : IMenuCommandFactoryStrategy
 {
     private readonly ParametersManager _parametersManager;
 
-    // ReSharper disable once ConvertToPrimaryConstructor
     public NewTaskCliMenuCommandFactoryStrategy(IParametersManager parametersManager)
     {
         _parametersManager = (ParametersManager)parametersManager;

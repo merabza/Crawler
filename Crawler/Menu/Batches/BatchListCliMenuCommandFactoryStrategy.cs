@@ -17,7 +17,6 @@ public class BatchListCliMenuCommandFactoryStrategy : IMenuCommandFactoryStrateg
     private readonly ILogger<BatchListCliMenuCommandFactoryStrategy> _logger;
     private readonly IParametersManager _parametersManager;
 
-    // ReSharper disable once ConvertToPrimaryConstructor
     public BatchListCliMenuCommandFactoryStrategy(ILogger<BatchListCliMenuCommandFactoryStrategy> logger,
         IHttpClientFactory httpClientFactory, IParametersManager parametersManager,
         ICrawlerRepository crawlerRepository)

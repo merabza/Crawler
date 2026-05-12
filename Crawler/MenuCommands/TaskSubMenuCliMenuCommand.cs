@@ -17,11 +17,10 @@ public sealed class TaskSubMenuCliMenuCommand : CliMenuCommand
     private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
-    private readonly ParametersManager _parametersManager;
+    private readonly IParametersManager _parametersManager;
 
-    // ReSharper disable once ConvertToPrimaryConstructor
     public TaskSubMenuCliMenuCommand(ILogger logger, IHttpClientFactory httpClientFactory,
-        ParametersManager parametersManager, ICrawlerRepository crawlerRepository, string taskName) : base(taskName,
+        IParametersManager parametersManager, ICrawlerRepository crawlerRepository, string taskName) : base(taskName,
         EMenuAction.LoadSubMenu)
     {
         _logger = logger;

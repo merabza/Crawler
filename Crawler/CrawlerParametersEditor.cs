@@ -10,12 +10,13 @@ using Microsoft.Extensions.Logging;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibFileParameters.Models;
 using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace Crawler;
 
 public sealed class CrawlerParametersEditor : ParametersEditor
 {
-    public CrawlerParametersEditor(string appName, IParameters parameters, IParametersManager parametersManager,
+    public CrawlerParametersEditor(IApplication application, IParameters parameters, IParametersManager parametersManager,
         ILogger logger, IHttpClientFactory httpClientFactory) : base("Crawler Parameters Editor", parameters,
         parametersManager)
     {
@@ -41,7 +42,7 @@ public sealed class CrawlerParametersEditor : ParametersEditor
         FieldEditors.Add(new DictionaryFieldEditor<DatabaseServerConnectionCruder, DatabaseServerConnectionData>(
             nameof(CrawlerParameters.DatabaseServerConnections), logger, httpClientFactory, parametersManager));
 
-        FieldEditors.Add(new DatabaseParametersFieldEditor(appName, logger, httpClientFactory,
+        FieldEditors.Add(new DatabaseParametersFieldEditor(application, logger, httpClientFactory,
             nameof(CrawlerParameters.DatabaseParameters), parametersManager));
 
         FieldEditors.Add(
