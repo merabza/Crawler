@@ -16,9 +16,9 @@ namespace Crawler;
 
 public sealed class CrawlerParametersEditor : ParametersEditor
 {
-    public CrawlerParametersEditor(IApplication application, IParameters parameters, IParametersManager parametersManager,
-        ILogger logger, IHttpClientFactory httpClientFactory) : base("Crawler Parameters Editor", parameters,
-        parametersManager)
+    public CrawlerParametersEditor(IApplication application, IParameters parameters,
+        IParametersManager parametersManager, ILogger logger, IHttpClientFactory httpClientFactory) : base(
+        "Crawler Parameters Editor", parameters, parametersManager)
     {
         FieldEditors.Add(new FolderPathFieldEditor(nameof(CrawlerParameters.LogFolder)));
 

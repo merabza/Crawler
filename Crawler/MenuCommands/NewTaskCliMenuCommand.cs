@@ -12,11 +12,11 @@ namespace Crawler.MenuCommands;
 
 public sealed class NewTaskCliMenuCommand : CliMenuCommand
 {
-    private readonly ParametersManager _parametersManager;
+    private readonly IParametersManager _parametersManager;
 
     //ახალი აპლიკაციის ამოცანის შექმნა
     // ReSharper disable once ConvertToPrimaryConstructor
-    public NewTaskCliMenuCommand(ParametersManager parametersManager) : base("New Task", EMenuAction.Reload)
+    public NewTaskCliMenuCommand(IParametersManager parametersManager) : base("New Task", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
     }

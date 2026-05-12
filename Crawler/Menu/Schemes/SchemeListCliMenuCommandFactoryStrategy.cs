@@ -6,18 +6,11 @@ using LibCrawlerRepositories;
 namespace Crawler.Menu.Schemes;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class SchemeListCliMenuCommandFactoryStrategy : IMenuCommandFactoryStrategy
+public class SchemeListCliMenuCommandFactoryStrategy(ICrawlerRepository crawlerRepository) : IMenuCommandFactoryStrategy
 {
-    private readonly ICrawlerRepository _crawlerRepository;
-
-    public SchemeListCliMenuCommandFactoryStrategy(ICrawlerRepository crawlerRepository)
-    {
-        _crawlerRepository = crawlerRepository;
-    }
-
     public CliMenuCommand CreateMenuCommand()
     {
-        var schemeCruder = new SchemeCruder(_crawlerRepository);
+        var schemeCruder = new SchemeCruder(crawlerRepository);
         return new CruderListCliMenuCommand(schemeCruder);
     }
 }

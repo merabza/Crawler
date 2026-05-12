@@ -6,19 +6,12 @@ using LibCrawlerRepositories;
 namespace Crawler.Menu.Hosts;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class HostListCliMenuCommandFactoryStrategy : IMenuCommandFactoryStrategy
+public class HostListCliMenuCommandFactoryStrategy(ICrawlerRepository crawlerRepository) : IMenuCommandFactoryStrategy
 {
-    private readonly ICrawlerRepository _crawlerRepository;
-
-    public HostListCliMenuCommandFactoryStrategy(ICrawlerRepository crawlerRepository)
-    {
-        _crawlerRepository = crawlerRepository;
-    }
-
     public CliMenuCommand CreateMenuCommand()
     {
         //ჰოსტების რედაქტორი
-        var hostCruder = new HostCruder(_crawlerRepository);
+        var hostCruder = new HostCruder(crawlerRepository);
         //"Hosts"
         return new CruderListCliMenuCommand(hostCruder);
     }
