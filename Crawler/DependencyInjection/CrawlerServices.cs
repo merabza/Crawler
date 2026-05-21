@@ -1,7 +1,5 @@
 ﻿using AppCliTools.CliMenu;
-using AppCliTools.CliMenu.DependencyInjection;
 using AppCliTools.CliParametersDataEdit;
-using AppCliTools.CliTools.DependencyInjection;
 using AppCliTools.CliTools.Services.MenuBuilder;
 using Crawler.Menu.CrawlerParametersEdit;
 using Crawler.Menu.Tasks;
@@ -10,9 +8,11 @@ using DoCrawler.Models;
 using LibCrawlerRepositories;
 using Microsoft.Extensions.DependencyInjection;
 using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
 using ParametersManagement.LibParameters.DependencyInjection;
 using Serilog.Events;
 using SystemTools.DependencyInjection;
+using SystemTools.SerilogStuff.DependencyInjection;
 using SystemTools.SystemToolsShared;
 using SystemTools.SystemToolsShared.DependencyInjection;
 
@@ -59,7 +59,7 @@ public static class CrawlerServices
             {
                 x.AppName = appName;
             })
-            .AddMainParametersManager(x =>
+            .AddMainParametersManager<ParametersManager>(x =>
             {
                 x.ParametersFileName = parametersFileName;
                 x.Par = par;
