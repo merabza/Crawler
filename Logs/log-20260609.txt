@@ -1,0 +1,117 @@
+2026-06-09 19:00:21.245 +04:00 [INF] UseWindowsServiceOnWindows Started
+2026-06-09 19:00:21.272 +04:00 [INF] UseWindowsServiceOnWindows Finished
+2026-06-09 19:00:21.344 +04:00 [INF] AddReCounterAbstraction Started
+2026-06-09 19:00:21.354 +04:00 [INF] AddReCounterAbstraction Finished
+2026-06-09 19:00:21.455 +04:00 [INF] AddSwagger Started
+2026-06-09 19:00:21.646 +04:00 [INF] AddSwagger Finished
+2026-06-09 19:00:21.788 +04:00 [INF] AddMediator Started
+2026-06-09 19:00:21.862 +04:00 [INF] AddMediator Finished
+2026-06-09 19:00:21.863 +04:00 [INF] AddSignalRRecounterMessages Started
+2026-06-09 19:00:21.864 +04:00 [INF] AddSignalRRecounterMessages Finished
+2026-06-09 19:00:21.898 +04:00 [INF] AddApiKeyIdentity Started
+2026-06-09 19:00:21.907 +04:00 [INF] AddApiKeyIdentity Finished
+2026-06-09 19:00:21.907 +04:00 [INF] AddCrawlerServiceReCounters Started
+2026-06-09 19:00:21.907 +04:00 [INF] AddCrawlerServiceReCounters Finished
+2026-06-09 19:00:22.740 +04:00 [INF] AddCrawlerServiceDb Started
+2026-06-09 19:03:07.581 +04:00 [INF] UseWindowsServiceOnWindows Started
+2026-06-09 19:03:07.599 +04:00 [INF] UseWindowsServiceOnWindows Finished
+2026-06-09 19:03:07.601 +04:00 [INF] AddReCounterAbstraction Started
+2026-06-09 19:03:07.603 +04:00 [INF] AddReCounterAbstraction Finished
+2026-06-09 19:03:07.604 +04:00 [INF] AddSwagger Started
+2026-06-09 19:03:07.605 +04:00 [INF] AddSwagger Finished
+2026-06-09 19:03:07.606 +04:00 [INF] AddMediator Started
+2026-06-09 19:03:07.613 +04:00 [INF] AddMediator Finished
+2026-06-09 19:03:07.614 +04:00 [INF] AddSignalRRecounterMessages Started
+2026-06-09 19:03:07.614 +04:00 [INF] AddSignalRRecounterMessages Finished
+2026-06-09 19:03:07.615 +04:00 [INF] AddApiKeyIdentity Started
+2026-06-09 19:03:07.619 +04:00 [INF] AddApiKeyIdentity Finished
+2026-06-09 19:03:07.619 +04:00 [INF] AddCrawlerServiceReCounters Started
+2026-06-09 19:03:07.619 +04:00 [INF] AddCrawlerServiceReCounters Finished
+2026-06-09 19:03:07.622 +04:00 [INF] AddCrawlerServiceDb Started
+2026-06-09 19:03:07.626 +04:00 [INF] AddCrawlerServiceDb Finished
+2026-06-09 19:03:07.642 +04:00 [FTL] Host terminated unexpectedly
+System.AggregateException: Some services are not able to be constructed (Error while validating the service descriptor 'ServiceType: MediatR.IRequestHandler`2[CrawlerServiceApi.CommandRequests.RunBatchCommand,OneOf.OneOf`2[System.Boolean,SystemTools.SystemToolsShared.Errors.Error[]]] Lifetime: Transient ImplementationType: CrawlerServiceApi.Handlers.RunBatchCommandHandler': Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.RunBatchCommandHandler'.) (Error while validating the service descriptor 'ServiceType: MediatR.IRequestHandler`2[CrawlerServiceApi.CommandRequests.RunTaskCommand,OneOf.OneOf`2[System.Boolean,SystemTools.SystemToolsShared.Errors.Error[]]] Lifetime: Transient ImplementationType: CrawlerServiceApi.Handlers.RunTaskCommandHandler': Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.RunTaskCommandHandler'.) (Error while validating the service descriptor 'ServiceType: MediatR.IRequestHandler`2[CrawlerServiceApi.CommandRequests.TestOnePageCommand,OneOf.OneOf`2[System.Boolean,SystemTools.SystemToolsShared.Errors.Error[]]] Lifetime: Transient ImplementationType: CrawlerServiceApi.Handlers.TestOnePageCommandHandler': Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.TestOnePageCommandHandler'.) (Error while validating the service descriptor 'ServiceType: LibCrawlerRepositories.ICrawlerRepository Lifetime: Scoped ImplementationType: LibCrawlerRepositories.CrawlerRepository': Unable to resolve service for type 'CrawlerDb.CrawlerDbContext' while attempting to activate 'LibCrawlerRepositories.CrawlerRepository'.)
+ ---> System.InvalidOperationException: Error while validating the service descriptor 'ServiceType: MediatR.IRequestHandler`2[CrawlerServiceApi.CommandRequests.RunBatchCommand,OneOf.OneOf`2[System.Boolean,SystemTools.SystemToolsShared.Errors.Error[]]] Lifetime: Transient ImplementationType: CrawlerServiceApi.Handlers.RunBatchCommandHandler': Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.RunBatchCommandHandler'.
+ ---> System.InvalidOperationException: Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.RunBatchCommandHandler'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceDescriptor serviceDescriptor, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\1WorkDotnet\CrawlerService\CrawlerService\CrawlerService\Program.cs:line 61
+ ---> (Inner Exception #1) System.InvalidOperationException: Error while validating the service descriptor 'ServiceType: MediatR.IRequestHandler`2[CrawlerServiceApi.CommandRequests.RunTaskCommand,OneOf.OneOf`2[System.Boolean,SystemTools.SystemToolsShared.Errors.Error[]]] Lifetime: Transient ImplementationType: CrawlerServiceApi.Handlers.RunTaskCommandHandler': Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.RunTaskCommandHandler'.
+ ---> System.InvalidOperationException: Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.RunTaskCommandHandler'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceDescriptor serviceDescriptor, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)<---
+
+ ---> (Inner Exception #2) System.InvalidOperationException: Error while validating the service descriptor 'ServiceType: MediatR.IRequestHandler`2[CrawlerServiceApi.CommandRequests.TestOnePageCommand,OneOf.OneOf`2[System.Boolean,SystemTools.SystemToolsShared.Errors.Error[]]] Lifetime: Transient ImplementationType: CrawlerServiceApi.Handlers.TestOnePageCommandHandler': Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.TestOnePageCommandHandler'.
+ ---> System.InvalidOperationException: Unable to resolve service for type 'DoCrawler.Models.CrawlerParameters' while attempting to activate 'CrawlerServiceApi.Handlers.TestOnePageCommandHandler'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceDescriptor serviceDescriptor, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)<---
+
+ ---> (Inner Exception #3) System.InvalidOperationException: Error while validating the service descriptor 'ServiceType: LibCrawlerRepositories.ICrawlerRepository Lifetime: Scoped ImplementationType: LibCrawlerRepositories.CrawlerRepository': Unable to resolve service for type 'CrawlerDb.CrawlerDbContext' while attempting to activate 'LibCrawlerRepositories.CrawlerRepository'.
+ ---> System.InvalidOperationException: Unable to resolve service for type 'CrawlerDb.CrawlerDbContext' while attempting to activate 'LibCrawlerRepositories.CrawlerRepository'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceDescriptor serviceDescriptor, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)<---
+
+2026-06-09 19:05:11.052 +04:00 [INF] UseWindowsServiceOnWindows Started
+2026-06-09 19:05:11.069 +04:00 [INF] UseWindowsServiceOnWindows Finished
+2026-06-09 19:05:11.071 +04:00 [INF] AddReCounterAbstraction Started
+2026-06-09 19:05:11.073 +04:00 [INF] AddReCounterAbstraction Finished
+2026-06-09 19:05:11.074 +04:00 [INF] AddSwagger Started
+2026-06-09 19:05:11.075 +04:00 [INF] AddSwagger Finished
+2026-06-09 19:05:11.076 +04:00 [INF] AddMediator Started
+2026-06-09 19:05:11.084 +04:00 [INF] AddMediator Finished
+2026-06-09 19:05:11.084 +04:00 [INF] AddSignalRRecounterMessages Started
+2026-06-09 19:05:11.085 +04:00 [INF] AddSignalRRecounterMessages Finished
+2026-06-09 19:05:11.086 +04:00 [INF] AddApiKeyIdentity Started
+2026-06-09 19:05:11.089 +04:00 [INF] AddApiKeyIdentity Finished
+2026-06-09 19:05:11.090 +04:00 [INF] AddCrawlerServiceReCounters Started
+2026-06-09 19:05:11.090 +04:00 [INF] AddCrawlerServiceReCounters Finished
+2026-06-09 19:05:11.093 +04:00 [INF] AddCrawlerServiceDb Started
+2026-06-09 19:05:11.230 +04:00 [INF] AddCrawlerServiceDb Finished
+2026-06-09 19:05:11.414 +04:00 [INF] UseSwaggerServices Started
+2026-06-09 19:05:11.422 +04:00 [INF] UseSwaggerServices Finished
+2026-06-09 19:05:11.422 +04:00 [INF] UseApiKeysAuthorization Started
+2026-06-09 19:05:11.423 +04:00 [INF] UseApiKeysAuthorization Finished
+2026-06-09 19:05:11.423 +04:00 [INF] UseTestToolsApiEndpoints Started
+2026-06-09 19:05:11.425 +04:00 [INF] UseTestEndpoints Started
+2026-06-09 19:05:11.430 +04:00 [INF] UseTestEndpoints Finished
+2026-06-09 19:05:11.430 +04:00 [INF] UseTestToolsApiEndpoints Finished
+2026-06-09 19:05:11.430 +04:00 [INF] UseSignalRRecounterMessages Started
+2026-06-09 19:05:11.431 +04:00 [INF] MapReCounterMessagesEndpoints Started
+2026-06-09 19:05:11.441 +04:00 [INF] MapReCounterMessagesEndpoints Finished
+2026-06-09 19:05:11.441 +04:00 [INF] UseSignalRRecounterMessages Finished
+2026-06-09 19:05:11.442 +04:00 [INF] UseCrawlerApiEndpoints Started
+2026-06-09 19:05:11.443 +04:00 [INF] MapCrawlerEndpoints Started
+2026-06-09 19:05:11.444 +04:00 [INF] MapCrawlerEndpoints Finished
+2026-06-09 19:05:11.444 +04:00 [INF] UseCrawlerApiEndpoints Finished
+2026-06-09 19:05:11.446 +04:00 [INF] UseApiExceptionHandler Started
+2026-06-09 19:05:11.447 +04:00 [INF] UseApiExceptionHandler Finished
+2026-06-09 19:05:11.459 +04:00 [INF] ReCounter Queued Hosted Service is starting.

@@ -18,6 +18,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
 {
     private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly bool _noPrompt;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly string? _taskName;
     protected readonly ILogger CrLogger;
@@ -26,7 +27,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
 
     protected CrawlerToolAction(ILogger logger, CrawlerParameters par, string taskName, TaskModel? task,
         ICrawlerRepository crawlerRepository, IHttpClientFactory httpClientFactory,
-        ParseOnePageParameters parseOnePageParameters) : base(logger, taskName, null, null, true)
+        ParseOnePageParameters parseOnePageParameters, bool noPrompt = false) : base(logger, taskName, null, null, true)
     {
         CrLogger = logger;
         Par = par;
@@ -35,6 +36,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
         _httpClientFactory = httpClientFactory;
         _parseOnePageParameters = parseOnePageParameters;
         _crawlerRepository = crawlerRepository;
+        _noPrompt = noPrompt;
     }
 
     protected BatchPartRunner? CreateBatchPartRunner(BatchPart? batchPart, Batch batch)
@@ -60,7 +62,7 @@ public /*open*/ class CrawlerToolAction : ToolAction
         if (batchPart is not null)
         {
             batchPartRunner = new BatchPartRunner(CrLogger, _httpClientFactory, _crawlerRepository, Par,
-                _parseOnePageParameters, batchPart);
+                _parseOnePageParameters, batchPart, _noPrompt);
         }
 
         if (batchPartRunner is null)
@@ -122,9 +124,9 @@ public /*open*/ class CrawlerToolAction : ToolAction
         return batch;
     }
 
-    private static bool IsCreateNewPartAllowed(Batch batch)
+    private bool IsCreateNewPartAllowed(Batch batch)
     {
-        return batch.AutoCreateNextPart ||
+        return batch.AutoCreateNextPart || _noPrompt ||
                Inputer.InputBool($"Opened part not found for bath {batch.BatchName}, Create new?", true, false);
     }
 

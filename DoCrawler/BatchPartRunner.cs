@@ -34,6 +34,7 @@ public sealed class BatchPartRunner
     private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
+    private readonly bool _noPrompt;
     private readonly CrawlerParameters _par;
 
     private readonly ParseOnePageParameters _parseOnePageParameters;
@@ -43,7 +44,7 @@ public sealed class BatchPartRunner
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository crawlerRepository,
-        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart)
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart, bool noPrompt = false)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -51,6 +52,7 @@ public sealed class BatchPartRunner
         _parseOnePageParameters = parseOnePageParameters;
         _batchPart = batchPart;
         _crawlerRepository = crawlerRepository;
+        _noPrompt = noPrompt;
         //_urlGraphDeDuplicator = new UrlGraphDeDuplicator(repository);
     }
 
@@ -948,7 +950,7 @@ public sealed class BatchPartRunner
             : null;
         if (contentAnalysis != null)
         {
-            if (!Inputer.InputBool(
+            if (!_noPrompt && !Inputer.InputBool(
                     $"The page {strUrName} already analyzed. Do you wont to delete Content data for reanalyze", true,
                     false))
             {

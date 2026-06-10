@@ -17,16 +17,16 @@ public sealed class CrawlerRunnerToolAction : CrawlerToolAction
 
     public CrawlerRunnerToolAction(ILogger logger, IHttpClientFactory httpClientFactory,
         ICrawlerRepository crawlerRepository, CrawlerParameters par, ParseOnePageParameters parseOnePageParameters,
-        string taskName, TaskModel? task, Batch? batch) : base(logger, par, taskName, task, crawlerRepository,
-        httpClientFactory, parseOnePageParameters)
+        string taskName, TaskModel? task, Batch? batch, bool noPrompt = false) : base(logger, par, taskName, task,
+        crawlerRepository, httpClientFactory, parseOnePageParameters, noPrompt)
     {
         _batch = batch;
     }
 
     public CrawlerRunnerToolAction(ILogger logger, IHttpClientFactory httpClientFactory,
         ICrawlerRepository crawlerRepository, CrawlerParameters par, ParseOnePageParameters parseOnePageParameters,
-        string taskName, Batch? batch) : base(logger, par, taskName, null, crawlerRepository, httpClientFactory,
-        parseOnePageParameters)
+        string taskName, Batch? batch, bool noPrompt = false) : base(logger, par, taskName, null, crawlerRepository,
+        httpClientFactory, parseOnePageParameters, noPrompt)
     {
         _batch = batch;
     }
