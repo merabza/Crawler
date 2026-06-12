@@ -44,7 +44,8 @@ public sealed class BatchPartRunner
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public BatchPartRunner(ILogger logger, IHttpClientFactory httpClientFactory, ICrawlerRepository crawlerRepository,
-        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart, bool noPrompt = false)
+        CrawlerParameters par, ParseOnePageParameters parseOnePageParameters, BatchPart batchPart,
+        bool noPrompt = false)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
