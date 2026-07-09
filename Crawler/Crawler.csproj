@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersDataEdit\AppCliTools.CliParametersDataEdit.csproj" />
-    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliTools\AppCliTools.CliTools.csproj" />
     <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     <ProjectReference Include="..\DoCrawler\DoCrawler.csproj" />
     <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />
@@ -10,6 +8,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AppCliTools.CliParametersDataEdit" />
+    <PackageReference Include="AppCliTools.CliTools" />
     <PackageReference Include="SystemTools.SerilogStuff" />
   </ItemGroup>
 
