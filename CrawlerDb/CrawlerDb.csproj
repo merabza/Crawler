@@ -3,10 +3,8 @@
     <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\SystemTools\SystemTools.DatabaseToolsShared\SystemTools.DatabaseToolsShared.csproj" />
+    <PackageReference Include="SystemTools.DatabaseToolsShared" />
+    <PackageReference Include="SystemTools.SystemToolsShared" />
   </ItemGroup>
 
 </Project>
