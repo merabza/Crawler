@@ -5,12 +5,9 @@
     <ProjectReference Include="..\DoCrawler\DoCrawler.csproj" />
     <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />
     <ProjectReference Include="..\SystemTools.DependencyInjection\SystemTools.DependencyInjection.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AppCliTools.CliParametersDataEdit" />
-    <PackageReference Include="AppCliTools.CliTools" />
-    <PackageReference Include="SystemTools.SerilogStuff" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersDataEdit\AppCliTools.CliParametersDataEdit.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliTools\AppCliTools.CliTools.csproj" />
+    <ProjectReference Include="..\..\SystemTools\SystemTools.SerilogStuff\SystemTools.SerilogStuff.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

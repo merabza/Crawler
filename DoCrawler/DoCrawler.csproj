@@ -9,6 +9,12 @@
     <ProjectReference Include="..\CrawlerDb\CrawlerDb.csproj" />
     <ProjectReference Include="..\LibCrawlerRepositories\LibCrawlerRepositories.csproj" />
     <ProjectReference Include="..\RobotsTxt\RobotsTxt.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParameters\AppCliTools.CliParameters.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.LibDataInput\AppCliTools.LibDataInput.csproj" />
+    <ProjectReference Include="..\..\ParametersManagement\ParametersManagement.LibApiClientParameters\ParametersManagement.LibApiClientParameters.csproj" />
+    <ProjectReference Include="..\..\ParametersManagement\ParametersManagement.LibDatabaseParameters\ParametersManagement.LibDatabaseParameters.csproj" />
+    <ProjectReference Include="..\..\ParametersManagement\ParametersManagement.LibFileParameters\ParametersManagement.LibFileParameters.csproj" />
+    <ProjectReference Include="..\..\ParametersManagement\ParametersManagement.LibParameters\ParametersManagement.LibParameters.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,14 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AppCliTools.CliParameters" />
-    <PackageReference Include="AppCliTools.LibDataInput" />
     <PackageReference Include="HtmlAgilityPack" />
     <PackageReference Include="Microsoft.Extensions.Http" />
-    <PackageReference Include="ParametersManagement.LibApiClientParameters" />
-    <PackageReference Include="ParametersManagement.LibDatabaseParameters" />
-    <PackageReference Include="ParametersManagement.LibFileParameters" />
-    <PackageReference Include="ParametersManagement.LibParameters" />
   </ItemGroup>
 
 </Project>
