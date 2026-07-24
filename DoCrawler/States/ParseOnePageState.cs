@@ -15,12 +15,12 @@ namespace DoCrawler.States;
 
 public sealed partial class ParseOnePageState // : State
 {
+    public readonly List<string> ListOfUris = [];
+    public readonly List<UriTerm> UriTerms = [];
     private readonly string _content;
     private readonly ILogger _logger;
     private readonly ParseOnePageParameters _par;
     private readonly UrlModel _url;
-    public readonly List<string> ListOfUris = [];
-    public readonly List<UriTerm> UriTerms = [];
     private Uri? _currentUri;
 
     // ReSharper disable once ConvertToPrimaryConstructor
@@ -173,7 +173,7 @@ public sealed partial class ParseOnePageState // : State
             return;
         }
 
-        var re = new Regex(_par.SegmentFinisherPunctuationsRegex);
+        var re = new Regex(_par.SegmentFinisherPunctuationsRegex, RegexOptions.None, TimeSpan.FromSeconds(1));
         string[] strTestParts = re.Split(context);
         if (strTestParts.Length == 1)
         {
@@ -232,7 +232,8 @@ public sealed partial class ParseOnePageState // : State
             return;
         }
 
-        var re = new Regex(_par.PunctuationsRegex); //ყველა პუნქტუაციის ნიშანი
+        var re = new Regex(_par.PunctuationsRegex, RegexOptions.None,
+            TimeSpan.FromSeconds(1)); //ყველა პუნქტუაციის ნიშანი
         string[] strTestParts = re.Split(context);
 
         if (strTestParts.Length == 1)
@@ -270,7 +271,7 @@ public sealed partial class ParseOnePageState // : State
         }
 
         //ყველა ის პუნქტუაციის ნიშანი, რომელიც არ შეიძლება აღიქმებოდეს სიტყვის ნაწილად
-        var re = new Regex(_par.WordDelimiterRegex);
+        var re = new Regex(_par.WordDelimiterRegex, RegexOptions.None, TimeSpan.FromSeconds(1));
         string[] strTestParts = re.Split(context);
         if (strTestParts.Length < 3)
         {

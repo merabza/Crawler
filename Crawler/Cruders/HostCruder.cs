@@ -104,7 +104,8 @@ public sealed class HostCruder : Cruder
             return false;
         }
 
-        var re = new Regex(@"[-a-zA-Z0-9]{1,256}\.([-a-zA-Z0-9]{1,256}\.)*[a-zA-Z0-9()]{1,6}");
+        var re = new Regex(@"[-a-zA-Z0-9]{1,256}\.([-a-zA-Z0-9]{1,256}\.)*[a-zA-Z0-9()]{1,6}", RegexOptions.None,
+            TimeSpan.FromSeconds(1));
         Match m = re.Match(newHost.HostName);
         if (m is { Success: true, Groups.Count: 2 } && m.Groups[0].Value == newHost.HostName)
         {
