@@ -21,8 +21,10 @@ public class TasksListFactoryStrategy(
     {
         var parameters = (CrawlerParameters)parametersManager.Parameters;
 
-        return parameters.Tasks.OrderBy(o => o.Key)
-            .Select(kvp => new TaskSubMenuCliMenuCommand(logger, httpClientFactory, parametersManager,
-                crawlerRepository, kvp.Key)).Cast<CliMenuCommand>().ToList();
+        return
+        [
+            .. parameters.Tasks.OrderBy(o => o.Key).Select(kvp =>
+                new TaskSubMenuCliMenuCommand(logger, httpClientFactory, parametersManager, crawlerRepository, kvp.Key))
+        ];
     }
 }

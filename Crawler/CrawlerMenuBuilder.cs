@@ -47,18 +47,21 @@ public sealed class CrawlerMenuBuilder : IMenuBuilder
     {
         List<string> excludeList = [];
 
-        if (!CheckConnection())
+        if (CheckConnection())
         {
-            excludeList.Add(nameof(HostListCliMenuCommandFactoryStrategy));
-            excludeList.Add(nameof(SchemeListCliMenuCommandFactoryStrategy));
-            excludeList.Add(nameof(BatchListCliMenuCommandFactoryStrategy));
-            excludeList.Add(nameof(NewTaskCliMenuCommandFactoryStrategy));
-            excludeList.Add(nameof(TasksListFactoryStrategy));
+            return CliMenuSetFactory.CreateMenuSet("Main Menu",
+                [.. MenuData.MainMenuCommandFactoryStrategyNames.Except(excludeList)], _serviceProvider, true);
         }
+
+        excludeList.Add(nameof(HostListCliMenuCommandFactoryStrategy));
+        excludeList.Add(nameof(SchemeListCliMenuCommandFactoryStrategy));
+        excludeList.Add(nameof(BatchListCliMenuCommandFactoryStrategy));
+        excludeList.Add(nameof(NewTaskCliMenuCommandFactoryStrategy));
+        excludeList.Add(nameof(TasksListFactoryStrategy));
 
         //მთავარი მენიუს ჩატვირთვა
         return CliMenuSetFactory.CreateMenuSet("Main Menu",
-            MenuData.MainMenuCommandFactoryStrategyNames.Except(excludeList).ToList(), _serviceProvider, true);
+            [.. MenuData.MainMenuCommandFactoryStrategyNames.Except(excludeList)], _serviceProvider, true);
     }
 
     private bool CheckConnection()

@@ -16,8 +16,11 @@ public static class RobotsFactory
             return null;
         }
 
-        string[] lines = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-            .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+        string[] lines =
+        [
+            .. content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+        ];
         return lines.Length == 0 ? null : ReadLinesAndCreateRobots(lines);
     }
 

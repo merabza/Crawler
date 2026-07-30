@@ -117,9 +117,11 @@ public sealed class CrawlerRepository : ICrawlerRepository
 
     public UrlModel? GetUrl(int hostId, int extId, int scmId, int urlHashCode, string urName)
     {
-        List<UrlModel> matchUrls = _context.Urls.Where(w =>
+        List<UrlModel> matchUrls =
+        [
+            .. _context.Urls.Where(w =>
                 w.UrlHashCode == urlHashCode && w.HostId == hostId && w.ExtensionId == extId && w.SchemeId == scmId)
-            .ToList();
+        ];
         return matchUrls.FirstOrDefault(url => url.UrlName == urName);
     }
 
@@ -443,7 +445,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
-            return _context.Hosts.ToList();
+            return [.. _context.Hosts];
         }
         catch (Exception e)
         {
@@ -521,7 +523,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
-            return _context.Schemes.ToList();
+            return [.. _context.Schemes];
         }
         catch (Exception e)
         {
@@ -600,7 +602,7 @@ public sealed class CrawlerRepository : ICrawlerRepository
     {
         try
         {
-            return _context.Batches.ToList();
+            return [.. _context.Batches];
         }
         catch (Exception e)
         {

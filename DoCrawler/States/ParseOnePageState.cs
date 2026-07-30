@@ -431,7 +431,7 @@ public sealed partial class ParseOnePageState // : State
             return startQuery;
         }
 
-        string[] parts = startQuery[1..].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
+        string[] parts = [.. startQuery[1..].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Distinct()];
         var newQuery = new StringBuilder();
         bool isLeastOneAdded = false;
         foreach (string p in parts)
