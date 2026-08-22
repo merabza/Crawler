@@ -23,7 +23,7 @@ try
             break;
         case EParseResult.Usage:
             return 1;
-        case EParseResult.Error:
+        case EParseResult.ParseError:
             return 2;
         default:
             throw new SwitchExpressionException();
