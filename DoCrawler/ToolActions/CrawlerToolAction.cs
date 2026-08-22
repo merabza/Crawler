@@ -16,14 +16,14 @@ namespace DoCrawler.ToolActions;
 
 public /*open*/ class CrawlerToolAction : ToolAction
 {
+    protected readonly ILogger CrLogger;
+    protected readonly CrawlerParameters Par;
+    protected readonly TaskModel? Task;
     private readonly ICrawlerRepository _crawlerRepository;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly bool _noPrompt;
     private readonly ParseOnePageParameters _parseOnePageParameters;
     private readonly string? _taskName;
-    protected readonly ILogger CrLogger;
-    protected readonly CrawlerParameters Par;
-    protected readonly TaskModel? Task;
 
     protected CrawlerToolAction(ILogger logger, CrawlerParameters par, string taskName, TaskModel? task,
         ICrawlerRepository crawlerRepository, IHttpClientFactory httpClientFactory,
