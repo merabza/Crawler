@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliMenu;
 using AppCliTools.CliParametersDataEdit;
 using AppCliTools.CliParametersDataEdit.Models;
@@ -16,13 +17,11 @@ using DatabaseTools.DbTools;
 using DatabaseTools.DbTools.Models;
 using DatabaseTools.DbToolsFactory;
 using DoCrawler.Models;
-using LanguageExt;
 using Microsoft.Extensions.Logging;
-using OneOf;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
+using SystemTools.SharedKernel;
 using SystemTools.SystemToolsShared;
-using SystemTools.SystemToolsShared.Errors;
 
 namespace Crawler;
 
@@ -43,11 +42,11 @@ public sealed class CrawlerMenuBuilder : IMenuBuilder
         _application = application;
     }
 
-    public CliMenuSet BuildMainMenu()
+    public async Task<CliMenuSet?> BuildMainMenu()
     {
         List<string> excludeList = [];
 
-        if (CheckConnection())
+        if (await CheckConnection())
         {
             return CliMenuSetFactory.CreateMenuSet("Main Menu",
                 [.. MenuData.MainMenuCommandFactoryStrategyNames.Except(excludeList)], _serviceProvider, true);
@@ -64,7 +63,7 @@ public sealed class CrawlerMenuBuilder : IMenuBuilder
             [.. MenuData.MainMenuCommandFactoryStrategyNames.Except(excludeList)], _serviceProvider, true);
     }
 
-    private bool CheckConnection()
+    private async Task<bool> CheckConnection()
     {
         Console.WriteLine("Checking connection to database...");
 
@@ -131,18 +130,18 @@ public sealed class CrawlerMenuBuilder : IMenuBuilder
                         return false;
                     }
 
-                    OneOf<DbAuthSettingsBase, ErrorOmd[]> dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
+                    Result<DbAuthSettingsBase> dbAuthSettingsCreateResult = DbAuthSettingsCreator.Create(
                         databaseServerConnectionData.WindowsNtIntegratedSecurity,
                         databaseServerConnectionData.ServerUser, databaseServerConnectionData.ServerPass, true);
 
-                    if (dbAuthSettingsCreateResult.IsT1)
+                    if (dbAuthSettingsCreateResult.IsFailure)
                     {
-                        ErrorOmd.PrintErrorsOnConsole(dbAuthSettingsCreateResult.AsT1);
+                        dbAuthSettingsCreateResult.Error.PrintErrorsOnConsole();
                         return false;
                     }
 
                     DbClient? dc = DbClientFactory.GetDbClient(_logger, true, dataProvider.Value,
-                        databaseServerConnectionData.ServerAddress, dbAuthSettingsCreateResult.AsT0,
+                        databaseServerConnectionData.ServerAddress, dbAuthSettingsCreateResult.Value,
                         databaseServerConnectionData.TrustServerCertificate, _application.AppName,
                         databaseServerConnectionData.DatabaseName);
 
@@ -152,13 +151,13 @@ public sealed class CrawlerMenuBuilder : IMenuBuilder
                         return false;
                     }
 
-                    Option<ErrorOmd[]> testConnectionResult = dc.TestConnection(true, token).Result;
-                    if (testConnectionResult.IsNone)
+                    Result testConnectionResult = await dc.TestConnection(true, token);
+                    if (testConnectionResult.IsSuccess)
                     {
                         return true;
                     }
 
-                    ErrorOmd.PrintErrorsOnConsole((ErrorOmd[])testConnectionResult);
+                    testConnectionResult.Error.PrintErrorsOnConsole();
 
                     Console.WriteLine("Database test connection failed");
                     break;
