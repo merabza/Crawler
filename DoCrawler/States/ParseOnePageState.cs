@@ -74,9 +74,12 @@ public sealed partial class ParseOnePageState // : State
     private static string ExtractText(HtmlNode htmlDocDocumentNode)
     {
         var sb = new StringBuilder();
-        foreach (HtmlNode node in htmlDocDocumentNode.SelectNodes("//text()"))
+        var nodes = htmlDocDocumentNode.SelectNodes("//text()");
+        if (nodes is null || nodes.Count == 0) { return sb.ToString(); }
+
+        foreach (HtmlNode node in nodes)
         {
-            if (node.ParentNode.Name is "script" or "style")
+            if (node.ParentNode?.Name is "script" or "style")
             {
                 continue;
             }
@@ -95,7 +98,7 @@ public sealed partial class ParseOnePageState // : State
                 continue;
             }
 
-            if (node.ParentNode.Name == "b")
+            if (node.ParentNode?.Name is "b")
             {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (node.ParentNode.NextSibling != null)
@@ -380,7 +383,9 @@ public sealed partial class ParseOnePageState // : State
             if (!string.IsNullOrEmpty(startQuery))
             {
                 //თუ მისამართი შეიცავს ქვერის ნაწილს
+                // ReSharper disable once QueryInvasionUsage.Global
                 string newQuery = NormalizeQuery(startQuery, '&');
+                // ReSharper disable once QueryInvasionUsage.Global
                 newQuery = NormalizeQuery(newQuery, ';');
                 //ფრაგმენტი არა გვჭირდება +AbsUri.Fragment;
                 strUri = newUri.Scheme + "://" + newUri.Authority + newUri.LocalPath + newQuery;
@@ -423,6 +428,7 @@ public sealed partial class ParseOnePageState // : State
         return strToRet;
     }
 
+    // ReSharper disable once QueryInvasionDeclaration.Global
     private static string NormalizeQuery(string startQuery, char delimiter)
     {
         char[] delimiters = [delimiter];
